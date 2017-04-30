@@ -1,0 +1,16 @@
+/* SumireCSS: Slim TimeLine for kktCSS v1.1(20170430)
+========================================================== */
+div.notification__message > span {font-size:12px}
+div.column-header{font-size:13px;}
+div.status > div{font-size:12px !important;}
+
+div.column-header{padding: 10px;}
+div.column-icon,div.column-back-button{padding: 10px !important;}
+div.collapsable,div.collapsable-collapsed,div.column-back-button{ top: -38px !important;}
+div.notification__message{padding:0px;}
+div.status, div.account {padding: 0 0 0 6px !important; margin-bottom:2px !important;}
+div.status > div{margin-top:unset !important;width:unset !important;min-width:128px;text-align:left !important;}
+
+div.status > div > div > a{width:unset !important;}
+div.status > div:last-child{margin-left: auto;min-width:unset;}
+div.status > div:last-child > div{margin-right:4px !important;}
