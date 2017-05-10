@@ -1,0 +1,11 @@
+/* SumireCSS: Super Slim TimeLine (for kktCSS) v1.2(20170505)
+========================================================== */
+/* font-size */
+div.notification__message > span {font-size:12px}
+div.column-header{font-size:13px;}
+div.status > div{font-size:12px !important;}
+
+/* notification */
+div.notification{margin-bottom: 4px;}
+/* status */
+div.status{margin-bottom:4px !important;}

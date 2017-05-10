@@ -1,16 +1,22 @@
-/* SumireCSS: Slim TimeLine for kktCSS v1.1(20170430)
+/* SumireCSS: Slim TimeLine (for kktCSS) v1.2(20170505)
 ========================================================== */
-div.notification__message > span {font-size:12px}
-div.column-header{font-size:13px;}
-div.status > div{font-size:12px !important;}
-
+/* header */
 div.column-header{padding: 10px;}
 div.column-icon,div.column-back-button{padding: 10px !important;}
 div.collapsable,div.collapsable-collapsed,div.column-back-button{ top: -38px !important;}
-div.notification__message{padding:0px;}
-div.status, div.account {padding: 0 0 0 6px !important; margin-bottom:2px !important;}
-div.status > div{margin-top:unset !important;width:unset !important;min-width:128px;text-align:left !important;}
 
+/* notification */
+div.account{padding: 2px 0 8px 0;}
+div.account__avatar-wrapper{margin: 0 8px;}
+div.status.muted > div.status__action-bar{display:none;}
+div.notification{margin-bottom: 8px;}
+div.notification__message{padding:0px;margin-left: 23px;}
+div.notification__favourite-icon-wrapper{left: -23px;}
+
+/* status */
 div.status > div > div > a{width:unset !important;}
 div.status > div:last-child{margin-left: auto;min-width:unset;}
 div.status > div:last-child > div{margin-right:4px !important;}
+div.status::before, div.notification::before {top:8px;}
+div.status{padding: 0 8px !important; margin: 0 8px 8px 72px !important;}
+div.status > div{margin-top:unset !important;width:unset !important;min-width:128px;text-align:left !important;}
