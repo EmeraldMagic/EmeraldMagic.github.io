@@ -7,4 +7,4 @@ div.loading-bar{top: unset; bottom:0; background-color: #804BA5 !important;}
 
 div.status__avatar{pointer-events : none;}
 
-div.columns-area{padding: 0 !important;}
+@media (min-width:0) {div.columns-area{padding: 0;
