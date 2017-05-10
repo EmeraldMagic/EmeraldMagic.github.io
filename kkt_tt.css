@@ -4,4 +4,7 @@ div.tabs-bar, div.column-header, div.search, .column-back-button, .ui::before, .
 div.column{position: fixed; top: 0; left: 0; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;}
 div.scrollable{width: 100%; height: 100%; overflow-y: auto;}
 div.loading-bar{top: unset; bottom:0; background-color: #804BA5 !important;}
+
 div.status__avatar{pointer-events : none;}
+
+div.columns-area{padding: 0 !important;}
