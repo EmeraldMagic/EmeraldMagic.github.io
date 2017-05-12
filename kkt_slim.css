@@ -24,5 +24,6 @@ div.status > div:last-child {margin-left: auto; min-width:unset;}
 div.status > div:last-child > div {margin-right:4px !important;}
 div.status::before,
 div.notification::before {top:8px;}
-div.status {padding: 0 8px !important; margin: 0 8px 8px 72px !important;}
+div.status {padding: 0 8px !important; margin: 0 0 8px 64px !important;}
+@media (max-width: 1024px) {div.status {margin: 0 8px 8px 72px !important;}}
 div.status > div {margin-top:unset !important; width:unset !important; min-width:128px; text-align:left !important;}
