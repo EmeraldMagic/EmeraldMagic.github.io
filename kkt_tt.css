@@ -1,5 +1,49 @@
-/* SumireCSS: Tarte Tatin v1.0(20170510)
+/* SumireCSS: Tarte Tatin v2.0(20170525)
 ========================================================== */
+*{text-decoration: none !important;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-webkit-touch-callout: none;-webkit-user-select: none;}
+input[type=text],textarea {-webkit-user-select: auto;}
+
+div.status > div:last-child > div {margin:2px 24px 2px 0 !important;}
+i.fa-photo{display: none;}
+div.status__content > p{min-height:20px;}
+
+/* mastodon css bugfix */
+div.empty-column-indicator > span {margin:0 auto;}
+
+/* kktcss fix (for pawoo)  */
+strong.display-name__html{color: #ed649c;}
+
+/* restyle show more */
+a.status__content__spoiler-link{width: calc(100% - 12px); text-align: center; padding: 6px; margin-bottom: 2px;}
+
+/* restyle hidden image */
+div.media-gallery{overflow: unset;}
+button.icon-button.overlayed{width: 48px !important; position:absolute; top: 78px; left: -76px;}
+div.spoiler-button{display: none !important;}
+div.media-spoiler, div.video-error-cover {margin-top: unset;}
+
+/* erase a link */
+span.display-name{overflow-y: unset;}
+div.status__info > a{padding-right: 0 !important; margin-bottom: 18px; max-height: 0px !important;}
+span.display-name,
+span.display-name__account,
+strong.display-name__html,
+a.account__header__avatar,
+a.status__relative-time,
+a.detailed-status__datetime,
+a.detailed-status__application,
+a.detailed-status__link{pointer-events : none;}
+
+/* erase action dropdown bottom */
+div.status__action-bar-dropdown,
+a.dropdown__trigger.emoji-button{display: none !important;}
+
+/* erase dropdown */
+div.privacy-dropdown__dropdown,
+.dropdown--active:after,
+div.dropdown__content{display: none !important;}
+
+/* erase header */
 div.tabs-bar,
 div.column-header,
 div.search,
@@ -7,11 +51,17 @@ div.search,
 .ui::before,
 .column-icon,
 .fa-eraser:before,
-div.status-list__unread-indicator {display:none !important;}
-div.column {position: fixed; top: 0; left: 0; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;}
-div.scrollable {width: 100%; height: 100%; overflow-y: auto;}
-div.loading-bar {top: unset; bottom:0; background-color: #804BA5 !important;}
+div.status-list__unread-indicator,
+a.navigation-bar__profile-edit,
+div.getting-started__wrapper,
+div.static-content.getting-started > p,
+div.report__target,
+a.load-more{display:none !important;}
+strong.navigation-bar__profile-account{padding: 11px 4px}
+div.column{position: fixed; top: 0; left: 0; height: 100%; overflow-y: scroll;}
 
-div.status__avatar{pointer-events : none;}
+/* smooth scroll */
+div.scrollable{width: 100%; height: 100%;-webkit-transform: translateZ(0px); -webkit-overflow-scrolling: touch; overflow-scrolling: touch;}
+div.loading-bar{top: unset; bottom:0; background-color: #804BA5 !important;}
 
 @media (min-width:0) {div.columns-area{padding: 0;}}
