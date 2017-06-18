@@ -458,6 +458,9 @@ div.column-footer{
 .setting-wrapper span{
   padding: 6px 0;
 }
+.setting-wrapper h3{
+  padding-top: 6px;
+}
 .setting-header{
   padding: 8px 0;
   margin: 12px ;
