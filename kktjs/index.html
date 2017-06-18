@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
   <head>
     <meta charset="utf-8">
     <title>kktjs</title>
@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <!-- OGP -->
+    <meta property="og:title" content="kktjs" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sumire.work/kktjs/" />
+    <meta property="og:image" content="https://sumire.work/kktjs/img/apple-touch-icon.png" />
+    <meta property="og:site_name"  content="sumire.work/kktjs" />
+    <meta property="og:description" content="キラキラッターをもっと素敵にするWebクライアント" />
     <!-- iOS Safari FullScreen -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -21,8 +28,6 @@
     <div id="app" class="color">
 
       <div class="app-header flex">
-<!--         <i v-if="optMode" class="fa fa-fw fa-mobile" v-on:click="toggleMobile"></i>
-        <i v-else class="fa fa-fw fa-laptop" v-on:click="toggleMobile"></i> -->
         <i class="fa fa-fw fa-home" v-on:click="runHome"></i>
         <i class="fa fa-fw fa-users" v-on:click="runLocal"></i>
         <!-- <i class="fa fa-fw fa-globe color-disable"></i> -->
@@ -61,7 +66,6 @@
       <!-- DEBUG -->
       <div class="flex column-list">
         <div v-if="showDebug" class="column scrollable debug">
-        <div id="vdbanner" style=""><a href="https://go.value-domain.com/xreaadvd001" target="_blank" rel="nofollow" style="display:inline-block!important;position:relative!important;top:0!important;left:0!important;margin:0!important;padding:0!important;"><img alt="VALUE-DOMAIN" src="https://cache1.value-domain.com/vd_468x60.png" style="display:inline-block!important;position:relative!important;top:0!important;left:0!important;margin:0!important;padding:0!important;width:100%!important;max-width:468px;max-height:60px;vertical-align:bottom;"></a></div>
           <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status</div>
           <h3>Columns</h3>
           <div class="">
@@ -865,7 +869,7 @@
               <h3 class="setting-header">🍨🍨🍨 アプリ推奨環境 🍨🍨🍨</h3>
                 <small>
                   Windows vivaldi/chrome/firefox<br>
-                  macOS chrome/safari<br>
+                  macOS chrome/firefox/safari<br>
                   Android(4.4以上) chrome58+WebApp化(ホーム画面に追加)<br>
                   iOS(10以上) safari+WebApp化(ホーム画面に追加)<br>
                 </small><br>
@@ -945,7 +949,6 @@
 <script src="js/emojione.js"></script>
 <script src="js/addtohomescreen.min.js"></script>
 <script src="js/main.js"></script>
-
 <!--
 media gifv 1064873
 media video 1065201
@@ -954,5 +957,7 @@ media 4ximage 1064479
 ogp 1093754 work
 ogp 1090233 qiita
 rtfav 1139708
+なぞ 1270410
+
 
  -->
