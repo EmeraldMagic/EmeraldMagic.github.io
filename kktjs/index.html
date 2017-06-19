@@ -22,7 +22,6 @@
     <link rel="icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="shortcut icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
-    <script src="js/inobounce.min.js"></script>
   </head>
   <body>
     <div id="app" class="color">
@@ -523,10 +522,14 @@
                   <h4>Sensitive contents</h4>
                   <small>Click to view</small>
                 </div>
-                <div v-if="hasDetailCard" class="flex center detail-card bgcolor-wh" onClick="">
+                <a v-if="hasDetailCard" class="flex center detail-card bgcolor-wh" :href="detail_card.url" target="_blank" rel="noopener noreferrer">
                   <img v-if="null != detail_card.image" :src="detail_card.image">
-                  <a :href="detail_card.url" target="_blank" rel="noopener noreferrer"><small>{{detail_card.title}}</small></a>
-                </div>
+                  <div class="detail-content">
+                    <span>{{detail_card.title}}</span><br>
+                    <small class="color">{{detail_card.description}}</small><br>
+                    <small class="color">{{detail_card.url | formatDomain }}</small>
+                  </div>
+                </a>
                 <div class="detail-bar flex end">
                   <i class="fa fa-fw fa-retweet color-disable"></i>
                   <small>{{detail.reblogs_count}}</small>
@@ -917,6 +920,7 @@
                 HOME/Local TLのしおり機能<br>
                 カツ!を 翻訳<br>
                 カツ!機能の 入力ショートカット(タグや定型文を登録可能)<br>
+                カツ!の 下書き保存<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
                 カツ!した当時のLocal TLへタイムスリップする機能<br>
                 通信エラーメッセージ<br>
@@ -928,12 +932,6 @@
         </div>
       </div>
 
-<!--       <div class="flex panel-list">
-        <div class="panel katsu-panel bgcolor-wh">
-          <input type="text" v-model="code" placeholder="ここにCodeを張り付けてね"><br>
-          <button v-on:click="fetchToken" class="color-wh bgcolor-gr">Token Login</button>
-        </div>
-      </div> -->
       <div class="app-footer">
         <button id="sound" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
@@ -946,18 +944,8 @@
 <!-- <script src="https://unpkg.com/vue"></script> -->
 <!-- <script src="js/vue233.js"></script> -->
 <script src="js/vue.min.js"></script>
+<script src="js/main.js"></script>
+
+<script src="js/inobounce.min.js"></script>
 <script src="js/emojione.js"></script>
 <script src="js/addtohomescreen.min.js"></script>
-<script src="js/main.js"></script>
-<!--
-media gifv 1064873
-media video 1065201
-media 3ximage 1066590
-media 4ximage 1064479
-ogp 1093754 work
-ogp 1090233 qiita
-rtfav 1139708
-なぞ 1270410
-
-
- -->
