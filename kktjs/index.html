@@ -625,7 +625,7 @@
           <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
           <div v-if="hasAcct" class="status-list">
             <div v-if="'/headers/original/missing.png' != acct.account.header" class="header-wrapper">
-              <img :src="acct.account.header" class="media">
+              <img :src="acct.account.header" class="media header">
             </div>
             <div class="flex">
               <img v-bind:src="['/avatars/original/missing.png' == acct.account.avatar ? '/kktjs/img/missing_icon.png' : acct.account.avatar]" class="account__avatar border">

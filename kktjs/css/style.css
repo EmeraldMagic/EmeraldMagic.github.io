@@ -352,6 +352,14 @@ div.column-footer{
   width: inherit;
   overflow: hidden;
 }
+.media.header {
+  padding: 1px;
+  object-fit: cover;
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  width: inherit;
+}
 .media {
   padding: 1px;
   object-fit: cover;
@@ -360,7 +368,6 @@ div.column-footer{
   height: 132px;
   text-decoration: none;
   width: inherit;
-  object-fit: cover;
 }
 .media-type{
     background: rgba(0,0,0,.33);
