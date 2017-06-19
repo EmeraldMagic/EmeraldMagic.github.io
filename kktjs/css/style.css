@@ -105,7 +105,7 @@ body{
   -webkit-overflow-scrolling: touch;
   font-size: 90%;
   line-height: 1.2;
-  font-family: "Roboto", "YuGothicM";
+  font-family: "YuGothicM", "Roboto", sans-serif;
   font-style: normal;
   font-weight: normal;
   letter-spacing: 0.1px;
@@ -297,6 +297,7 @@ div.column-footer{
     width: 52px;
     height: 52px;
     border-radius: 4px;
+    cursor: pointer;
 }
 .content_before {
     position: relative;
@@ -356,14 +357,15 @@ div.column-footer{
   object-fit: cover;
   cursor: pointer;
   display: block;
-  height: 100%;
+  height: 132px;
   text-decoration: none;
   width: inherit;
+  object-fit: cover;
 }
 .media-type{
     background: rgba(0,0,0,.33);
     width: 100%;
-    height: 100%;
+    height: 132px;
     font-size: 300%;
     position: relative;
     bottom: 132px;
@@ -408,6 +410,7 @@ div.column-footer{
 }
 .detail-content {
   width: calc(100% - 80px);
+  padding: 0 8px;
   text-align: center;
 }
 

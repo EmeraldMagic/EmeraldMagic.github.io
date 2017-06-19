@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.7/assets/css/emojione.min.css"/> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
@@ -87,25 +88,30 @@
           </div>
           <h3>Other Debug</h3>
           <button v-on:click="playSound">default boop</button>
+          <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button>
           <!-- <input type="text" v-model="repository" readonly> -->
 <!--           <button v-on:click="reopenWsHome">Home Stream ReConn</button>
           <button v-on:click="pingWsHome">Ping Home Stream Socket</button>
           <button v-on:click="reopenWsLocal">Local Stream ReConn</button>
           <button v-on:click="pingWsLocal">Ping Local Stream Socket</button> -->
-          login_id
+          user.id(loginuser)
           <input type="text" v-model="user.id" readonly>
           <!-- <input type="text" v-model="searchText"> -->
           <!-- <input type="text" v-model="notif_id"> -->
-          katsu_id(open)
-          <input type="text" v-model="detail_id">
-          <button v-on:click="runDetail(detail_id)">Load Katsu!</button>
-          user_id(open)
-          <input type="text" v-model="acct_id">
-          <button v-on:click="runAcct(acct_id)">Load Account</button>
+          detail_targetid
+          <input type="text" v-model="detail_targetid">
+          <button v-on:click="runDetail(detail_targetid)">Load Katsu!</button>
+          acct_targetid
+          <input type="text" v-model="acct_targetid">
+          <button v-on:click="runAcct(acct_targetid)">Load Account</button>
           katsu_id(home_min)
           <input type="text" v-model="home_id">
           katsu_id(local_min)
           <input type="text" v-model="local_id">
+          katsu_id(notif_min)
+          <input type="text" v-model="notif_id">
+          katsu_id(acct_min)
+          <input type="text" v-model="acct_id">
           home_unread: {{home_unread}}/ {{homes.length}},
           home_posy: {{home_posy}}<br>
           local_unread: {{local_unread}}/ {{locals.length}},
@@ -145,7 +151,7 @@
                 </div>
                 <!-- REBLOG -->
                 <div v-if="null != issue.reblog" class="status flex">
-                  <img v-bind:src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="account__avatar border">
+                  <img v-bind:src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.reblog.account.id)">
                   <div class="content_before"><div></div></div>
                   <div class="content border">
                     <div class="status__info flex start">
@@ -196,7 +202,7 @@
                 </div>
                 <!-- NORMAL -->
                 <div v-else class="status flex">
-                  <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+                  <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
                   <div class="content_before"><div></div></div>
                   <div class="content border">
                     <div class="status__info flex start">
@@ -263,7 +269,7 @@
           <div class ="scrollable" id="local">
             <div v-if="hasLocal" class="status-list">
               <div v-for="(issue, index) in locals" v-if="local_unread <= index && index < 40 + local_unread" class="status flex" v-bind:class="issue.visibility">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -341,7 +347,7 @@
               </div>
               <!-- Mention -->
               <div v-if="'mention' == issue.type" class="status flex">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -382,7 +388,7 @@
               </div>
               <!-- Fav/Reblog -->
               <div v-else-if="'favourite' == issue.type || 'reblog' == issue.type " class="status flex">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.status.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.status.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.status.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.status.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.status.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -406,7 +412,7 @@
               </div>
               <!-- Follow -->
               <div v-else class="status flex">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -437,7 +443,7 @@
           <!-- ANCESTORS -->
           <div v-if="hasDetailUp" class="status-list">
             <div v-for="(issue, index) in detail_chain.ancestors" class="status flex">
-              <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+              <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
               <div class="content_before"><div></div></div>
               <div class="content border">
                 <div class="status__info flex start">
@@ -488,7 +494,7 @@
           <!-- TARGET -->
           <div v-if="hasDetail" class="status-list">
             <div class="status flex">
-              <img v-bind:src="['/avatars/original/missing.png' == detail.account.avatar_static ? '/kktjs/img/missing_icon.png' : detail.account.avatar_static]" class="account__avatar border">
+              <img v-bind:src="['/avatars/original/missing.png' == detail.account.avatar_static ? '/kktjs/img/missing_icon.png' : detail.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(detail.account.id)">
               <div class="content_before"><div></div></div>
               <div class="content border">
                 <div class="status__info flex start">
@@ -561,7 +567,7 @@
           <!-- DESCESTORS -->
           <div v-if="hasDetailDn" class="status-list">
             <div v-for="(issue, index) in detail_chain.descendants" class="status flex">
-              <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+              <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
               <div class="content_before"><div></div></div>
               <div class="content border">
                 <div class="status__info flex start">
@@ -633,12 +639,12 @@
                   <span>{{acct.account.following_count}} </span>Follow /
                   <span>{{acct.account.followers_count}} </span>Follower
                 </div>
-                <div v-if="user.id != acct_id" class="flex end action-bar">
+                <div v-if="user.id != acct_targetid" class="flex end action-bar">
                   <i class="fa fa-fw fa-reply color-disable"></i>
                   <span v-if="acct_relation[0].followed_by">[Follows You] </span>
-                  <span v-if="acct_relation[0].following" v-on:click="actUnFollow(acct_id)" class="button color-wh bgcolor-pk">Following</span>
+                  <span v-if="acct_relation[0].following" v-on:click="actUnFollow(acct_targetid)" class="button color-wh bgcolor-pk">Following</span>
                   <span v-else-if="acct_relation[0].requested" class="button color-wh bgcolor">Requested</span>
-                  <span v-else="acct_relation[0].following" v-on:click="actFollow(acct_id)" class="button color-wh bgcolor">Follow</span>
+                  <span v-else="acct_relation[0].following" v-on:click="actFollow(acct_targetid)" class="button color-wh bgcolor">Follow</span>
 <!--                   <span v-show="acct_relation[0].blocking">[Blocking]</span>
                   <span v-show="acct_relation[0].muting">[Muting]</span> -->
                 </div>
@@ -659,7 +665,7 @@
             <div class="flex account-bar">
               <div v-on:click="fetchAcct" class="acct-select color-wh bgcolor"><i class="fa fa-fw fa-comments-o"></i>All</div>
               <div v-on:click="fetchMedia" class="acct-select color-wh bgcolor"><i class="fa fa-fw fa-photo"></i>Media</div>
-              <div v-if="user.id == acct_id" v-on:click="fetchFav" class="acct-select color-wh bgcolor"><i class="fa fa-fw fa-star-o"></i>favourite</div>
+              <div v-if="user.id == acct_targetid" v-on:click="fetchFav" class="acct-select color-wh bgcolor"><i class="fa fa-fw fa-star-o"></i>favourite</div>
             </div>
           </div>
           <div v-if="hasAcct" class="status-list">
@@ -673,7 +679,7 @@
               </div>
               <!-- REBLOG -->
               <div v-if="null != issue.reblog" class="status flex">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.reblog.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -722,7 +728,7 @@
               </div>
               <!-- NORMAL -->
               <div v-else class="status flex">
-                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border">
+                <img v-bind:src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="account__avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content_before"><div></div></div>
                 <div class="content border">
                   <div class="status__info flex start">
@@ -884,7 +890,8 @@
                 <small>
                   ログイン/ログアウト/Webアプリ設定<br>
                   Home/Local/通知 TLのカツ!ストリーミング受信/削除<br>
-                  Home/Local/通知/Fav済/ユーザー のカツ!一覧取得(+遡り)<br>
+                  Home/Local/通知/Fav済/ユーザー のカツ!一覧取得<br>
+                  Home/Local のカツ!一覧を遡って取得<br>
                   ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
                   お気に入り/ブースト/フォロー の登録と解除<br>
                   カツ!の CW/NSFW/画像/ビデオ/gifv(ループ再生) 表示<br>
@@ -907,8 +914,9 @@
                 カツ!機能(+画像カツ!)<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧機能<br>
                 アカウント詳細のフォロー/フォロワー一覧機能<br>
-                ユーザー名で検索した結果のアカウント一覧を表示する機能<br>
-                タグで検索した結果のカツ一覧を表示する<br>
+                ユーザー名で検索した結果のアカウント一覧を表示<br>
+                通知/Fav済/ユーザー のカツ!一覧を遡って取得<br>
+                タグで検索した結果のカツ一覧を表示<br>
                 アカウントの ミュート/ブロック (と表示)<br>
                 カツ!の 通報<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
@@ -942,8 +950,8 @@
 </html>
 
 <!-- <script src="https://unpkg.com/vue"></script> -->
-<!-- <script src="js/vue233.js"></script> -->
-<script src="js/vue.min.js"></script>
+<script src="js/vue233.js"></script>
+<!-- <script src="js/vue.min.js"></script> -->
 <script src="js/main.js"></script>
 
 <script src="js/inobounce.min.js"></script>
