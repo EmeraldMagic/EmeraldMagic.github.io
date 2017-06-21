@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>kktjs</title>
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.7/assets/css/emojione.min.css"/> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.7/assets/css/emojione.min.css"/> -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <!-- OGP -->
     <meta property="og:title" content="kktjs" />
@@ -25,6 +25,20 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
   </head>
   <body>
+    <!-- template for the modal component -->
+    <script type="text/x-template" id="modal-template">
+      <transition name="modal">
+        <div class="modal-mask">
+
+          <div class="image center">
+            <slot name="header"></slot>
+            <button class="modalbutton" v-on:click="$emit('close');"></button>
+          </div>
+
+        </div>
+      </transition>
+    </script>
+
     <div id="app" class="color">
 
       <div class="app-header flex">
@@ -62,6 +76,13 @@
         </div>
         <div class="app-bg"></div>
       </div>
+
+      <modal v-if="showModal" v-on:close="showModal = false; modal = ''">
+        <span slot="header">
+          <img v-if="'image' == modal.type" :src="modal.url" alt="" class="fullimage">
+          <video v-else :src="modal.url" class="fullimage" autoplay loop></video>
+        </span>
+      </modal>
 
       <!-- DEBUG -->
       <div class="flex column-list">
@@ -173,10 +194,10 @@
                       </div>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
-                      <a v-for="media in issue.reblog.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                        <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                        <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                       </a>
                     </div>
                     <div v-if="( optAllNsfw || issue.reblog.sensitive ) && 0 != issue.reblog.media_attachments && 'opened' != issue.opt_open" class="media-wrapper bluesheet" onClick="this.classList.add('invisible');app._data.homes[this.getAttribute('idx')].opt_open = 'opened';" :idx="index">
@@ -224,10 +245,10 @@
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                      <a v-for="media in issue.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                        <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                        <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                       </a>
                     </div>
                     <div v-if="( optAllNsfw || issue.sensitive ) && 0 != issue.media_attachments && 'opened' != issue.opt_open" class="media-wrapper bluesheet" onClick="this.classList.add('invisible');app._data.homes[this.getAttribute('idx')].opt_open = 'opened';" :idx="index">
@@ -291,10 +312,10 @@
                     </div>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                    <a v-for="media in issue.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                      <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                      <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                      <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                     </a>
                   </div>
                   <div v-if="( optAllNsfw || issue.sensitive ) && 0 != issue.media_attachments && 'opened' != issue.opt_open" class="media-wrapper bluesheet" onClick="this.classList.add('invisible');app._data.locals[this.getAttribute('idx')].opt_open = 'opened';" :idx="index">
@@ -363,10 +384,10 @@
                     <span v-html="$options.filters.formatContent(issue.status.content)"></span>
                   </div>
                   <div v-if="0 != issue.status.media_attachments" class="media-wrapper flex">
-                    <a v-for="media in issue.status.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                      <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                      <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <a v-for="media in issue.status.media_attachments" @click="modal = media;showModal = true;">
+                      <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                     </a>
                   </div>
                   <div v-if="issue.status.sensitive && 0 != issue.status.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
@@ -465,10 +486,10 @@
                   </div>
                 </div>
                 <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                  <a v-for="media in issue.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                    <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                    <img v-if="'gifv' !== media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                    <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                  <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                    <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                   </a>
                 </div>
                 <div v-if="issue.sensitive && 0 != issue.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
@@ -486,7 +507,7 @@
                   <i v-if="issue.favourited" v-on:click="actUnFav(issue.id);" class="fa fa-fw fa-star color-on"></i>
                   <i v-else v-on:click="actFav(issue.id);" class="fa fa-fw fa-star"></i>
                   <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
-                  <i v-on:click="runAcct(detail.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                  <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                 </div>
               </div>
             </div>
@@ -518,10 +539,10 @@
                   </div>
                 </div>
                 <div v-if="0 != detail.media_attachments" class="media-wrapper flex">
-                  <a v-for="media in detail.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                    <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                    <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                    <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                  <a v-for="media in detail.media_attachments" @click="modal = media;showModal = true;">
+                    <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                   </a>
                 </div>
                 <div v-if="detail.sensitive && 0 != detail.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
@@ -555,6 +576,7 @@
                   <i v-if="user.id == detail.account.id" v-on:click="actDelete(detail.id)" class="fa fa-fw fa-trash"></i>
                   <i v-else v-on:click="runDetail(detail.id)" class="fa fa-fw fa-comment-o"></i>
                   <i v-on:click="runAcct(detail.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                  <i v-on:click="actTrans(detail.spoiler_text, detail.content)" class="fa fa-fw fa-user-circle-o"></i>
                 </div>
               </div>
             </div>
@@ -589,10 +611,10 @@
                   </div>
                 </div>
                 <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                  <a v-for="media in issue.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                    <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                    <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                    <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                  <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                    <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                   </a>
                 </div>
                 <div v-if="issue.sensitive && 0 != issue.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
@@ -625,7 +647,7 @@
           <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
           <div v-if="hasAcct" class="status-list">
             <div v-if="'/headers/original/missing.png' != acct.account.header" class="header-wrapper">
-              <img :src="acct.account.header" class="media header">
+              <img :src="acct.account.header" class="media-header">
             </div>
             <div class="flex">
               <img v-bind:src="['/avatars/original/missing.png' == acct.account.avatar ? '/kktjs/img/missing_icon.png' : acct.account.avatar]" class="account__avatar border">
@@ -701,10 +723,10 @@
                     </div>
                   </div>
                   <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
-                    <a v-for="media in issue.reblog.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                      <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                      <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
+                      <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                     </a>
                   </div>
                   <div v-if="issue.reblog.sensitive && 0 != issue.reblog.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible');">
@@ -750,10 +772,10 @@
                     </div>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                    <a v-for="media in issue.media_attachments" :href="media.url" target="_blank" rel="noopener noreferrer">
-                      <video v-if="'gifv' == media.type" :src="media.url" class="media" preload="none" autoplay loop></video>
-                      <img v-if="'gifv' != media.type && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                      <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" autoplay loop></video>
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                     </a>
                   </div>
                   <div v-if="issue.sensitive && 0 != issue.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
@@ -809,6 +831,16 @@
                   <label class="button color-wh bgcolor" v-bind:class="{ 'bgcolor-pk': 1 == optPtl }" for="tone">local</label>
                   <label class="button color-wh bgcolor" v-bind:class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo">home</label>
                   <label class="button color-wh bgcolor-disable" for="">federated</label>
+                </div>
+
+                <div class="flex end action-bar">
+                <span>AutoPlay</span>
+                  <input type="radio" class="invisible" id="vone" value="1" v-model="optAutoPlay">
+                  <input type="radio" class="invisible" id="vtwo" value="2" v-model="optAutoPlay">
+                  <!-- <input type="radio" class="invisible" id="vthree" value="3" v-model="optAutoPlay"> -->
+                  <label class="button color-wh bgcolor" v-bind:class="{ 'bgcolor-pk': 1 == optAutoPlay }" for="vone">OFF</label>
+                  <label class="button color-wh bgcolor" v-bind:class="{ 'bgcolor-pk': 2 == optAutoPlay }" for="vtwo">GIF</label>
+                  <label class="button color-wh bgcolor-disable" for="">ALL</label>
                 </div>
 
                 <div class="flex end action-bar">
@@ -952,8 +984,9 @@
 <!-- <script src="https://unpkg.com/vue"></script> -->
 <!-- <script src="js/vue233.js"></script> -->
 <script src="js/vue.min.js"></script>
-<script src="js/main.js"></script>
 
+<script src="js/addtohomescreen.min.js"></script>
 <script src="js/inobounce.min.js"></script>
 <script src="js/emojione.js"></script>
-<script src="js/addtohomescreen.min.js"></script>
+
+<script src="js/main.js"></script>
