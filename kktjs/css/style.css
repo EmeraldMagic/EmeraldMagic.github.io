@@ -227,7 +227,7 @@ div.column-footer{
 }
 .column {
   min-width: 344px; /* for iphone 5s */
-  max-width: 412px; /* for android */
+  max-width: 412px; /* for android  */
   position: relative;
   box-sizing: border-box;
   display: -webkit-box;
@@ -237,6 +237,9 @@ div.column-footer{
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+}
+.column.primary {
+  /*max-width: 66vw; */ /* for PC  */
 }
 
 .scrollable {

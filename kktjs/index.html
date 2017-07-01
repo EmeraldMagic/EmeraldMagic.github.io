@@ -168,7 +168,7 @@
         </div>
 
         <!-- HOME -->
-        <div class="column" :class="{ invisible: !showhometl }">
+        <div class="column primary" :class="{ invisible: !showhometl }">
           <div class="column-header"><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}}, AutoScr: {{home_scr}})</div>
           <div class ="scrollable" id="home">
             <div v-if="hasHome" class="status-list">
@@ -293,7 +293,7 @@
           </div>
         </div>
         <!-- LOCAL -->
-        <div :class="{ invisible: !showlocaltl }" class="column">
+        <div :class="{ invisible: !showlocaltl }" class="column primary">
         <div class="column-header"><i class="fa fa-fw fa-users"></i>Local (Stream: {{connLocal}}, AutoScr: {{local_scr}})</div>
           <div class ="scrollable" id="local">
             <div v-if="hasLocal" class="status-list">
@@ -906,9 +906,6 @@
             </div>
           </div>
           <div class="flex column-footer">
-            <i class="fa fa-fw fa-angle-double-up" v-on:click="upLocal"></i>
-            <i class="fa fa-fw fa-angle-up" v-on:click="backLocal"></i>
-            <i class="fa fa-fw fa-angle-down" v-on:click="nextLocal"></i>
           </div>
         </div>
 
