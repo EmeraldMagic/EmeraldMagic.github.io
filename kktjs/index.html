@@ -178,7 +178,7 @@
               </div>
               <div class="action-bar flex end">
                 <div class="hidden">
-                  <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                  <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.id}}</small>
                 </div>
                 <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
               </div>
@@ -462,7 +462,9 @@
                       <small>Click to view</small>
                     </div>
                     <div class="action-bar flex end">
-                      <small :href="issue.reblog.url">id:{{issue.reblog.id}}</small>
+                      <div class="hidden">
+                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.reblog.id}}</small>
+                      </div>
                       <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
                       <i v-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -661,15 +663,17 @@
                   <div v-if="issue.status.sensitive && 0 != issue.status.media_attachments" class="media-wrapper bluesheet" onClick="this.classList.add('invisible')">
                   </div>
                   <div class="action-bar flex end">
-                    <small :href="issue.status.url">id:{{issue.status.id}}</small>
+                    <div class="hidden">
+                      <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.status.id}}</small>
+                    </div>
                     <small v-if="'public' != issue.status.visibility">{{issue.status.visibility}}</small>
                     <i v-on:click="runForm(issue.status)" class="fa fa-fw fa-reply"></i>
                     <i v-if="'direct' == issue.status.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                     <i v-else-if="'private' == issue.status.visibility" class="fa fa-fw fa-lock color-disable"></i>
-                    <i v-else-if="issue.status.reblogged" v-on:click="actUnReblog(issue.status.id);" class="fa fa-fw fa-retweet color-on"></i>
-                    <i v-else v-on:click="actReblog(issue.status.id)" class="fa fa-fw fa-retweet"></i>
-                    <i v-if="issue.status.favourited" v-on:click="actUnFav(issue.status.id);" class="fa fa-fw fa-star color-on"></i>
-                    <i v-else v-on:click="actFav(issue.status.id);" class="fa fa-fw fa-star"></i>
+                    <i v-else-if="issue.status.reblogged" v-on:click="actUnReblog(issue.status);" class="fa fa-fw fa-retweet color-on"></i>
+                    <i v-else v-on:click="actReblog(issue.status)" class="fa fa-fw fa-retweet"></i>
+                    <i v-if="issue.status.favourited" v-on:click="actUnFav(issue.status);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-else v-on:click="actFav(issue.status);" class="fa fa-fw fa-star"></i>
                     <i v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -693,7 +697,9 @@
                     <span v-html="$options.filters.formatContent(issue.status.content)"></span>
                   </div>
                   <div class="action-bar flex end">
-                    <small :href="issue.status.url">id:{{issue.status.id}}</small>
+                    <div class="hidden">
+                      <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.status.id}}</small>
+                    </div>
                     <i v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -838,15 +844,17 @@
                   </div>
                 </div>
                 <div class="action-bar flex end">
-                  <small :href="detail.url">id:{{detail.id}}</small>
+                  <div class="hidden">
+                    <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{detail.id}}</small>
+                  </div>
                   <small v-if="'public' != detail.visibility">{{detail.visibility}}</small>
                   <i v-on:click="runForm(detail)" class="fa fa-fw fa-reply"></i>
                   <i v-if="'direct' == detail.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                   <i v-else-if="'private' == detail.visibility" class="fa fa-fw fa-lock color-disable"></i>
-                  <i v-else-if="detail.reblogged" v-on:click="actUnReblog(detail.id);" class="fa fa-fw fa-retweet color-on"></i>
-                  <i v-else v-on:click="actReblog(detail.id)" class="fa fa-fw fa-retweet"></i>
-                  <i v-if="detail.favourited" v-on:click="actUnFav(detail.id);" class="fa fa-fw fa-star color-on"></i>
-                  <i v-else v-on:click="actFav(detail.id);" class="fa fa-fw fa-star"></i>
+                  <i v-else-if="detail.reblogged" v-on:click="actUnReblog(detail);" class="fa fa-fw fa-retweet color-on"></i>
+                  <i v-else v-on:click="actReblog(detail)" class="fa fa-fw fa-retweet"></i>
+                  <i v-if="detail.favourited" v-on:click="actUnFav(detail);" class="fa fa-fw fa-star color-on"></i>
+                  <i v-else v-on:click="actFav(detail);" class="fa fa-fw fa-star"></i>
                   <i v-if="user.id == detail.account.id" v-on:click="actDelete(detail)" class="fa fa-fw fa-trash"></i>
                   <i v-else v-on:click="runDetail(detail.id)" class="fa fa-fw fa-comment-o"></i>
                   <i v-on:click="runAcct(detail.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1026,16 +1034,18 @@
                       <small>Click to view</small>
                     </div>
                     <div class="action-bar flex end">
-                      <small :href="issue.reblog.url">id:{{issue.reblog.id}}</small>
+                      <div class="hidden">
+                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.reblog.id}}</small>
+                      </div>
                       <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
                       <i v-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.reblog.visibility" class="fa fa-fw fa-lock color-disable"></i>
-                      <i v-else-if="issue.reblog.reblogged" v-on:click="actUnReblog(issue.reblog.id);" class="fa fa-fw fa-retweet color-on"></i>
-                      <i v-else v-on:click="actReblog(issue.reblog.id)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog.id);" class="fa fa-fw fa-star color-on"></i>
-                      <i v-else v-on:click="actFav(issue.reblog.id);" class="fa fa-fw fa-star"></i>
-                      <i v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-else-if="issue.reblog.reblogged" v-on:click="actUnReblog(issue.reblog);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue.reblog)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.reblog)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
                   </div>
@@ -1335,7 +1345,9 @@
                   <small>Click to view</small>
                 </div>
                 <div class="action-bar flex end">
-                  <small :href="reply.url">id:{{reply.id}}</small>
+                  <div class="hidden">
+                    <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{reply.id}}</small>
+                  </div>
                   <small v-if="'public' != reply.visibility">{{reply.visibility}}</small>
                   <i v-on:click="katsu['in_reply_to_id'] = ''; reply = [];" class="fa fa-fw fa-times"></i>
                 </div>
