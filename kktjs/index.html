@@ -67,11 +67,11 @@
       </transition>
     </script>
 
-    <div id="app" class="color">
+    <div id="app" class="color" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
 
       <div class="app-header bgsvg-pk flex">
         <div class="logo-wrapper color-wh">
-        <div class="svgkkt logo"><small>{{app_ver_top}}</small></div>
+          <div class="svgkkt logo"><small>{{app_ver_top}}</small></div>
         </div>
         <div class="icon-wrapper flex">
           <i class="fa fa-fw fa-home" v-on:click="runHome"></i>
@@ -124,7 +124,7 @@
           <div id="container" class="form-option full">
             <div class="wrapper full">
               <h3>Emoji Picker</h3>
-              <textarea type="text" id="katsu" placeholder="What is on your mind?" class="content-input border-lite"></textarea>
+              <textarea type="text" id="katsu" placeholder="What is on your mind?" class="content-input border-lite" onkeyup="autogrow(this)"></textarea>
               <div class="flex center">
                 <span class="full">
                   <i class="fa fa-fw fa-smile-o full border-lite"></i>
@@ -143,7 +143,7 @@
         <span slot="header">
 
           <div class="status flex" v-if="['delete','fav','unfav','reblog','unreblog','bookmark'].indexOf(issue.confirmtype) != -1">
-            <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+            <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
             <div class="content-before"><div></div></div>
             <div class="content border">
               <div class="status-name flex start">
@@ -189,7 +189,7 @@
             </div>
           </div>
           <div v-else-if="'katsu' == issue.confirmtype" class="status flex">
-            <img :src="['/avatars/original/missing.png' == user.avatar_static ? '/kktjs/img/missing_icon.png' : user.avatar_static]" class="avatar border" v-on:click="runAcct(user.id)">
+            <img :src="checkAvatar(user.avatar_static)" class="avatar border" v-on:click="runAcct(user.id)">
             <div class="content-before"><div></div></div>
             <div class="content border">
               <div class="status-name flex start">
@@ -240,7 +240,7 @@
             </div>
           </div>
           <div v-else class="status flex">
-            <img :src="['/avatars/original/missing.png' == acct.avatar ? '/kktjs/img/missing_icon.png' : acct.avatar]" class="avatar border">
+            <img :src="checkAvatar(acct.avatar)" class="avatar border">
             <div class="content">
               <a v-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
               <a v-else>{{acct.username}}</a>
@@ -383,17 +383,17 @@
           <h3>Other Debug</h3>
           <button v-on:click="confirm">confirm</button>
           <button v-on:click="playSound">default boop</button>
-          <!-- <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button> -->
-          <!-- <input type="text" v-model="repository" readonly> -->
-<!--           <button v-on:click="reopenWsHome">Home Stream ReConn</button>
+          <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button>
+          <!-- <input type="text" v-model="repository" readonly>
+          <button v-on:click="reopenWsHome">Home Stream ReConn</button>
           <button v-on:click="pingWsHome">Ping Home Stream Socket</button>
           <button v-on:click="reopenWsLocal">Local Stream ReConn</button>
           <button v-on:click="pingWsLocal">Ping Local Stream Socket</button> -->
-          user.id(loginuser)
-          <input type="text" v-model="user.id" readonly>
+          <!-- user.id(loginuser) -->
+          <!-- <input type="text" v-model="user.id" readonly> -->
           <!-- <input type="text" v-model="searchText"> -->
           <!-- <input type="text" v-model="notif_id"> -->
-          detail_targetid
+<!--           detail_targetid
           <input type="text" v-model="detail_targetid">
           <button v-on:click="runDetail(detail_targetid)">Load Katsu!</button>
           acct_targetid
@@ -416,14 +416,15 @@
           home_unread: {{home_unread}}/ {{homes.length}},
           home_posy: {{home_posy}}<br>
           local_unread: {{local_unread}}/ {{locals.length}},
-          local_posy: {{local_posy}}<br>
+          local_posy: {{local_posy}}/{{local_posy_b}}<br>
           katsu_id(bookmark)
-          <input type="text" v-model="local_id_bookmark">
+          <input type="text" v-model="local_id_bookmark"> -->
         </div>
 
         <!-- HOME -->
         <div :class="[{ invisible: !showhometl }, { primary: optColumnWide }]" class="column">
-          <div class="column-header"><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}}, AutoScr: {{home_scr}})</div>
+          <div class="column-header" ><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})</div>
+          <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
           <div class ="scrollable" id="home" v-on:scroll="handleScrollHome">
             <div v-if="hasHome" class="status-list">
               <div v-for="(issue, index) in homes" v-if="home_unread <= index && index < 40 + home_unread" class="status-wrapper" :class="issue.visibility">
@@ -436,7 +437,7 @@
                 </div>
                 <!-- REBLOG -->
                 <div v-if="null != issue.reblog" class="status flex">
-                  <img :src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.reblog.account.id)">
+                  <img :src="checkAvatar(issue.reblog.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.reblog.account.id)">
                   <div class="content-before"><div></div></div>
                   <div class="content border">
                     <div class="status-name flex start">
@@ -492,7 +493,7 @@
                 </div>
                 <!-- NORMAL -->
                 <div v-else class="status flex">
-                  <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                   <div class="content-before"><div></div></div>
                   <div class="content border">
                     <div class="status-name flex start">
@@ -560,7 +561,8 @@
         </div>
         <!-- LOCAL -->
         <div :class="[{ invisible: !showlocaltl }, { primary: optColumnWide }]" class="column">
-          <div class="column-header"><i class="fa fa-fw fa-users"></i>Local (Stream: {{connLocal}}, AutoScr: {{local_scr}})</div>
+          <div class="column-header"><i class="fa fa-fw fa-users"></i>Local (Stream: {{connLocal}})</div>
+          <!-- <div :class="{'border-dash-pk':! local_scr && 0 != local_unread}"></div> -->
           <div class ="scrollable" id="local" v-on:scroll="handleScrollLocal">
             <div v-if="hasLocal" class="status-list">
               <div v-for="(issue, index) in locals" v-if="local_unread <= index && index < 40 + local_unread" class="status-wrapper" :class="issue.visibility">
@@ -573,7 +575,7 @@
                   </small>
                 </div>
                 <div class="status flex">
-                  <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                   <div class="content-before"><div></div></div>
                   <div class="content border">
                     <div class="status-name flex start">
@@ -642,7 +644,7 @@
 
         <!-- NOTIFICATION -->
         <div v-if="shownotif" class ="column scrollable">
-          <div class="column-header"><i class="fa fa-fw fa-bell"></i>Notification (StreamObj: {{connHome}})</div>
+          <div class="column-header"><i class="fa fa-fw fa-bell"></i>Notification (Stream: {{connHome}})</div>
           <div v-if="hasNotif" class="status-list">
             <div v-for="issue in notifs" class="status-wrapper">
               <div class="status-header">
@@ -658,7 +660,7 @@
               </div>
               <!-- Mention -->
               <div v-if="'mention' == issue.type" class="status flex">
-                <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status-name flex start">
@@ -707,7 +709,7 @@
               </div>
               <!-- Fav/Reblog -->
               <div v-else-if="'favourite' == issue.type || 'reblog' == issue.type " class="status flex">
-                <img :src="['/avatars/original/missing.png' == issue.status.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.status.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.status.account.id)">
+                <img :src="checkAvatar(issue.status.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.status.account.id)">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status-name flex start">
@@ -733,7 +735,7 @@
               </div>
               <!-- Follow -->
               <div v-else class="status flex">
-                <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status-name flex start">
@@ -764,7 +766,7 @@
           <!-- ANCESTORS -->
           <div v-if="hasDetailUp" class="status-list">
             <div v-for="(issue, index) in detail_chain.ancestors" class="status flex">
-              <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+              <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -822,7 +824,7 @@
           <!-- TARGET -->
           <div v-if="hasDetail" class="status-list">
             <div class="status flex">
-              <img :src="['/avatars/original/missing.png' == detail.account.avatar_static ? '/kktjs/img/missing_icon.png' : detail.account.avatar_static]" class="avatar border" v-on:click="runAcct(detail.account.id)">
+              <img :src="checkAvatar(detail.account.avatar_static)" class="avatar border" v-on:click="runAcct(detail.account.id)">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -872,11 +874,11 @@
                 <div class="detail-bar flex end">
                   <div>
                     <div class="detail-select color"><i class="fa fa-fw fa-retweet"></i><small>{{detail_reblog.length}}</small></div>
-                    <img v-for="account in detail_reblog" :src="['/avatars/original/missing.png' == account.avatar_static ? '/kktjs/img/missing_icon.png' : account.avatar_static]" v-on:click="runAcct(account.id)" class="avatar mini">
+                    <img v-for="account in detail_reblog" :src="checkAvatar(account.avatar_static)" v-on:click="runAcct(account.id)" class="avatar mini">
                   </div>
                   <div>
                     <div class="detail-select color"><i class="fa fa-fw fa-star"></i><small>{{detail_fav.length}}</small></div>
-                    <img v-for="account in detail_fav" :src="['/avatars/original/missing.png' == account.avatar_static ? '/kktjs/img/missing_icon.png' : account.avatar_static]" v-on:click="runAcct(account.id)" class="avatar mini">
+                    <img v-for="account in detail_fav" :src="checkAvatar(account.avatar_static)" v-on:click="runAcct(account.id)" class="avatar mini">
                   </div>
                 </div>
                 <div class="action-bar flex end">
@@ -908,7 +910,7 @@
           <!-- DESCESTORS -->
           <div v-if="hasDetailDn" class="status-list">
             <div v-for="(issue, index) in detail_chain.descendants" class="status flex">
-              <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+              <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -977,7 +979,7 @@
                 <img :src="acct.header" class="media-header">
               </div>
               <div class="flex">
-                <img :src="['/avatars/original/missing.png' == acct.avatar ? '/kktjs/img/missing_icon.png' : acct.avatar]" class="avatar border">
+                <img :src="checkAvatar(acct.avatar)" class="avatar">
                 <div class="content">
                   <a v-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
                   <a v-else>{{acct.username}}</a>
@@ -1008,7 +1010,7 @@
                 </div>
               </div>
               <div v-if="7 < acct.note.length" class="flex">
-                <img :src="['/avatars/original/missing.png' == acct.avatar ? '/kktjs/img/missing_icon.png' : acct.avatar]" class="avatar border">
+                <img :src="checkAvatar(acct.avatar)" class="avatar border">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status__content">
@@ -1042,7 +1044,7 @@
                 </div>
                 <!-- REBLOG -->
                 <div v-if="null != issue.reblog" class="status flex">
-                  <img :src="['/avatars/original/missing.png' == issue.reblog.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.reblog.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.reblog.account.id)">
+                  <img :src="checkAvatar(issue.reblog.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.reblog.account.id)">
                   <div class="content-before"><div></div></div>
                   <div class="content border">
                     <div class="status-name flex start">
@@ -1098,7 +1100,7 @@
                 </div>
                 <!-- NORMAL -->
                 <div v-else class="status flex">
-                  <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                   <div class="content-before"><div></div></div>
                   <div class="content border">
                     <div class="status-name flex start">
@@ -1156,7 +1158,7 @@
             </div>
             <div v-if="hasUser" class="status-list">
               <div v-for="issue in accts_users" class="status flex">
-                <img :src="['/avatars/original/missing.png' == issue.avatar_static ? '/kktjs/img/missing_icon.png' : issue.avatar_static]" class="avatar border" v-on:click="runAcct(issue.id)">
+                <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="runAcct(issue.id)">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status-name flex start">
@@ -1197,7 +1199,7 @@
           <div class ="scrollable">
             <div v-if="hasManage" class="status-list">
               <div v-for="(issue, index) in manages" class="status flex" :class="issue.visibility">
-                <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
                 <div class="content-before"><div></div></div>
                 <div class="content border">
                   <div class="status-name flex start">
@@ -1267,7 +1269,7 @@
           <div class="status-list">
 
             <div class="search-container bgcolor-wh flex center">
-              <input v-focus type="text" v-model="search_text" class="border-dash" placeholder="" @keyup.enter="searchAll"><br>
+              <input v-focus type="text" class="border-dash" placeholder="" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
               <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span>
             </div>
 
@@ -1278,7 +1280,7 @@
 
             <div v-if="searchs.accounts && 0 != searchs.accounts.length" class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
             <div v-for="issue in searchs.accounts" class="status flex">
-              <img :src="['/avatars/original/missing.png' == issue.avatar_static ? '/kktjs/img/missing_icon.png' : issue.avatar_static]" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
+              <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -1302,7 +1304,7 @@
             <div v-if="searchs.statuses && 0 != searchs.statuses.length" class="column-header"><i class="fa fa-fw fa-comment-o"></i>Katsu!</div>
             <div v-for="(issue, index) in searchs.statuses" class="status flex">
 
-              <img :src="['/avatars/original/missing.png' == issue.account.avatar_static ? '/kktjs/img/missing_icon.png' : issue.account.avatar_static]" class="avatar border" v-on:click="runAcct(issue.account.id)">
+              <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -1370,7 +1372,7 @@
               <span v-else>{{reply.account.username}}</span>
             </div>
             <div v-if="hasReply" class="status flex form bgcolor-wh border-dash">
-              <img :src="['/avatars/original/missing.png' == reply.account.avatar_static ? '/kktjs/img/missing_icon.png' : reply.account.avatar_static]" class="avatar border" v-on:click="runAcct(reply.account.id)">
+              <img :src="checkAvatar(reply.account.avatar_static)" class="avatar border" v-on:click="runAcct(reply.account.id)">
               <div class="content-before"><div></div></div>
               <div class="content border">
                 <div class="status-name flex start">
@@ -1419,11 +1421,11 @@
 
             <div class="form-wrapper bgcolor-wh">
 
-              <div v-if="showSpoiler" class="form-option border-dash">
+              <div v-show="showSpoiler" class="form-option border-dash">
                 <div class="flex center">
-                  <div v-on:click="katsu['spoiler_text'] += '<コンプラ>'" class="color-wh bgcolor button full"><small>コンプラ</small></div>
-                  <div v-on:click="katsu['spoiler_text'] += '<ネタバレ>'" class="color-wh bgcolor button full"><small>ネタバレ</small></div>
-                  <div v-on:click="katsu['spoiler_text'] += '<R-18>'" class="color-wh bgcolor button full"><small>R-18</small></div>
+                  <div v-on:click="addSpoiler('<コンプラ>')" class="color-wh bgcolor button full"><small>コンプラ</small></div>
+                  <div v-on:click="addSpoiler('<ネタバレ>')" class="color-wh bgcolor button full"><small>ネタバレ</small></div>
+                  <div v-on:click="addSpoiler('<R-18>')" class="color-wh bgcolor button full"><small>R-18</small></div>
                 </div>
                 <div class="flex center">
                   <small class="full text center">とりあえず<br>ダメそうならコレ</small>
@@ -1432,35 +1434,41 @@
                 </div>
                 <div class="action-bar flex end">
                   <div class="spoiler-left">
-                    <i v-if="'' == katsu['spoiler_text']" v-on:click="katsu['spoiler_text'] = katsu['spoiler_text_bu'];" class="fa fa-fw fa-exclamation-triangle color-disable"></i>
-                    <i v-else v-on:click="katsu['spoiler_text_bu'] = katsu['spoiler_text']; katsu['spoiler_text'] = '';" class="fa fa-fw fa-exclamation-triangle"></i>
+                    <i v-if="'' == katsu_spoiler_text" v-on:click="restoreSpoiler" class="fa fa-fw fa-exclamation-triangle color-disable"></i>
+                    <i v-else v-on:click="disableSpoiler" class="fa fa-fw fa-exclamation-triangle"></i>
 
                     <i v-on:click="contentExchange" class="fa fa-fw fa-exchange"></i>
                   </div>
-                  <textarea type="text" v-model="katsu['spoiler_text']" :rows="spoilerRows" class="spoiler-input border-lite" placeholder="Content warning" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)"></textarea>
+                  <textarea type="text" id="katsu_spoiler" class="spoiler-input border-lite" placeholder="Content warning" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onKeyup="autogrow(this)"></textarea>
                 </div>
               </div>
 
               <div class="flex center border-dash">
                 <div class="form-option full">
-                  <textarea v-focus type="text" v-model="katsu['content_text']" class="content-input border-lite" :rows="contentRows" placeholder="What is on your mind?" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)"></textarea>
+                  <textarea v-focus type="text" id="katsu_content" class="content-input border-lite" placeholder="What is on your mind?" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onkeyup="autogrow(this)"></textarea>
                   <span v-if="0 != result_run.length">Error: {{result_run}}</span>
                 </div>
               </div>
 
               <div v-if="showDraft" class="form-option border-dash">
-                <div v-if="3 > content_text_drafts.length" class="action-bar flex end draft">
+                <div v-if="5 > content_text_drafts.length" class="action-bar flex end draft">
                   <i v-if="0 == contentLength()" class="fa fa-fw fa-floppy-o color-disable"></i>
                   <i v-else v-on:click="contentToDraft()" class="fa fa-fw fa-floppy-o"></i>
                   <span v-if="0 == contentLength()" class="full text center">(下書きに保存)</span>
-                  <span v-else v-on:click="contentToDraft" class="full text center">(下書きに保存)</span>
+                  <span v-else class="full text center">(下書きに保存)</span>
                 </div>
                 <div v-for="(draft, index) in content_text_drafts" class="action-bar flex end draft">
-                  <i v-on:click="draftToContent(index)" class="fa fa-fw fa-arrow-up"></i>
+                  <i v-on:click="draftToContent(index, false)" class="fa fa-fw fa-copy"></i>
+                  <i v-on:click="draftToContent(index, true)" class="fa fa-fw fa-arrow-up"></i>
                   <span class="full text center hidden">{{draft}}</span>
                 </div>
               </div>
 
+              <div v-if="showFileImporter" class="form-option">
+                <div class="flex">
+                  <span class="color-wh bgcolor-disable full button">Drop to upload</span>
+                </div>
+              </div>
               <div v-if="0 != katsu['media_previews'].length" class="form-option border-dash">
                 <div class="media-wrapper flex">
                   <a v-for="(media, index) in katsu['media_previews']" @click="modal = media;showModal = true;">
@@ -1498,7 +1506,7 @@
                 </div>
               </div>
 
-              <input type="file" name="file" id="uploader" class="invisible" onchange="preview(this)">
+              <input type="file" name="file" id="uploader" class="invisible" onchange="preview(this.files)">
 
               <div class="action-bar flex wrap form-option border-dash">
                 <div class="color bgcolor-in">
@@ -1660,6 +1668,8 @@
               <small>
                 ログイン/ログアウト/Webアプリ設定<br>
                 カツ!機能(メディア投稿,CW,NSFW,絵文字入力)<br>
+                ドラッグ＆ドロップでメディア投稿(PC)<br>
+                キーボードショートカット(カツ!/検索)<br>
                 Home/Local/通知 TLのカツ!ストリーミング受信/削除<br>
                 Home/Local/通知/Fav済/ユーザー/タグ のカツ!一覧取得<br>
                 Home/Local のカツ!一覧を遡って取得<br>
@@ -1733,6 +1743,7 @@
 <script src="js/addtohomescreen.min.js"></script>
 <script src="js/inobounce.min.js"></script>
 <script src="js/emojione.js"></script>
+<script src="js/lodash.js"></script>
 
 <script src="js/main.js"></script>
 <script src="js/picker.js"></script>

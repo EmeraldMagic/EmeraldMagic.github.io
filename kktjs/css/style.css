@@ -83,6 +83,12 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border:none;
   border-bottom: 1px dashed #e1c152;
 }
+.border-dash-pk{
+  border-top: 2px dashed #ed649c;
+  position: absolute;
+  top: 16px;
+  width: 100%;
+}
 /* ===========================
     Common Elements
 =========================== */
@@ -733,9 +739,14 @@ small.button {
 *{
   text-decoration: none !important;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-overflow-scrolling: auto;
+  /*-webkit-overflow-scrolling: touch;*/
+  /*-webkit-touch-callout: none;*/
+  /*-webkit-user-select: none;*/
+  -webkit-text-size-adjust: none;
 }
-
+*:not{
+  -webkit-user-select: none;
+}
 /* emoji-picker
 =========================== */
 #emoji-picker{
