@@ -666,8 +666,13 @@ small.button {
   display: table;
   transition: opacity .3s ease;
 }
-.modal-mask.front {
+.modal-front {
+  position: fixed;
   z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .modal-mask > div.flex.center{

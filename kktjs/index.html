@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/emojione/2.2.7/assets/css/emojione.min.css"/> -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
     <!-- OGP -->
     <meta property="og:title" content="kktjs" />
@@ -26,6 +25,7 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
   </head>
   <body class="bgsvg-gr">
+
     <script type="text/x-template" id="modal-image">
       <transition name="modal">
         <div class="modal-mask">
@@ -69,7 +69,23 @@
 
     <div id="app" class="color" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
 
-      <div class="app-header bgsvg-pk flex">
+      <div v-if="startApp" class="modal-front bgsvg-gr front">
+
+      </div>
+
+      <div class="app-header flex">
+        <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
+          <defs>
+            <pattern id="border" patternUnits="userSpaceOnUse" height="24" width="18">
+              <rect id="pkl" height="24" width="18" y="0" x="0"/>
+              <path id="pkd" d="m0 12 9-12 9 12-9 12z"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" style="fill: url(#border)"/>
+        </svg>
+      </div>
+
+      <div class="app-header control flex">
         <div class="logo-wrapper color-wh">
           <div class="svgkkt logo"><small>{{app_ver_top}}</small></div>
         </div>
@@ -1439,13 +1455,13 @@
 
                     <i v-on:click="contentExchange" class="fa fa-fw fa-exchange"></i>
                   </div>
-                  <textarea type="text" id="katsu_spoiler" class="spoiler-input border-lite" placeholder="Content warning" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onKeyup="autogrow(this)"></textarea>
+                  <textarea type="text" id="katsu_spoiler" v-restore-s class="spoiler-input border-lite" placeholder="Content warning" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onKeyup="autogrow(this)"></textarea>
                 </div>
               </div>
 
               <div class="flex center border-dash">
                 <div class="form-option full">
-                  <textarea v-focus type="text" id="katsu_content" class="content-input border-lite" placeholder="What is on your mind?" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onkeyup="autogrow(this)"></textarea>
+                  <textarea v-focus type="text" id="katsu_content" v-restore-c class="content-input border-lite" placeholder="What is on your mind?" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onkeyup="autogrow(this)"></textarea>
                   <span v-if="0 != result_run.length">Error: {{result_run}}</span>
                 </div>
               </div>
@@ -1664,7 +1680,7 @@
                 <h4>私(<span v-on:click="runAcct(17)" class="color-pk">@sumire</span>)に直接送ってくれても大丈夫だよ。</h4>
               <h3 class="setting-header">🍨🍨🍨 開発ステータス 🍨🍨🍨</h3>
 
-              <h3>アプリで使える機能(v0.0)</h3>
+              <h3>アプリで使える機能(v1.0)</h3>
               <small>
                 ログイン/ログアウト/Webアプリ設定<br>
                 カツ!機能(メディア投稿,CW,NSFW,絵文字入力)<br>
@@ -1686,10 +1702,11 @@
                 PUSH通知(PC)と、通知音再生(PC)<br>
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
               </small><br>
-              <h3>拡張機能(v0.0)</h3>
+              <h3>拡張機能(v1.0)</h3>
               <small>
                 1-3カラム表示+切替機能<br>
                 カツ!の 下書き保存、CWと本文の入れ替え<br>
+                カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
                 カツ!一覧のスクロールを廃止して、ページ化(遷移方法は暫定)<br>
                 Local TLにしおりをはさむ機能(削除カツ未対応)<br>
@@ -1699,7 +1716,7 @@
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
                 ヘッダに お気に入り、Webアプリ設定アイコン追加<br>
               </small><br>
-              <h3>アプリにまだない機能(v0.0)</h3>
+              <h3>アプリにまだない機能(v1.0)</h3>
               <small>
                 Home TLの正規表現フィルタ<br>
                 通知/Fav済/ユーザー/タグ のカツ!一覧を遡って取得<br>
@@ -1713,14 +1730,17 @@
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
                 テーマ機能(ナイトテーマ追加)<br>
-                PUSH通知(Android/iOS11?12?)<br>
+                PUSH通知(Android chrome)<br>
                 カツ!を 翻訳<br>
-                カツ!機能の 入力ショートカット(タグや定型文を登録可能)<br>
                 通知 TLのインスタンスフィルター<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
                 カツ!した当時のLocal TLへタイムスリップする機能<br>
                 通信エラーメッセージ<br>
                 ワード検索機能(Mastodon API未実装)<br>
+              </small>
+              <h3>スマートフォンアプリで追加されるかもしれない拡張機能</h3>
+              <small>
+                PUSH通知(Android/iOS)<br>
               </small>
 
             </div>
@@ -1728,7 +1748,16 @@
         </div>
       </div>
 
-      <div class="app-footer bgsvg-pk">
+      <div class="app-footer">
+        <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
+          <defs>
+            <pattern id="border" patternUnits="userSpaceOnUse" height="24" width="18">
+              <rect id="pkl" height="24" width="18" y="0" x="0"/>
+              <path id="pkd" d="m0 12 9-12 9 12-9 12z"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" style="fill: url(#border)"/>
+        </svg>
         <button id="sound" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
       </div>
@@ -1737,6 +1766,7 @@
   </body>
 </html>
 
+<!-- <script src="js/vue233.js"></script> -->
 <script src="js/vue.min.js"></script>
 
 <script src="js/addtohomescreen.min.js"></script>
