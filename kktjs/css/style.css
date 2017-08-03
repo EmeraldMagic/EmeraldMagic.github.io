@@ -50,6 +50,11 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bgcolor-wh.scrollable{background-color: rgba(255,255,255,.85);}
 .bgcolor-bookmark{background-image: linear-gradient( -45deg, #fff 25%, #2b90d9 25%, #2b90d9 50%, #fff 50%, #fff 75%, #2b90d9 75%, #2b90d9);}
 
+#pkl{fill:#e46bac;}
+#pkd{fill:#df57a4;}
+#grl{fill:#ecf5be;}
+#grd{fill:#e0ea95;}
+
 .eye{opacity:0.66;}
 
 .svgkkt{
@@ -156,9 +161,14 @@ div.app-header{
   width: 100%;
   height: 48px;
   border-bottom: 2px solid #e1c152;
-  padding: 14px 0;
+  padding: 0;
   transform: translate3d(0, 0, 0);
 }
+div.app-header.control{
+  margin-top: -48px;
+  padding: 14px 0;
+}
+
 div.app-header .logo-wrapper{
   position: relative;
   left: -12px;
@@ -174,7 +184,7 @@ div.app-header .margin{
 }
 div.app-footer{
   top: calc(100vh - 48px);
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 48px;
   border-top: 2px solid #e1c152;
@@ -655,6 +665,9 @@ small.button {
   background-color: rgba(0, 0, 0, .5);
   display: table;
   transition: opacity .3s ease;
+}
+.modal-mask.front {
+  z-index: 9999;
 }
 
 .modal-mask > div.flex.center{
