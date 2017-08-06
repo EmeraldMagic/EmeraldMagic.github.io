@@ -24,7 +24,16 @@
     <link rel="shortcut icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
   </head>
-  <body class="bgsvg-gr">
+  <body class="themetest">
+<!--   <svg xmlns="http://www.w3.org/2000/svg" height="24" width="18">
+    <rect id="pkl" height="24" width="18" y="0" x="0"/>
+    <path id="pkd" d="m0 12 9-12 9 12-9 12z"/>
+  </svg>
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="114" width="80">
+    <rect id="grl" height="114" width="80" y="0" x="0"/>
+    <path id="grd" d="m0 57 40-57 40 57-40 57z"/>
+  </svg> -->
 
     <script type="text/x-template" id="modal-image">
       <transition name="modal">
@@ -275,7 +284,7 @@
               <h3>カツ!しますか？</h3>
               <div class="flex center">
                 <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
-                <span v-if="katsuCheck()" v-on:click="showConfirm = false; actKatsu(katsu, true)" class="color-wh bgcolor-gr button full">KATSU!</span>
+                <span v-if="checkKatsu()" v-on:click="showConfirm = false; actKatsu(katsu, true)" class="color-wh bgcolor-gr button full">KATSU!</span>
                 <span v-else class="color-wh bgcolor-disable button full">KATSU!</span>
               </div>
             </div>
@@ -889,11 +898,11 @@
                 </a>
                 <div class="detail-bar flex end">
                   <div>
-                    <div class="detail-select color"><i class="fa fa-fw fa-retweet"></i><small>{{detail_reblog.length}}</small></div>
+                    <div class="detail-select"><i class="fa fa-fw fa-retweet"></i><small>{{detail_reblog.length}}</small></div>
                     <img v-for="account in detail_reblog" :src="checkAvatar(account.avatar_static)" v-on:click="runAcct(account.id)" class="avatar mini">
                   </div>
                   <div>
-                    <div class="detail-select color"><i class="fa fa-fw fa-star"></i><small>{{detail_fav.length}}</small></div>
+                    <div class="detail-select"><i class="fa fa-fw fa-star"></i><small>{{detail_fav.length}}</small></div>
                     <img v-for="account in detail_fav" :src="checkAvatar(account.avatar_static)" v-on:click="runAcct(account.id)" class="avatar mini">
                   </div>
                 </div>
@@ -1538,7 +1547,7 @@
                 </div>
                 <div class="flex end katsu-ctrl">
                   <div class="katsu-count">{{500 - spoilerLength() - contentLength()}}</div>
-                  <div v-if="katsuCheck()" v-on:click="actKatsu(katsu)" class="color-wh bgcolor-gr button">KATSU!</div>
+                  <div v-if="checkKatsu()" v-on:click="actKatsu(katsu)" class="color-wh bgcolor-gr button">KATSU!</div>
                   <div v-else class="color-wh bgcolor-disable button">KATSU!</div>
                 </div>
               </div>
@@ -1760,6 +1769,18 @@
         </svg>
         <button id="sound" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
+      </div>
+
+      <div class="bgapp">
+        <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
+          <defs>
+            <pattern id="borders" patternUnits="userSpaceOnUse" height="114" width="80">
+          <rect id="grl" height="114" width="80" y="0" x="0"/>
+          <path id="grd" d="m0 57 40-57 40 57-40 57z"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" style="fill: url(#borders)"/>
+        </svg>
       </div>
 
     </div><!-- Vue Root -->
