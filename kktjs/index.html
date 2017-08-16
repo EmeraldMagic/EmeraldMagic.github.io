@@ -1126,7 +1126,7 @@
                       <i v-else v-on:click="actReblog(issue.reblog)" class="fa fa-fw fa-retweet"></i>
                       <i v-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
-                      <i v-on:click="runDetail(issue.reblog)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
                   </div>
