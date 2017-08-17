@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>kktjs</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:900,400' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/emojipicker.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
@@ -163,7 +164,7 @@
       </emojipicker>
 
       <confirm v-if="showConfirm">
-        <span slot="header">
+        <div slot="header">
 
           <div class="status flex" v-if="['delete','report','fav','unfav','reblog','unreblog','bookmark'].indexOf(issue.confirmtype) != -1">
             <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
@@ -224,11 +225,11 @@
                 <!-- <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span> -->
               </div>
               <div class="status__content">
-                <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                <span v-html="$options.filters.formatContentSP(issue.spoiler_text)"></span>
                 <div v-if="0 != issue.spoiler_text.length">
                   <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                   <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                  <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                  <span v-if="issue.content_opened" v-html="$options.filters.formatContentP(issue.content)"></span>
                 </div>
                 <div v-else>
                   <span v-html="$options.filters.formatContentSP(issue.content)"></span>
@@ -277,7 +278,7 @@
             </div>
           </div>
 
-          <div class="text center">
+          <div class="text center confirm-wrapper">
             <div v-if="'katsu' == issue.confirmtype">
               <h3>カツ!しますか？</h3>
               <div class="flex center">
@@ -382,7 +383,7 @@
 
           </div>
 
-        </span>
+        </div>
       </confirm>
 
       <!-- DEBUG -->
@@ -456,7 +457,7 @@
 
         <!-- HOME -->
         <div :class="[{ invisible: !showhometl }, { primary: optColumnWide }]" class="column">
-          <div class="column-header" ><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})</div>
+          <div class="column-header"><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})</div>
           <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
           <div class ="scrollable" id="home" v-on:scroll="handleScrollHome">
             <div v-if="hasHome" class="status-list">
@@ -583,7 +584,7 @@
               </div>
             </div>
             <div v-else>
-              <div>loading...</div>
+              <div class="flex">loading...</div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -665,7 +666,7 @@
               </div>
             </div>
             <div v-else>
-              <div>loading...</div>
+              <div class="flex">loading...</div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -790,7 +791,7 @@
             </div>
           </div>
           <div v-else>
-            <div>loading...</div>
+            <div class="flex">loading...</div>
           </div>
         </div>
         <!-- Detail -->
@@ -999,12 +1000,12 @@
             </div>
           </div>
           <div v-else>
-            <div>loading...</div>
+            <div class="flex">loading...</div>
           </div>
         </div>
 
         <!-- Account -->
-        <div v-if="showacct" class="column ">
+        <div v-if="showacct" class="column">
           <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
           <div class="scrollable" id="acct" v-on:scroll="handleScrollAcct">
             <div v-if="hasAcctRel" class="status-list">
@@ -1065,6 +1066,9 @@
                 <div v-on:click="acct_id=''; fetchMute()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'mute' == acct_type }"><i class="fa fa-fw fa-microphone-slash"></i>Mute</div>
                 <div v-on:click="acct_id=''; fetchBlock()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'block' == acct_type }"><i class="fa fa-fw fa-user-circle"></i>Block</div>
               </div>
+            </div>
+            <div v-if="!hasAcctRel && (hasAcct || hasUser)">
+              <div class="flex">loading...</div>
             </div>
             <div v-if="hasAcct" class="status-list">
               <div v-for="(issue, index) in accts" class="status-wrapper">
@@ -1189,7 +1193,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="hasUser" class="status-list">
+            <div v-else-if="hasUser" class="status-list">
               <div v-for="issue in accts_users" class="status flex">
                 <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="runAcct(issue.id)">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
@@ -1217,6 +1221,9 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div v-else>
+              <div class="flex">loading...</div>
             </div>
           </div>
         </div>
@@ -1283,7 +1290,7 @@
               </div>
             </div>
             <div v-else>
-              <div>loading...</div>
+              <div class="flex">loading...</div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -1558,11 +1565,12 @@
               <div class="action-bar form-option border-dash">
                 <div class="flex end action-bar">
                   <span>🔥 お知らせ 🔥</span>
-                  <small>20170729(v1.0 beta)</small>
+                  <small>20170817(v1.1)</small>
                 </div>
-                <span>ついに、カツ!機能を追加したよ。</span><br>
-                <span>画像/動画のアップロードは、</span><br>
-                <span>サイズが8MB未満の対応したファイルを用意してね。</span><br>
+                <span>テーマ機能を追加したよ。</span><br>
+                <span>"Mastodon Dark Diamonds"、Mastodonのカラーを</span><br>
+                <span>そのまま取り入れたシンプルでクールなコーデ。</span><br>
+                <span>眩しくならないから暗い所でも活躍しちゃうね。</span><br>
               </div>
 
             </div>
@@ -1621,19 +1629,19 @@
               </div>
 
               <h3 class=""><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認ウィンドウの設定をしてね </h3>
-              <div class="flex end action-bar">
+              <div class="flex end">
                 <small v-on:click="optConfirm['fav'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['fav'] }">Fav</small>
                 <small v-on:click="optConfirm['unfav'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unfav'] }">UnFav</small>
                 <small v-on:click="optConfirm['reblog'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['reblog'] }">Boost</small>
                 <small v-on:click="optConfirm['unreblog'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unreblog'] }">UnBoost</small>
               </div>
-              <div class="flex end action-bar">
+              <div class="flex end">
                 <small v-on:click="optConfirm['katsu'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['katsu'] }">Katsu!</small>
                 <small v-on:click="optConfirm['delete'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['delete'] }">Delete</small>
                 <small v-on:click="optConfirm['follow'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['follow'] }">Follow</small>
                 <small v-on:click="optConfirm['unfollow'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unfollow'] }">Remove</small>
               </div>
-              <div class="flex end action-bar">
+              <div class="flex end">
                 <small v-on:click="optConfirm['mute'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['mute'] }">Mute</small>
                 <small v-on:click="optConfirm['unmute'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unmute'] }">UnMute</small>
                 <small v-on:click="optConfirm['block'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['block'] }">Block</small>
@@ -1642,29 +1650,32 @@
 
               <h3 class=""><i class="fa fa-fw fa-paint-brush"></i> Theme: 見た目のカスタマイズができるよ </h3>
               <div class="flex end action-bar"><span>Tops, Shoes</span></div>
-              <div class="flex end action-bar">
-                <span>(Diamonds Color)</span>
-                <label v-on:click="optThemeTops = 'tp_diadark'" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'tp_diadark' == optThemeTops }">Mastodon Dark</label>
-                <label v-on:click="optThemeTops = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeTops }">Magenta</label>
+              <div class="flex end">
+                <label v-on:click="optThemeTops = 'tp_diadark'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'tp_diadark' == optThemeTops }">Mastodon Dark Diamonds</label>
+              </div>
+              <div class="flex end">
+                <label v-on:click="optThemeTops = ''" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeTops }">kktCSS Magenta Diamonds</label>
               </div>
               <div class="flex end action-bar"><span>Bottoms</span></div>
-              <div class="flex end action-bar">
-                <span>(Diamonds Color)</span>
-                <label v-on:click="optThemeBottoms = 'bm_diadark'" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diadark' == optThemeBottoms }">Mastodon Dark</label>
-                <label v-on:click="optThemeBottoms = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeBottoms }">Green</label>
+              <div class="flex end">
+                <label v-on:click="optThemeBottoms = 'bm_diadark'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diadark' == optThemeBottoms }">Mastodon Dark Diamonds</label>
               </div>
-
+              <div class="flex end">
+                <label v-on:click="optThemeBottoms = ''" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeBottoms }">kktCSS Green Diamonds</label>
+              </div>
               <h3 class=""><i class="fa fa-fw fa-bell"></i> Notif: PUSH通知(PC)の内容を選んでね </h3>
               <div class="flex end action-bar">
                 <span>Desktop Notifications(PC)</span>
                 <label v-if="optPushNotif" v-on:click="optPushNotif = false; dummy = !dummy;" class="button color-wh bgcolor-pk">ON</label>
                 <label v-else v-on:click="optPushNotif = true; dummy = !dummy;" class="button color-wh bgcolor">OFF</label>
               </div>
-              <div class="flex end action-bar">
+              <div class="flex end wrap action-bar">
                 <span>Boop Sound</span>
-                <label v-on:click="optThemeSound = 'off'" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' == optThemeSound }" >OFF</label>
-                <label v-on:click="playSound(); optThemeSound = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" >Mastodon</label>
-                <label class="button color-wh bgcolor-disable">Excellent</label>
+                <div class="flex end">
+                  <label v-on:click="optThemeSound = 'off'" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' == optThemeSound }" >OFF</label>
+                  <label v-on:click="playSound(); optThemeSound = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" >Mastodon</label>
+                  <label class="button color-wh bgcolor-disable">Excellent</label>
+                </div>
               </div>
 
               <div class="flex end action-bar">
