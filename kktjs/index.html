@@ -232,7 +232,7 @@
                   <span v-if="issue.content_opened" v-html="$options.filters.formatContentP(issue.content)"></span>
                 </div>
                 <div v-else>
-                  <span v-html="$options.filters.formatContentSP(issue.content)"></span>
+                  <span v-html="$options.filters.formatContentP(issue.content)"></span>
                 </div>
               </div>
               <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
