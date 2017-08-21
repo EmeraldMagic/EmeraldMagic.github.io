@@ -76,17 +76,18 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 }
 
 
+/* Mastodon Dark Diamonds(tops) */
 .tp_diadark #pkl{fill:#313543;}
 .tp_diadark #pkd{fill:#393F4F;}
 .tp_diadark .app-header .fa-fw, .tp_diadark .app-footer .fa-fw, .tp_diadark .column-footer .fa-fw {
   text-shadow: unset;
 }
-.tp_diadark .fa-fw, .tp_diadark .app-footer .fa-fw, .tp_diadark .column-footer .fa-fw {
+.tp_diadark .app-footer .fa-fw, .tp_diadark .column-footer .fa-fw {
   text-shadow: unset;
 }
 .tp_diadark.color .app-header, .tp_diadark.color .column-footer {color: #9BAEC8;}
 
-
+/* Mastodon Dark Diamonds(bottoms) */
 .bm_diadark #grl{fill:#393F4F;}
 .bm_diadark #grd{fill:#282C37;}
 .bm_diadark #cbl{stroke:#282C37; fill:none;}
@@ -108,8 +109,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diadark .border-lite{border: solid 1px #9BAEC8;}
 .bm_diadark .border-dash{border-bottom: 1px dashed #9BAEC8;}
 
-.bm_diadark .scrollable {background: rgba(25,27,34,0.5);}
-
+.bm_diadark .scrollable, .bm_diadark .column-header {background: rgba(25, 27, 34, 0.5);}
 
 .bm_diadark .content{
   color: #FFFFFF;
@@ -129,6 +129,62 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border-top: 1px solid #9BAEC8;
 }
 .bm_diadark ::-webkit-scrollbar-thumb, .bm_diadark ::-webkit-scrollbar-thumb:hover{background: #9BAEC8;}
+
+
+/* bbv DeepBlue Diamonds(tops) */
+.tp_diablue #pkl{fill:#074899;}
+.tp_diablue #pkd{fill:#1251af;}
+.tp_diablue .app-header .fa-fw, .tp_diablue .app-footer .fa-fw, .tp_diablue .column-footer .fa-fw {
+  text-shadow: unset;
+}
+.tp_diablue .app-footer .fa-fw, .tp_diablue .column-footer .fa-fw {
+  text-shadow: unset;
+}
+.tp_diablue.color .app-header, .tp_diablue.color .column-footer {color: #9BBED8;}
+
+/* bbv SandyWhite Diamonds(bottoms) */
+.bm_diawhite #grl{fill:#ffffff;}
+.bm_diawhite #grd{fill:#F4F4F2;}
+.bm_diawhite #cbl{stroke:#fefefc; fill:none;}
+.bm_diawhite #cbp{stroke:#ffffff; fill:#fefefc}
+
+.bm_diawhite.color .scrollable, .bm_diawhite.color .column-header{color: #363947;}
+.bm_diawhite .color-pk, .bm_diawhite a{color: #ed649c;}
+.bm_diawhite .color-gr{color: #737373;}
+.bm_diawhite .color-disable{color: #ccc;}
+.bm_diawhite .status-name .color-pk{color: #ed649c;}
+
+.bm_diawhite .bgcolor   {background: #737373;}
+.bm_diawhite .bgcolor-pk{background: #0E7AC4;}
+.bm_diawhite .bgcolor-gr{background: #E1C152;}
+.bm_diawhite .bgcolor-disable{background: #ccc;}
+.bm_diawhite .bgcolor-wh, .bm_diawhite .scrollable.bgcolor-wh{background: rgba(255,255,255, .85);}
+
+.bm_diawhite .border{border: solid 2px #ffffff; box-shadow: 0 2px 2px rgba(249, 210, 254, .3);}
+.bm_diawhite .border-lite{border: solid 1px #363947;}
+.bm_diawhite .border-dash{border-bottom: 1px dashed #363947;}
+
+.bm_diawhite .scrollable, .bm_diawhite .column-header{background: rgba(170, 170, 166, .25);}
+
+.bm_diawhite .content{
+  color: #363947;
+  background: #fefefc;
+}
+.bm_diawhite .bluesheet{
+  background: #ccc;
+}
+.bm_diawhite .search-container input, .bm_diawhite input.report_text{
+  color: #363947;
+}
+.bm_diawhite .action-bar, .bm_diawhite .action-bar > div:not(.button){
+  color: #737373;
+}
+.bm_diawhite .setting-header {
+  border-bottom: 1px solid #363947;
+  border-top: 1px solid #363947;
+}
+.bm_diawhite ::-webkit-scrollbar-thumb, .bm_diawhite ::-webkit-scrollbar-thumb:hover{background: #363947;}
+
 
 /*.themetest #pkl{fill:#e0ea95;}
 .themetest #pkd{fill:#ecf5be;}
@@ -386,7 +442,12 @@ div.column-footer{
   flex-direction: column;
 }
 .column.primary {
-  max-width: 66vw; /* for PC  */
+  width: unset;
+  max-width: calc(100vw - 412px); /* for PC  */
+}
+.column.full {
+  width: 100vw;
+  max-width: 100vw; /* for Mobile  */
 }
 
 .scrollable {
@@ -399,6 +460,9 @@ div.column-footer{
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-overflow-scrolling: touch;
+}
+.column-header{
+  background: rgba(212,220,171,0.5);
 }
 
 ::-webkit-scrollbar {
@@ -476,6 +540,9 @@ div.column-footer{
 .status__content > span > p {  /* link in katsu */
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.status__content > span > p:not(:last-child), .status__content > div > span > p:not(:last-child) {  /* many block katsu */
+  margin-bottom:20px;
 }
 .invisible{ /* linkurl in katsu */
   display: none;
