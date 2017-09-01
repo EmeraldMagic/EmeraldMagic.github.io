@@ -3,10 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>kktjs</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-    <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -37,6 +36,19 @@
           </div>
 
         </div>
+      </transition>
+    </script>
+
+
+    <script type="text/x-template" id="modal-info">
+      <transition name="info">
+
+          <div class="flex">
+            <div class="column info">
+              <slot name="header"></slot>
+            </div>
+          </div>
+
       </transition>
     </script>
 
@@ -159,6 +171,7 @@
                 <span class="button full color-wh bgcolor-pk" v-on:click="showEmojiPicker = false; closeEmoji()">OK</span>
               </div>
             </div>
+
           </div>
         </span>
       </emojipicker>
@@ -271,7 +284,7 @@
               <small class="color-gr">@{{acct.acct}}</small>
               <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
               <span>{{acct.statuses_count}} </span>Katsu!
-              <div class="">
+              <div>
                 <span>{{acct.following_count}} </span>Follow /
                 <span>{{acct.followers_count}} </span>Follower
               </div>
@@ -297,7 +310,7 @@
             <div v-else-if="'report' == issue.confirmtype">
               <h3>カツ!を通報しますか？</h3>
               <small>(どういった点で不適切な内容ですか？)</small><br>
-              <input v-focus type="text" id="report_text" class="report_text border-dash" placeholder=""><br>
+              <input v-focus type="text" id="report_text" class="report_text border-dash"><br>
               <div class="flex center">
                 <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
                 <span class="button full color-wh bgcolor-pk" v-on:click="actReport(issue, true);">OK</span>
@@ -389,14 +402,14 @@
       <!-- DEBUG -->
       <div class="flex column-list">
         <div v-if="showDebug" class="column debug">
-          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status</div>
+          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{ua}}</div>
           <div class="scrollable">
             <h3>Columns</h3>
-            <div class="">
+            <div >
               Home<input type="checkbox" id="showhometl" v-model="showhometl">
               Local<input type="checkbox" id="showlocaltl" v-model="showlocaltl">
             </div>
-            <div class="">
+            <div>
               Notif<input type="checkbox" id="shownotif" v-model="shownotif">
               Detail<input type="checkbox" id="showdetail" v-model="showdetail">
               Acct({{acct_type}})<input type="checkbox" id="showacct" v-model="showacct">
@@ -404,19 +417,21 @@
               Debug<input type="checkbox" id="showDubug" v-model="showDebug">
               (Local)<input type="checkbox" id="showDubugLocal" v-model="showDebugLocal">
             </div>
-            <div class="">
+            <div>
               Setting<input type="checkbox" id="showSetting" v-model="showSetting">
               Search<input type="checkbox" id="showSearch" v-model="showSearch">
               Form<input type="checkbox" id="optAllNsfw" v-model="showForm">
             </div>
             <h3>Options</h3>
-            <div class="">
+            <div>
               Mobile<input type="checkbox" id="optMode" v-model="optMode" disabled>
               AllNSFW(TL) <input type="checkbox" id="optAllNsfw" v-model="optAllNsfw">
             </div>
             <h3>Other Debug</h3>
-            <button v-on:click="playSound">default boop</button>
-            <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button><br>
+            <button v-on:click="playSound('sound')">default boop</button>
+            <button v-on:click="playSound('soundex')">excelent boop</button>
+            <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button>
+            <button v-on:click="result_run = 'test'">Info</button><br>
             <!-- <input type="text" v-model="repository" readonly>
             <button v-on:click="reopenWsHome">Home Stream ReConn</button>
             <button v-on:click="pingWsHome">Ping Home Stream Socket</button>
@@ -464,12 +479,23 @@
           <div class="scrollable" id="home" v-on:scroll="handleScrollHome">
             <div v-if="hasHome" class="status-list">
               <div v-for="(issue, index) in homes" v-if="home_unread <= index" class="status-wrapper" :class="issue.visibility">
-                <div v-if="null != issue.reblog" class="status-header">
-                  <i class="fa fa-fw fa-retweet"></i>
-                  <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
-                  <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
-                  <span v-else class="color-pk">{{issue.account.username}}</span>
-                  <span> reblog ({{issue.created_at | formatDate}})</span>
+                <div v-if="null != issue.reblog" class="status-header flex start">
+                  <i class="fa fa-fw fa-retweet color-on"></i>
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id)">
+                  <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
+                  <div class="full">
+                    <div>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-else class="color-pk">{{issue.account.username}}</span>
+                      <small class="color-gr">@{{issue.account.acct}}</small>
+                    </div>
+                    <div class="status-name flex start">
+                      <div class="hidden">
+                      <span> reblog</span>
+                      </div>
+                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                    </div>
+                  </div>
                 </div>
                 <!-- REBLOG -->
                 <div v-if="null != issue.reblog" class="status flex">
@@ -516,11 +542,13 @@
                       </div>
                       <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.reblog.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.reblog.reblogged" v-on:click="actUnReblog(issue.reblog);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue.reblog)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog, false);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -572,11 +600,13 @@
                       </div>
                       <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -655,11 +685,13 @@
                       </div>
                       <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -684,17 +716,29 @@
           <div class="column-header"><i class="fa fa-fw fa-bell"></i>Notification (Stream: {{connHome}})</div>
           <div class="scrollable" v-on:scroll="handleScrollNotif">
             <div v-if="hasNotif" class="status-list">
-              <div v-for="issue in notifs" class="status-wrapper">
-                <div class="status-header">
+              <div v-for="issue in notifs"  v-if="!(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) " class="status-wrapper">
+                <div class="status-header flex start">
                   <i v-if="'mention' == issue.type" class="fa fa-fw fa-reply"></i>
-                  <i v-else-if="'reblog' == issue.type" class="fa fa-fw fa-retweet"></i>
-                  <i v-else-if="'favourite' == issue.type" class="fa fa-fw fa-star"></i>
-                  <i v-else-if="'follow' == issue.type" class="fa fa-fw fa-user-plus"></i>
-                  <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
-                  <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
-                  <span v-else class="color-pk">{{issue.account.username}}</span>
-                  <span v-if="'follow' != issue.type">{{issue.type}} your katsu! ({{issue.created_at | formatDate}})</span>
-                  <span v-else>{{issue.type}} you ({{issue.created_at | formatDate}})</span>
+                  <i v-else-if="'reblog' == issue.type" class="fa fa-fw fa-retweet color-on"></i>
+                  <i v-else-if="'favourite' == issue.type" class="fa fa-fw fa-star color-on"></i>
+                  <i v-else-if="'follow' == issue.type" class="fa fa-fw fa-user-plus color-gr"></i>
+                  <img v-if="'reblog' == issue.type || 'favourite' == issue.type" :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id)">
+                  <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
+                  <div class="full">
+                    <div>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-else class="color-pk">{{issue.account.username}}</span>
+                      <small class="color-gr">@{{issue.account.acct}}</small>
+                    </div>
+                    <div class="status-name flex start">
+                      <div class="hidden">
+                      <span v-if="'mention' == issue.type">{{issue.type}} your katsu!</span>
+                      <span v-else-if="'follow' == issue.type">{{issue.type}} you</span>
+                      <span v-else>{{issue.type}} your katsu!</span>
+                      </div>
+                      <span v-if="'mention' != issue.type" class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                    </div>
+                  </div>
                 </div>
                 <!-- Mention -->
                 <div v-if="'mention' == issue.type" class="status flex">
@@ -734,11 +778,13 @@
                       </div>
                       <small v-if="'public' != issue.status.visibility">{{issue.status.visibility}}</small>
                       <i v-on:click="runForm(issue.status)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.status.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.status.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.status.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.status.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.status.reblogged" v-on:click="actUnReblog(issue.status);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue.status)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.status.favourited" v-on:click="actUnFav(issue.status);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.status.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.status.favourited" v-on:click="actUnFav(issue.status);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.status);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -774,7 +820,7 @@
                 <!-- Follow -->
                 <div v-else class="status flex">
                   <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
-                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <!-- <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div> -->
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden">
@@ -782,7 +828,7 @@
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <span class="status-time color-gr"> {{issue.account.created_at | formatDate}}</span>
                     </div>
                     <div class="status__content">
                     </div>
@@ -849,11 +895,13 @@
                     </div>
                     <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                    <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                    <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                     <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                     <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                     <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                    <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                     <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -927,13 +975,16 @@
                     </div>
                     <small v-if="'public' != detail.visibility">{{detail.visibility}}</small>
                     <i v-on:click="runForm(detail)" class="fa fa-fw fa-reply"></i>
-                    <i v-if="'direct' == detail.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                    <i v-if="detail.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="'direct' == detail.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                     <i v-else-if="'private' == detail.visibility" class="fa fa-fw fa-lock color-disable"></i>
                     <i v-else-if="detail.reblogged" v-on:click="actUnReblog(detail);" class="fa fa-fw fa-retweet color-on"></i>
                     <i v-else v-on:click="actReblog(detail)" class="fa fa-fw fa-retweet"></i>
-                    <i v-if="detail.favourited" v-on:click="actUnFav(detail);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-if="detail.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="detail.favourited" v-on:click="actUnFav(detail);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(detail);" class="fa fa-fw fa-star"></i>
-                    <i v-if="user.id == detail.account.id" v-on:click="actDelete(detail)" class="fa fa-fw fa-trash"></i>
+                    <i v-if="detail.req_delete || detail.req_report" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="user.id == detail.account.id" v-on:click="actDelete(detail)" class="fa fa-fw fa-trash"></i>
                     <i v-else v-on:click="actReport(detail)" class="fa fa-fw fa-exclamation-triangle"></i>
                     <i v-on:click="runAcct(detail.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -993,11 +1044,13 @@
                     </div>
                     <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                    <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                    <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                     <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                     <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                     <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                    <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                     <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1027,7 +1080,7 @@
                   <small class="color-gr">@{{acct.acct}}</small>
                   <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   <span>{{acct.statuses_count}} </span>Katsu!
-                  <div class="">
+                  <div>
                     <span>{{acct.following_count}} </span>Follow /
                     <span>{{acct.followers_count}} </span>Follower
                   </div>
@@ -1035,7 +1088,9 @@
                     <i v-on:click="runForm(acct)" class="fa fa-fw fa-reply"></i>
                     <span v-if="acct_relation[0].followed_by">[Follows You] </span>
                     <span v-if="acct_relation[0].muting"><i class="fa fa-fw fa-microphone-slash"></i></span>
-                    <span v-if="acct_relation[0].following" v-on:click="actUnFollow(acct)" class="button mini color-wh bgcolor-pk">Following</span>
+
+                    <span v-if="acct.req_follow" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                    <span v-else-if="acct_relation[0].following" v-on:click="actUnFollow(acct)" class="button mini color-wh bgcolor-pk">Following</span>
                     <span v-else-if="acct_relation[0].requested" class="button mini color-wh bgcolor">Requested</span>
                     <span v-else-if="acct_relation[0].blocking" class="button mini color-wh bgcolor-disable">Follow</span>
                     <span v-else v-on:click="actFollow(acct)" class="button mini color-wh bgcolor">Follow</span>
@@ -1043,9 +1098,11 @@
                   </div>
                   <div v-if="user.id != acct_targetid && showacctEx" class="flex end action-bar">
                     <span></span>
-                    <span v-if="acct_relation[0].muting" v-on:click="actUnMute(acct)" class="button mini color-wh bgcolor-pk">UnMute</span>
+                    <span v-if="acct.req_mute" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                    <span v-else-if="acct_relation[0].muting" v-on:click="actUnMute(acct)" class="button mini color-wh bgcolor-pk">UnMute</span>
                     <span v-else v-on:click="actMute(acct)" class="button mini color-wh bgcolor">Mute</span>
-                    <span v-if="acct_relation[0].blocking" v-on:click="actUnBlock(acct)" class="button mini color-wh bgcolor-pk">UnBlock</span>
+                    <span v-if="acct.req_block" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                    <span v-else-if="acct_relation[0].blocking" v-on:click="actUnBlock(acct)" class="button mini color-wh bgcolor-pk">UnBlock</span>
                     <span v-else v-on:click="actBlock(acct)" class="button mini color-wh bgcolor">Block</span>
                   </div>
                 </div>
@@ -1071,7 +1128,8 @@
               <div v-if="user.id == acct_targetid" class="flex account-bar">
                 <div v-on:click="acct_id=''; fetchFav()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'fav' == acct_type }"><i class="fa fa-fw fa-star-o"></i>Favourite</div>
                 <div v-on:click="acct_id=''; fetchMute()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'mute' == acct_type }"><i class="fa fa-fw fa-microphone-slash"></i>Mute</div>
-                <div v-on:click="acct_id=''; fetchBlock()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'block' == acct_type }"><i class="fa fa-fw fa-user-circle"></i>Block</div>
+                <div v-on:click="acct_id=''; fetchBlock()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'block' == acct_type }"><i class="fa fa-fw fa-ban"></i>Block</div>
+                <div v-if="acct.locked" v-on:click="acct_id=''; fetchFollowRequest()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'request' == acct_type }"><i class="fa fa-fw fa-hourglass"></i>Request</div>
               </div>
             </div>
             <div v-if="!hasAcctRel && (hasAcct || hasUser)">
@@ -1079,12 +1137,23 @@
             </div>
             <div v-if="hasAcct" class="status-list">
               <div v-for="(issue, index) in accts" class="status-wrapper">
-                <div v-if="null != issue.reblog" class="status-header">
-                  <i class="fa fa-fw fa-retweet"></i>
-                  <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
-                  <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
-                  <span v-else class="color-pk">{{issue.account.username}}</span>
-                  <span> reblog ({{issue.created_at | formatDate}})</span>
+                <div v-if="null != issue.reblog" class="status-header flex start">
+                  <i class="fa fa-fw fa-retweet color-on"></i>
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id)">
+                  <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
+                  <div class="full">
+                    <div>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-else class="color-pk">{{issue.account.username}}</span>
+                      <small class="color-gr">@{{issue.account.acct}}</small>
+                    </div>
+                    <div class="status-name flex start">
+                      <div class="hidden">
+                      <span> reblog</span>
+                      </div>
+                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                    </div>
+                  </div>
                 </div>
                 <!-- REBLOG -->
                 <div v-if="null != issue.reblog" class="status flex">
@@ -1131,11 +1200,13 @@
                       </div>
                       <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.reblog.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.reblog.reblogged" v-on:click="actUnReblog(issue.reblog);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue.reblog)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1187,11 +1258,13 @@
                       </div>
                       <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                       <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                       <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                       <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                       <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1218,11 +1291,20 @@
                   </div>
                   <div class="action-bar flex end">
                     <i></i>
-                    <div v-if="user.id != issue.id">
-                      <span v-if="isFollow(issue.id)" v-on:click="actUnFollow(issue)" class="button mini color-wh bgcolor-pk">Following</span>
-                      <span v-else-if="isRequest(issue.id)" class="button mini color-wh bgcolor">Requested</span>
+                    <div v-if="user.id != issue.id && acct_type != 'request'">
+                      <span v-if="issue.req_follow" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                      <span v-else-if="isFollow(issue.id)" v-on:click="actUnFollow(issue)" class="button mini color-wh bgcolor-pk">Following</span>
+                      <span v-else-if="isRequest(issue.id)" class="button mini color-wh bgcolor-disable">Requested</span>
                       <span v-else-if="isBlock(issue.id)" class="button mini color-wh bgcolor-disable">Follow</span>
                       <span v-else-if="!isFollow(issue.id)" v-on:click="actFollow(issue)" class="button mini color-wh bgcolor">Follow</span>
+                    </div>
+                    <div v-if="acct_type == 'request'">
+                      <span v-if="issue.req_follow" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                      <span v-else-if="false === issue.authorize" class="button mini color-wh bgcolor-disable">Rejected</span>
+                      <span v-else-if="void 0 === issue.authorize" v-on:click="actUnFollowAuth(issue)" class="button mini color-wh bgcolor">Reject</span>
+                      <span v-if="issue.req_follow" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                      <span v-else-if="issue.authorize" class="button mini color-wh bgcolor-disable">Authorized</span>
+                      <span v-else-if="void 0 === issue.authorize" v-on:click="actFollowAuth(issue)" class="button mini color-wh bgcolor-pk">Authorize</span>
                     </div>
                     <i v-on:click="runAcct(issue.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -1284,11 +1366,13 @@
                     </div>
                     <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                    <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                    <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                     <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                     <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                     <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                    <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                     <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1296,7 +1380,7 @@
                 </div>
               </div>
             </div>
-            <div v-else>
+            <div v-else-if="fetch_lock.hash">
               <div class="flex">loading...</div>
             </div>
           </div>
@@ -1305,22 +1389,22 @@
         </div>
 
       </div>
-      <div class="flex" style="">
+      <div class="flex">
         <!-- SEARCH -->
         <div v-if="showSearch" class="column scrollable bgcolor-wh fixed">
           <div class="status-list">
 
             <div class="search-container bgcolor-wh flex center">
-              <input v-focus type="text" class="border-dash" placeholder="" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
+              <input v-focus type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
               <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span>
             </div>
 
-            <div v-if="searchs.hashtags && 0 != searchs.hashtags.length" class="column-header"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
+            <div v-if="searchs.hashtags && 0 != searchs.hashtags.length"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
             <div class="status flex wrap">
               <a v-for="issue in searchs.hashtags" href="javascript:void(0)" v-on:click="showSearch = false; search_tag = issue; runHash();" class="search-result">#{{issue}}</a>
             </div>
 
-            <div v-if="searchs.accounts && 0 != searchs.accounts.length" class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
+            <div v-if="searchs.accounts && 0 != searchs.accounts.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
             <div v-for="issue in searchs.accounts" class="status flex">
               <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
               <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
@@ -1343,7 +1427,7 @@
               </div>
             </div>
 
-            <div v-if="searchs.statuses && 0 != searchs.statuses.length" class="column-header"><i class="fa fa-fw fa-comment-o"></i>Katsu!</div>
+            <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>Katsu!</div>
             <div v-for="(issue, index) in searchs.statuses" class="status flex">
 
               <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
@@ -1389,11 +1473,13 @@
                   </div>
                   <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                   <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                  <i v-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                  <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                  <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
                   <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
                   <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
                   <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                  <i v-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                  <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                  <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                   <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
                   <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                   <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1481,14 +1567,13 @@
 
                     <i v-on:click="contentExchange" class="fa fa-fw fa-exchange"></i>
                   </div>
-                  <textarea type="text" id="katsu_spoiler" v-restore-s class="spoiler-input border-lite" placeholder="Content warning" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onKeyup="autogrow(this)"></textarea>
+                  <textarea type="text" id="katsu_spoiler" v-restore-s class="spoiler-input border-lite" placeholder="Content warning" @keydown="keyKatsu" onKeyup="autogrow(this)"></textarea>
                 </div>
               </div>
 
               <div class="flex center border-dash">
                 <div class="form-option full">
-                  <textarea v-focus type="text" id="katsu_content" v-restore-c class="content-input border-lite" placeholder="What is on your mind?" @keyup.(enter.91)="actKatsu(katsu)" @keyup.ctrl.enter="actKatsu(katsu)" onkeyup="autogrow(this)"></textarea>
-                  <span v-if="0 != result_run.length">Error: {{result_run}}</span>
+                  <textarea v-focus type="text" id="katsu_content" v-restore-c class="content-input border-lite" placeholder="What is on your mind?" @keydown="keyKatsu" onkeyup="autogrow(this)"></textarea>
                 </div>
               </div>
 
@@ -1564,7 +1649,8 @@
                 </div>
                 <div class="flex end katsu-ctrl">
                   <div class="katsu-count">{{500 - spoilerLength() - contentLength()}}</div>
-                  <div v-if="checkKatsu()" v-on:click="actKatsu(katsu)" class="color-wh bgcolor-gr button">KATSU!</div>
+                  <div v-if="katsu.req_katsu" class="color-wh bgcolor-disable button micro"><i class="fa fa-fw fa-spinner fa-pulse"></i></div>
+                  <div v-else-if="checkKatsu()" v-on:click="actKatsu(katsu)" class="color-wh bgcolor-gr button">KATSU!</div>
                   <div v-else class="color-wh bgcolor-disable button">KATSU!</div>
                 </div>
               </div>
@@ -1589,7 +1675,7 @@
             <div class="setting-wrapper">
 
               <h3 class="setting-header">📛📛📛 WebApp Setting 📛📛📛</h3>
-              <h3 class=""><i class="fa fa-fw fa-wrench"></i> Layout: 端末を選んでカラム数を決めてね</h3>
+              <h3><i class="fa fa-fw fa-wrench"></i> Layout: 端末を選んでカラム数を決めてね</h3>
               <div class="flex end action-bar"><span>{{ optColumns }} Column(s) </span></div>
               <div class="flex end action-bar">
                 <input type="radio" class="invisible" id="cone" value="1" v-model="optColumns">
@@ -1617,7 +1703,7 @@
                 <label v-else for="checkwide" class="button color-wh bgcolor">OFF</label>
               </div>
 
-              <h3 class=""><i class="fa fa-fw fa-photo"></i> View: 表示をアレンジしちゃおう </h3>
+              <h3><i class="fa fa-fw fa-photo"></i> View: 表示をアレンジしちゃおう </h3>
               <div class="flex end action-bar">
               <span>Media AutoPlay</span>
                 <input type="radio" class="invisible" id="vone" value="1" v-model="optAutoPlay">
@@ -1635,7 +1721,7 @@
                 <label v-else for="checknsfw" class="button color-wh bgcolor">OFF</label>
               </div>
 
-              <h3 class=""><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認ウィンドウの設定をしてね </h3>
+              <h3><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認ウィンドウの設定をしてね </h3>
               <div class="flex end">
                 <small v-on:click="optConfirm['fav'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['fav'] }">Fav</small>
                 <small v-on:click="optConfirm['unfav'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unfav'] }">UnFav</small>
@@ -1655,7 +1741,7 @@
                 <small v-on:click="optConfirm['unblock'] ^= 1" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unblock'] }">UnBlock</small>
               </div>
 
-              <h3 class=""><i class="fa fa-fw fa-paint-brush"></i> Theme: 見た目のカスタマイズができるよ </h3>
+              <h3><i class="fa fa-fw fa-paint-brush"></i> Theme: 見た目のカスタマイズができるよ </h3>
               <div class="flex end action-bar"><span>Tops, Shoes</span></div>
               <div class="flex end">
                 <label v-on:click="optThemeTops = 'tp_diadark'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'tp_diadark' == optThemeTops }">Mastodon Dark Diamonds</label>
@@ -1676,7 +1762,7 @@
               <div class="flex end">
                 <label v-on:click="optThemeBottoms = 'bm_diawhite'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diawhite' == optThemeBottoms }">bbv SandyWhite Diamonds</label>
               </div>
-              <h3 class=""><i class="fa fa-fw fa-bell"></i> Notif: PUSH通知(PC)の内容を選んでね </h3>
+              <h3><i class="fa fa-fw fa-bell"></i> Notif: PUSH通知(PC)の内容を選んでね </h3>
               <div class="flex end action-bar">
                 <span>Desktop Notifications(PC)</span>
                 <label v-if="optPushNotif" v-on:click="optPushNotif = false; dummy = !dummy;" class="button color-wh bgcolor-pk">ON</label>
@@ -1686,8 +1772,8 @@
                 <span>Boop Sound</span>
                 <div class="flex end">
                   <label v-on:click="optThemeSound = 'off'" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' == optThemeSound }" >OFF</label>
-                  <label v-on:click="playSound(); optThemeSound = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" >Mastodon</label>
-                  <label class="button color-wh bgcolor-disable">Excellent</label>
+                  <label v-on:click="playSound('sound'); optThemeSound = ''" class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" >Mastodon</label>
+                  <label class="button color-wh bgcolor-disable" :class="{ 'bgcolor-pk': 'ex' == optThemeSound }" >Excellent</label>
                 </div>
               </div>
 
@@ -1738,6 +1824,8 @@
                 ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
                 ユーザーのフォロー/フォロワー一覧 取得<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧 取得<br>
+                フォローリクエスト中のアカウント一覧 取得<br>
+                フォローリクエスト中のアカウントの 認証/拒否<br>
                 検索した結果(アカウント/タグ/カツの一覧) 取得<br>
                 お気に入り/ブースト/フォロー の登録と解除<br>
                 カツ!/お気に入り/ブースト/フォロー の確認ウィンドウ<br>
@@ -1748,10 +1836,12 @@
                 ヘッダアイコンでカラム切替機能<br>
                 デスクトップ通知(PC)と、通知音再生(PC)<br>
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
+                通信エラーの表示<br>
               </small><br>
               <h3>拡張機能(v1.1)</h3>
               <small>
-                カラーテーマ機能<br>
+                カラーテーマ機能(3テーマ)<br>
+                デスクトップ通知音の切替機能(PC)<br>
                 1-3カラム表示+切替機能<br>
                 カツ!の 下書き保存、CWと本文の入れ替え<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
@@ -1764,22 +1854,21 @@
                 Home/Local TLの画像や映像を全て隠すオプション<br>
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
                 ヘッダに お気に入り、Webアプリ設定アイコン追加<br>
+                通信エラーメッセージ<br>
               </small><br>
               <h3>アプリにまだない機能(v1.1)</h3>
               <small>
                 Home/Local/通知 のカツ!フィルタ<br>
                 連合TLの 取得<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
-                通信エラーの表示<br>
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
-                PUSH通知(Android chrome)<br>
+                Web Push(Android)<br>
                 カツ!を 翻訳<br>
                 通知 TLのインスタンスフィルター<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
                 カツ!した当時のLocal TLへタイムスリップする機能<br>
-                通信エラーメッセージ<br>
                 ワード検索機能(Mastodon API未実装)<br>
                 Youtube動画の展開<br>
               </small>
@@ -1793,6 +1882,15 @@
         </div>
       </div>
 
+      <info v-if="hasInfo">
+        <span slot="header">
+          <div v-on:click="result_run = ''" class="info-wrapper color-wh bgcolor">
+            <span>{{result_run}}</span>
+            <i class="fa fa-fw fa-times"></i>
+          </div>
+        </span>
+      </info>
+
       <div class="app-footer">
         <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
           <defs>
@@ -1804,6 +1902,7 @@
           <rect width="100%" height="100%" style="fill: url(#ptbottoms)"/>
         </svg>
         <button id="sound" class="invisible"></button>
+        <button id="soundex" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
       </div>
 
@@ -1831,5 +1930,5 @@
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js"></script>
-<script src="js/picker.js"></script>
+<script src="js/main.js?v=1"></script>
+<script src="js/picker.js?v=0902"></script>
