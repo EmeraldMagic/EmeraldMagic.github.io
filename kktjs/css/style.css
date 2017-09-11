@@ -747,6 +747,7 @@ small.button {
 .form-wrapper i, .form-wrapper small, .action-bar.draft span{
   padding: 6px 0;
   margin: auto 0;
+  min-width:30px;
 }
 .button.tall > * {
   padding: 0;

@@ -5,7 +5,7 @@
     <title>kktjs</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=1">
+    <link rel="stylesheet" href="css/style.css?v=0911">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -1493,56 +1493,75 @@
         <div v-if="showForm" class="column scrollable bgcolor-wh fixed">
           <div class="status-list">
 
-            <div v-if="hasReply" class="status-header">
+            <div class="form-wrapper bgcolor-wh">
+              <div v-if="showKatsuDraft" class="form-option border-dash">
+                <div class="action-bar flex end draft">
+
+                  <img :src="checkAvatar(user.avatar)" class="avatar mini" v-on:click="showForm = false; runAcct(user.id);">
+                  <span>(下書き保存)</span>
+                  <i v-if="2 > katsu_drafts.length" v-on:click="katsuToDraft()" class="fa fa-fw fa-floppy-o"></i>
+                  <i v-else class="fa fa-fw fa-floppy-o color-disable"></i>
+                  <!-- <span class="full text center">(下書き保存)</span> -->
+                </div>
+                <div v-for="(draft, index) in katsu_drafts" class="action-bar flex end draft">
+                  <i v-on:click="draftToKatsu(index, true)" class="fa fa-fw fa-arrow-up"></i>
+                  <span class="full text center hidden">{{draft.spoiler_text}}{{draft.status}}</span>
+                  <i v-if="null != draft.in_reply_to_id" class="fa fa-fw fa-reply color-disable"></i>
+                  <i v-if="0 < draft.media_attachments.length" class="fa fa-fw fa-photo color-disable"></i>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="hasReply" class="status-header bgcolor-wh">
               <i class="fa fa-fw fa-reply"></i>
               <span> reply to</span>
-              <span v-if="0 != reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(reply.account.display_name)"></span>
-              <span v-else class="color-pk">{{reply.account.username}}</span>
+              <span v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name)"></span>
+              <span v-else class="color-pk">{{katsu.reply.account.username}}</span>
             </div>
             <div v-if="hasReply" class="status flex form bgcolor-wh border-dash">
-              <img :src="checkAvatar(reply.account.avatar_static)" class="avatar border" v-on:click="runAcct(reply.account.id)">
+              <img :src="checkAvatar(katsu.reply.account.avatar_static)" class="avatar border" v-on:click="runAcct(katsu.reply.account.id)">
               <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
               <div class="content border">
                 <div class="status-name flex start">
                   <div class="hidden">
-                    <a v-if="0 != reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(reply.account.display_name)"></a>
-                    <a v-else class="color-pk">{{reply.account.username}}</a>
-                    <small class="color-gr">@{{reply.account.acct}}</small>
+                    <a v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name)"></a>
+                    <a v-else class="color-pk">{{katsu.reply.account.username}}</a>
+                    <small class="color-gr">@{{katsu.reply.account.acct}}</small>
                   </div>
-                  <span class="status-time color-gr"> {{reply.created_at | formatDate}}</span>
+                  <span class="status-time color-gr"> {{katsu.reply.created_at | formatDate}}</span>
                 </div>
                 <div class="status__content">
-                  <span v-html="$options.filters.formatContentS(reply.spoiler_text)"></span>
-                  <div v-if="0 != reply.spoiler_text.length">
-                    <div v-if="!reply.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(reply, true)"><small>- SHOW MORE -</small></div>
+                  <span v-html="$options.filters.formatContentS(katsu.reply.spoiler_text)"></span>
+                  <div v-if="0 != katsu.reply.spoiler_text.length">
+                    <div v-if="!katsu.reply.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(reply, true)"><small>- SHOW MORE -</small></div>
                     <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(reply, false)"><small>- SHOW LESS -</small></div>
-                    <span v-if="reply.content_opened" v-html="$options.filters.formatContent(reply.content)"></span>
+                    <span v-if="katsu.reply.content_opened" v-html="$options.filters.formatContent(katsu.reply.content)"></span>
                   </div>
                   <div v-else>
-                    <span v-html="$options.filters.formatContent(reply.content)"></span>
+                    <span v-html="$options.filters.formatContent(katsu.reply.content)"></span>
                   </div>
                 </div>
-                <div v-if="0 != reply.media_attachments" class="media-wrapper flex">
-                  <a v-for="media in reply.media_attachments" @click="modal = media;showModal = true;">
+                <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper flex">
+                  <a v-for="media in katsu.reply.media_attachments" @click="modal = media;showModal = true;">
                     <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                     <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
                     <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
                   </a>
                 </div>
-                <div v-if="0 != reply.media_attachments" class="media-wrapper control">
+                <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper control">
                   <i v-on:click="updateMediaWrapper(reply, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
                 </div>
-                <div v-if="((( optAllNsfw || reply.sensitive ) && !reply.media_opened ) || false === reply.media_opened ) && 0 != reply.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(reply, true)">
-                  <h4 v-if="reply.sensitive">Sensitive contents</h4>
+                <div v-if="((( optAllNsfw || katsu.reply.sensitive ) && !katsu.reply.media_opened ) || false === katsu.reply.media_opened ) && 0 != katsu.reply.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(reply, true)">
+                  <h4 v-if="katsu.reply.sensitive">Sensitive contents</h4>
                   <h4 v-else>Media contents</h4>
                   <small>Click to view</small>
                 </div>
                 <div class="action-bar flex end">
                   <div class="hidden">
-                    <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{reply.id}}</small>
+                    <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{katsu.reply.id}}</small>
                   </div>
-                  <small v-if="'public' != reply.visibility">{{reply.visibility}}</small>
-                  <i v-on:click="katsu['in_reply_to_id'] = ''; reply = [];" class="fa fa-fw fa-times"></i>
+                  <small v-if="'public' != katsu.reply.visibility">{{katsu.reply.visibility}}</small>
+                  <i v-on:click="katsu['in_reply_to_id'] = ''; katsu.reply = [];" class="fa fa-fw fa-times"></i>
                 </div>
               </div>
             </div>
@@ -1581,8 +1600,8 @@
                 <div v-if="5 > content_text_drafts.length" class="action-bar flex end draft">
                   <i v-if="0 == contentLength()" class="fa fa-fw fa-floppy-o color-disable"></i>
                   <i v-else v-on:click="contentToDraft()" class="fa fa-fw fa-floppy-o"></i>
-                  <span v-if="0 == contentLength()" class="full text center">(下書きに保存)</span>
-                  <span v-else class="full text center">(下書きに保存)</span>
+                  <span v-if="0 == contentLength()" class="full text center">(入力ショートカットに登録)</span>
+                  <span v-else class="full text center">(入力ショートカットに登録)</span>
                 </div>
                 <div v-for="(draft, index) in content_text_drafts" class="action-bar flex end draft">
                   <i v-on:click="draftToContent(index, false)" class="fa fa-fw fa-copy"></i>
@@ -1599,10 +1618,10 @@
               <div v-if="0 != katsu['media_previews'].length" class="form-option border-dash">
                 <div class="media-wrapper flex">
                   <a v-for="(media, index) in katsu['media_previews']" @click="modal = media;showModal = true;">
-                    <img v-if="null != katsu['media_attachments'][index] && 'image' == katsu['media_attachments'][index].type" :src="katsu['media_previews'][index].preview_url" class="media">
-                    <img v-else-if="'image' == katsu['media_previews'][index].type" :src="media.preview_url" class="media gray">
-                    <video v-else-if="null != katsu['media_attachments'][index] && 'video' == katsu['media_attachments'][index].type" :src="katsu['media_previews'][index].preview_url" class="media" playsinline muted autoplay loop></video>
-                    <video v-else-if="'video' == katsu['media_previews'][index].type" :src="media.preview_url" class="media gray" playsinline muted autoplay loop></video>
+                    <img v-if="null != katsu['media_attachments'][index] && ('image' == katsu['media_attachments'][index].type || 'image' == katsu['media_previews'][index].type)" :src="katsu['media_previews'][index].url" class="media">
+                    <img v-else-if="'image' == katsu['media_previews'][index].type" :src="media.url" class="media gray">
+                    <video v-else-if="null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)" :src="katsu['media_previews'][index].url" class="media" playsinline muted autoplay loop></video>
+                    <video v-else-if="'video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type" :src="media.url" class="media gray" playsinline muted autoplay loop></video>
                   </a>
                 </div>
                 <div class="flex center">
@@ -1637,10 +1656,11 @@
 
               <div class="action-bar flex wrap form-option border-dash">
                 <div class="color bgcolor-in">
-                  <label v-if="4 > katsu['media_previews'].length" for="uploader"><i class="fa fa-fw fa-camera"></i></label>
+                  <label v-if="4 > katsu['media_previews'].length && katsu['media_previews'].length == katsu['media_attachments'].length" for="uploader"><i class="fa fa-fw fa-camera"></i></label>
                   <i v-else class="fa fa-fw fa-camera color-disable"></i>
                   <i class="fa fa-fw fa-smile-o"  @click="showEmojiPicker = true; popEmoji();"></i>
                   <i v-on:click="toggleDraft()" class="fa fa-fw fa-th-list"></i>
+                  <i v-on:click="toggleDraft()" class="fa fa-fw fa-pencil"></i>
                   <i v-if="'direct' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-envelope"></i>
                   <i v-else-if="'private' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-lock"></i>
                   <i v-else-if="'unlisted' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-unlock-alt"></i>
@@ -1843,7 +1863,8 @@
                 カラーテーマ機能(3テーマ)<br>
                 デスクトップ通知音の切替機能(PC)<br>
                 1-3カラム表示+切替機能<br>
-                カツ!の 下書き保存、CWと本文の入れ替え<br>
+                カツ!の 下書きの保存<br>
+                カツ!の 本文と注意文の入れ替え<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
                 カツ!一覧に カツ!表示数目標を設定(必要以上に描画しない)<br>
@@ -1930,5 +1951,5 @@
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=1"></script>
-<script src="js/picker.js?v=0902"></script>
+<script src="js/main.js?v=0911"></script>
+<script src="js/picker.js"></script>
