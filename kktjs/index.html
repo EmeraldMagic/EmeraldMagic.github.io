@@ -1499,7 +1499,7 @@
 
                   <img :src="checkAvatar(user.avatar)" class="avatar mini" v-on:click="showForm = false; runAcct(user.id);">
                   <span>(下書き保存)</span>
-                  <i v-if="2 > katsu_drafts.length" v-on:click="katsuToDraft()" class="fa fa-fw fa-floppy-o"></i>
+                  <i v-if="checkKatsu() && 2 > katsu_drafts.length" v-on:click="katsuToDraft()" class="fa fa-fw fa-floppy-o"></i>
                   <i v-else class="fa fa-fw fa-floppy-o color-disable"></i>
                   <!-- <span class="full text center">(下書き保存)</span> -->
                 </div>
@@ -1660,7 +1660,6 @@
                   <i v-else class="fa fa-fw fa-camera color-disable"></i>
                   <i class="fa fa-fw fa-smile-o"  @click="showEmojiPicker = true; popEmoji();"></i>
                   <i v-on:click="toggleDraft()" class="fa fa-fw fa-th-list"></i>
-                  <i v-on:click="toggleDraft()" class="fa fa-fw fa-pencil"></i>
                   <i v-if="'direct' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-envelope"></i>
                   <i v-else-if="'private' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-lock"></i>
                   <i v-else-if="'unlisted' == katsu['visibility']" v-on:click="toggleVisible()" class="fa fa-fw fa-unlock-alt"></i>
@@ -1678,12 +1677,13 @@
               <div class="action-bar form-option border-dash">
                 <div class="flex end action-bar">
                   <span>🔥 お知らせ 🔥</span>
-                  <small>20170817(v1.1)</small>
+                  <small>20170913(v1.1.5)</small>
                 </div>
-                <span>テーマ機能を追加したよ。</span><br>
-                <span>"Mastodon Dark Diamonds"、Mastodonのカラーを</span><br>
-                <span>そのまま取り入れたシンプルでクールなコーデ。</span><br>
-                <span>眩しくならないから暗い所でも活躍しちゃうね。</span><br>
+                <span>今日でキラキラッターが始まって5か月になるね。</span><br>
+                <span>私は、開発のお仕事が忙しい時期に入っちゃって</span><br>
+                <span>アプリがあまり進められない状態...かな</span><br>
+                <span>しばらくは、時間があるときに少しずつ</span><br>
+                <span>進めてていくね。</span><br>
               </div>
 
             </div>
@@ -1951,5 +1951,5 @@
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=091100"></script>
+<script src="js/main.js?v=0913"></script>
 <script src="js/picker.js"></script>
