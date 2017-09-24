@@ -629,6 +629,44 @@ div.column-footer{
   display: none;
 }
 
+.media-wrapper{
+  height: 132px;
+  width: 100%;
+}
+.media-wrapper > a{
+  width: inherit;
+  overflow: hidden;
+}
+.media-header {
+  padding: 1px;
+  object-fit: cover;
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  border-radius: 8px;
+  width: inherit;
+}
+
+.tall .media {
+  height: 264px;
+}
+.tall .media-wrapper{
+  height: 264px;
+}
+.tall .fa-fw.media-type{
+  height: 264px;
+  bottom: 264px;
+  line-height: 250px;
+}
+.tall .media-wrapper.control{
+  margin: -264px 0 232px 0px;
+  height: 32px;
+}
+.tall .bluesheet {
+  margin: -264px 0 0 0px;
+  padding: 114px 0;
+}
+
 .action-bar{
   padding-top:6px;
 }
@@ -909,6 +947,7 @@ small.button {
   top: 0;
   left: 0;
 
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
   background-color: rgba(0,0,0,0);
   border: none;
   outline: none;
@@ -957,6 +996,10 @@ div.info-wrapper{
 /**:not(textarea):not(input){
   -webkit-user-select: none;
 }*/
+
+_::-webkit-full-page-media, _:future, :root *:not(textarea):not(input) { /* css hack for mobile safari */
+  -webkit-user-select: none;
+}
 /* emoji-picker
 =========================== */
 #emoji-picker{

@@ -5,7 +5,7 @@
     <title>kktjs</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0911">
+    <link rel="stylesheet" href="css/style.css?v=0924">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -32,10 +32,7 @@
       <transition name="modal">
         <div class="modal-mask">
 
-          <div class="image center">
-            <slot name="header"></slot>
-            <button class="modalbutton" v-on:click="$emit('close');"></button>
-          </div>
+          <slot name="header"></slot>
 
         </div>
       </transition>
@@ -150,11 +147,11 @@
         <div class="modal-bg"></div>
       </div>
 
-      <modal v-if="showModal" v-on:close="showModal = false; modal = ''">
-        <span slot="header">
+      <modal v-if="showModal">
+        <div class="modalbutton flex center" v-on:click="showModal = false; modal = ''" slot="header">
           <img v-if="'image' == modal.type" :src="modal.url" alt="" class="fullimage">
           <video v-else :src="modal.url" class="fullimage" v-play="true" autoplay loop></video>
-        </span>
+        </div>
       </modal>
 
       <emojipicker v-show="showEmojiPicker">
@@ -208,7 +205,7 @@
                 <a v-for="media in issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                   <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                  <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                  <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                 </a>
               </div>
               <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -254,7 +251,7 @@
                 <a v-for="media in issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                   <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                  <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                  <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                 </a>
               </div>
               <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -404,7 +401,7 @@
       <!-- DEBUG -->
       <div class="flex column-list">
         <div v-if="showDebug" class="column debug">
-          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{ua}}</div>
+          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{ua}}(w:{{ua_w}})</div>
           <div class="scrollable">
             <h3>Columns</h3>
             <div >
@@ -527,7 +524,7 @@
                       <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
@@ -585,7 +582,7 @@
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -670,7 +667,7 @@
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -763,7 +760,7 @@
                       <a v-for="media in issue.status.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.status.media_attachments" class="media-wrapper control">
@@ -880,7 +877,7 @@
                     <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                       <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -942,7 +939,7 @@
                     <a v-for="media in detail.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                       <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
                   <div v-if="0 != detail.media_attachments" class="media-wrapper control">
@@ -1029,7 +1026,7 @@
                     <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                       <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -1185,7 +1182,7 @@
                       <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
@@ -1243,7 +1240,7 @@
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                         <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -1351,7 +1348,7 @@
                     <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                       <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -1458,7 +1455,7 @@
                   <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                     <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                     <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
                 <div v-if="0 != issue.media_attachments" class="media-wrapper control">
@@ -1547,7 +1544,7 @@
                   <a v-for="media in katsu.reply.media_attachments" @click="modal = media;showModal = true;">
                     <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
                     <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type"></i>
+                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
                 <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper control">
@@ -1945,13 +1942,13 @@
   </body>
 </html>
 
-<!-- <script src="js/vue233.js"></script> -->
-<script src="js/vue.min.js"></script>
+<script src="js/vue233.js"></script>
+<!-- <script src="js/vue.min.js"></script> -->
 
 <script src="js/addtohomescreen.min.js"></script>
 <script src="js/inobounce.min.js"></script>
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=0918"></script>
+<script src="js/main.js?v=0924"></script>
 <script src="js/picker.js"></script>
