@@ -47,7 +47,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bgcolor-gr{background: #9bc430;}
 .bgcolor-wh{background: #fff;}
 .bgcolor-disable{background: #aaa;}
-.bgcolor-wh.scrollable{background-color: rgba(255,255,255,.85);}
+.bgcolor-wh.column{background-color: rgba(255,255,255,.85);}
 .bgcolor-bookmark{background-image: linear-gradient( -45deg, #fff 25%, #2b90d9 25%, #2b90d9 50%, #fff 50%, #fff 75%, #2b90d9 75%, #2b90d9);}
 
 #pkl{fill:#df57a4;}
@@ -880,9 +880,15 @@ small.button {
   height: 100vh;
 }
 .modal-mask .column{
-  width: unset;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-width: 100vw;
   padding: 16px 0;
   border-radius: 8px;
+}
+
+.modal-mask .content{
+  max-width: 319px;
 }
 
 .modal-wrapper {

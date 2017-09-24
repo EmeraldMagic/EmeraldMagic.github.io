@@ -5,7 +5,7 @@
     <title>kktjs</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0924">
+    <link rel="stylesheet" href="css/style.css?v=0925">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -56,7 +56,7 @@
         <div class="modal-mask">
 
           <div class="flex">
-            <div class="column scrollable bgcolor-wh">
+            <div class="column bgcolor-wh">
               <slot name="header"></slot>
             </div>
           </div>
@@ -70,7 +70,7 @@
         <div class="modal-mask">
 
           <div class="flex center">
-            <div class="column scrollable bgcolor-wh">
+            <div class="column bgcolor-wh">
               <slot name="header"></slot>
             </div>
           </div>
@@ -79,7 +79,7 @@
       </transition>
     </script>
 
-    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms]" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
+    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight]" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
 
       <svg width="0" height="0" class="invisible" xmlns="http://www.w3.org/2000/svg">
         <g id="cb">
@@ -128,16 +128,23 @@
             <div class="modal-container bgsvg-pk">
 
               <div class="text center color-wh">
-                <h2 class="title">{{app_name}} v{{app_ver}}</h2>
-                <h3>1. アプリ認証</h3>
-                kirakiratter.comにログインして、<br>
-                アプリからのアクセスを許可してね。<br>
-                <button v-on:click="runAuth" class="color-wh bgcolor-gr">App Authorize</button><br>
-                <h3>2. コードログイン</h3>
-                アプリ認証でもらったCodeを使って<br>
-                ログインしてみて。キラキラッターを楽しんでね。<br>
-                <input type="text" v-model="code" placeholder="ここにCodeを張り付けてね"><br>
-                <button v-on:click="fetchToken" class="color-wh bgcolor-gr">Token Login</button><br>
+                <div class="title">
+                  <h2>{{app_name}} v{{app_ver}}</h2>
+                  Custom Themes for kirakiratter.com<br>
+                </div>
+                <div>
+                  <h3>- アプリ認証 -</h3>
+                  kirakiratter.comにログインして、<br>
+                  アプリからのアクセスを許可してね。<br>
+                  色々なテーマでキラキラッターを楽しんでね。<br>
+                  <button v-on:click="runAuth" class="color-wh bgcolor-gr">App Authorize</button>
+                </div>
+                <div v-show="!autologin">
+                  <h3>- コードログイン -</h3>
+                  テスト用にCodeを使ったログインもあるよ。<br>
+                  <input type="text" v-model="code" placeholder="ここにCodeを張り付けてね"><br>
+                  <button v-on:click="fetchToken" class="color-wh bgcolor-gr">Token Login</button>
+                </div>
                 <small>{{result_run}}</small>
               </div>
 
@@ -401,7 +408,7 @@
       <!-- DEBUG -->
       <div class="flex column-list">
         <div v-if="showDebug" class="column debug">
-          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{ua}}(w:{{ua_w}})</div>
+          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{ua}}</div>
           <div class="scrollable">
             <h3>Columns</h3>
             <div >
@@ -1697,21 +1704,17 @@
               <h3><i class="fa fa-fw fa-wrench"></i> Layout: 端末を選んでカラム数を決めてね</h3>
               <div class="flex end action-bar"><span>{{ optColumns }} Column(s) </span></div>
               <div class="flex end action-bar">
-                <input type="radio" class="invisible" id="cone" value="1" v-model="optColumns">
-                <input type="radio" class="invisible" id="ctwo" value="2" v-model="optColumns">
-                <input type="radio" class="invisible" id="cthree" value="3" v-model="optColumns">
-                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optColumns }" for="cone">Mobile</label>
-                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optColumns }" for="ctwo">Tablet</label>
-                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 3 == optColumns }" for="cthree">PC</label>
+                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optColumns }" for="cone" v-on:click="optColumns = 1;runCustom();">Mobile</label>
+                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optColumns }" for="ctwo" v-on:click="optColumns = 2;runCustom();">Tablet</label>
+                <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 3 == optColumns }" for="cthree" v-on:click="optColumns = 3;runCustom();">PC</label>
               </div>
 
               <div class="flex end action-bar"><span>Primary Timeline: {{ optPtl }}</span></div>
               <div class="flex end action-bar">
-                <input type="radio" class="invisible" id="tone" value="1" v-model="optPtl">
-                <input type="radio" class="invisible" id="ttwo" value="2" v-model="optPtl">
+                <span class="invisible"></span>
                 <!-- <input type="radio" class="invisible" id="tthree" value="3" v-model="optPtl"> -->
-                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optPtl }" for="tone">local</label>
-                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo">home</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optPtl }" for="tone" v-on:click="optPtl = 1;runCustom();">local</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo" v-on:click="optPtl = 2;runCustom();">home</label>
                 <label class="button color-wh bgcolor-disable" for="">federated</label>
               </div>
 
@@ -1950,5 +1953,5 @@
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=0924"></script>
+<script src="js/main.js?v=0925"></script>
 <script src="js/picker.js"></script>
