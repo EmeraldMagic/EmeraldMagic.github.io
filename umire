@@ -1,0 +1,332 @@
+[33mcommit 819754c736db5be22ec8f6b61ab4350d4e9cde56[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Oct 2 22:23:29 2017 +0900
+
+    [kktjs] 1.1.8 ブラウザの「戻る」処理を変更したよ
+
+[33mcommit f945681db85e8f53ce56f2742cb97a3a6b232b35[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 25 06:20:06 2017 +0900
+
+    [kktjs] 1.1.7b カラム修正機能はまだ調整...かな。
+
+[33mcommit 603b6157d237380d7b6bc4a1260ed73137779999[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 25 06:13:56 2017 +0900
+
+    [kktjs] 1.1.7b カラム修正機能はまだ調整...かな。
+
+[33mcommit 995c07daffd497f0c3de4371e8c69bc30247f5f8[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Sep 24 22:03:50 2017 +0900
+
+    [kktjs] 1.1.7a
+
+[33mcommit 3b00d221f218bac67b5407776ebec58997ef203e[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Sep 24 22:02:10 2017 +0900
+
+    [kktjs] 1.1.7 カラム数の修正処理を追加して、メディア保存もできるようになったよ
+
+[33mcommit 77699f089c71a9d5851b9a89ffb05ffcb4292705[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 18 22:00:01 2017 +0900
+
+    [kktjs] 1.1.6a
+
+[33mcommit 5205e24430730bbc1c64261871b349880be60314[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 18 21:58:22 2017 +0900
+
+    [kktjs] 1.1.6 iOSの電話リンク対策を追加したよ
+
+[33mcommit ff526fc4eb58f07a144c2d0c3f132ecf0f5a447f[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Wed Sep 13 22:40:01 2017 +0900
+
+    [kktjs] 1.1.5 下書き機能の修正...かな
+
+[33mcommit 25bd61cf042121683e81dd7d2c034b6808c09a54[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 11 23:06:08 2017 +0900
+
+    [kktjs] 1.1.4a
+
+[33mcommit 9f4ddf4efd477b77d0f7b74ae9a60a07d38da9b5[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Sep 11 22:51:22 2017 +0900
+
+    [kktjs] 1.1.4 下書き機能を強化したよ
+
+[33mcommit ac7fd4399443158f22625ea52a162fa450c7c249[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Sep 2 00:47:29 2017 +0900
+
+    [kktjs] 1.1.3 エラー処理や処理中の表示、Android/iOS向けの微調整をしたよ
+
+[33mcommit c1fbc499522cc28d206378c627f3ce1ec83eeb73[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Tue Aug 22 02:50:51 2017 +0900
+
+    [kktjs] 1.1.2b
+
+[33mcommit 815da1fed507a5f3aec890e23b76a0f89f6f28ab[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Tue Aug 22 00:55:17 2017 +0900
+
+    [kktjs] 1.1.2a
+
+[33mcommit 1804c2e110fc197aebf06f4d1f1982cddae632d5[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Tue Aug 22 00:20:02 2017 +0900
+
+    [kktjs] 1.1.2 bbvテーマ追加とWideColumn Mode完成...かな
+
+[33mcommit b3e0809fd2d864eac4ba18f45ecd12d2373fece4[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 17 23:38:43 2017 +0900
+
+    [kktjs] 1.1.1a font指定を修正したよ
+
+[33mcommit 3753c16eb59769394cdc6c85a9400bdacbec0012[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 17 23:15:36 2017 +0900
+
+    [kktjs] 1.1.1 空白を含むカツ!の処理を修正したよ
+
+[33mcommit 7850d08df82e7c4c99b80d180d3a7decfe1d3857[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 17 02:27:16 2017 +0900
+
+    [kktjs] 1.1.0b
+
+[33mcommit 239b0818aa72f0dd4a8969f033423c3ca9cb9308[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 17 00:35:48 2017 +0900
+
+    [kktjs] 1.1.0a 書きかけの内容を消したよ
+
+[33mcommit 40f8e8d5cf6448ad50760554c8ea3990e1edaca8[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 17 00:11:03 2017 +0900
+
+    [kktjs] 1.1.0 テーマ機能が完成したよ。スクロールの修正やスワイプ操作の追加もしたかな...
+
+[33mcommit efa6b93b0fd7afba012ce9473be1bd640b7fc9e2[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Aug 6 22:58:29 2017 +0900
+
+    [kktjs] 1.0_beta8 カツ!したあとの処理を修正したよ
+
+[33mcommit 967c87197bd33d53737d834f786340f5b08b20c8[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 3 23:09:54 2017 +0900
+
+    [kktjs] 1.0_beta7c
+
+[33mcommit 50e601d53bc51f9b1eb2f445d69b2b1be0426c13[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 3 23:02:08 2017 +0900
+
+    [kktjs] 1.0_beta7b
+
+[33mcommit ea1dcf5395e31c94f565e212553cde7be0c308e8[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 3 22:36:36 2017 +0900
+
+    [kktjs] 1.0_beta7 入力データの扱い方を変更したよ。(絵文字や定型文入力も修正したよ)
+
+[33mcommit 803d01dee416e868d65d1962ffc419172af2b613[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 3 01:35:28 2017 +0900
+
+    [kktjs] 1.0_beta6a
+
+[33mcommit d14a1d294bf8656f6816f997338e475c5c06cdf3[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Thu Aug 3 00:34:47 2017 +0900
+
+    [kktjs] 1.0_beta6 iOS Safari軽量化と、D&Dメディア投稿の追加...かな
+
+[33mcommit f7f1a23f1d46e689bacba9e06994d59f605112b7[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jul 31 23:25:59 2017 +0900
+
+    [kktjs] 1.0_beta5 cw/nsfwの機能を書き直したよ
+
+[33mcommit e3e08cfab0adf2b9c25faea080dde452d23a6215[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jul 31 11:25:58 2017 +0900
+
+    [kktjs] 1.0_beta4c 通知欄の修正をしたよ
+
+[33mcommit 40873d758fa8df67e56e49754bd7e0b00b70cf24[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jul 31 02:07:28 2017 +0900
+
+    [kktjs] 1.0_beta4b リプの時にIDを入れる処理を修正したよ
+
+[33mcommit de5957a238ab20550fae87ab3b74ef077c2bd0a2[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jul 31 00:17:24 2017 +0900
+
+    [kktjs] 1.0_beta4a 自動ログインは一度キャンセルするね...
+
+[33mcommit c9ef3ff3b4929271149f981134ac6f8918c2edb8[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jul 31 00:01:21 2017 +0900
+
+    [kktjs] 1.0_beta4 たくさん修正したよ、それから自動ログインできるようになった...かな
+
+[33mcommit 2bbe8dcaacc057a12aca7cf404c242e13d6bf725[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 29 02:12:03 2017 +0900
+
+    [kktjs] 1.0_beta3a emoji
+
+[33mcommit 795bfd842923cf57fc57624d14da1c94a5eaea99[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 29 01:57:48 2017 +0900
+
+    [kktjs] 1.0_beta3 カツ!機能やしおり機能を追加したよ
+
+[33mcommit 125efa186d5ab4016cae3201d865d0d22f25bbe5[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 29 01:34:18 2017 +0900
+
+    [kktjs] 1.0_beta2 警告文にhtmlエスケープ処理を追加したよ
+
+[33mcommit ad259259bb2290378ee94009ba55525230e1dbc2[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 29 00:08:52 2017 +0900
+
+    Revert "[kktjs] 1.0_beta カツ!機能やしおり機能を追加したよ"
+    
+    This reverts commit cfe0c225f46a192e867b5077aa925812af96d1ff.
+
+[33mcommit cfe0c225f46a192e867b5077aa925812af96d1ff[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 29 00:00:44 2017 +0900
+
+    [kktjs] 1.0_beta カツ!機能やしおり機能を追加したよ
+
+[33mcommit 752e40a3eb425c29d3dedab180517daae309d442[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Wed Jul 12 16:12:39 2017 +0900
+
+    [.work] 即売会の情報を告知したよ。
+
+[33mcommit 8852d0a14f4e388c0c316b7e43d7fa816c4c09c1[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jul 2 01:30:50 2017 +0900
+
+    [kktjs] 画像URLのアイコン化、ローカル/ホームTLカラムにクラス追加したよ
+
+[33mcommit 576b976ae5a4850771ee0dfb990ab7fd895254cf[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sat Jul 1 19:40:13 2017 +0900
+
+    [kktjs] タグTL、検索機能、アカウント一覧表示を追加したよ
+
+[33mcommit df7632686718f20cdbcad2238fbe2f2d3714b841[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Wed Jun 21 21:01:20 2017 +0900
+
+    [kktjs] ローカルTLを修正したよ
+
+[33mcommit 0ef7ec3cc54fa0f75bc9b93e77aba892b0407443[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Wed Jun 21 20:38:13 2017 +0900
+
+    [kktjs] カーソルの修正と、自動再生オプション&モーダルウィンドウを追加したよ
+
+[33mcommit 44d6d2c45d8cd69ac302c90255995c080d7ac87c[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 22:19:43 2017 +0900
+
+    [kktjs] ヘッダ画像の位置を調整したよ
+
+[33mcommit caf90632b39b87721269c6d5018bf0b7d5bf37b7[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 22:02:53 2017 +0900
+
+    miss
+
+[33mcommit 86ba0ef366022c6b022f68f4b61d74512dd7b98a[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 22:00:04 2017 +0900
+
+    [kktjs] multiimage, font(mac), avatar action
+
+[33mcommit d6c213d8a3a7b49bf801671991af5a3fbbf4b35b[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 16:24:50 2017 +0900
+
+    [kktjs] fix for ios
+
+[33mcommit bc8bb5f60635e9e80b1e094e272293d826b93c1b[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 01:13:42 2017 +0900
+
+    [kktjs] fix for firefox (mac)
+
+[33mcommit ae1c9f4c239a951d9571a3bca863eac084e2c443[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 01:10:30 2017 +0900
+
+    [kktjs] fix for firefox (mac)
+
+[33mcommit 63440cd292774993a5a9196c41c64d97261ea4c6[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Mon Jun 19 00:05:54 2017 +0900
+
+    add info
+
+[33mcommit ee23c8bc7da027903ab22275de180be66efb9f89[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:38:18 2017 +0900
+
+    fix kktjs setting
+
+[33mcommit 562d8665260387f8485ca23dd0a7f4d109c97783[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:27:39 2017 +0900
+
+    add kktjs v0.0
+
+[33mcommit 098df635230e8a0cb93322040f47e7a4a8d505e9[m
+Merge: 052550b 6d981fd
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:16:05 2017 +0900
+
+    Merge branch 'master' of github.com:EmeraldMagic/EmeraldMagic.github.io
+
+[33mcommit 052550b69572eeebcf7db4f349ad1f77894ca61a[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:14:58 2017 +0900
+
+    mv doc''s''
+
+[33mcommit 6d981fd9a6f52d0778927d54c4573a68d138a50c[m
+Author: 氷上スミレ <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:12:28 2017 +0900
+
+    Create CNAME
+
+[33mcommit 2a7caf28c741385cf46f958c1244264f84669bef[m
+Author: 氷上スミレ <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:12:16 2017 +0900
+
+    Delete CNAME
+
+[33mcommit ca8513f6842d69b0f6261a27dbaa978cfba97da2[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Sun Jun 18 22:09:40 2017 +0900
+
+    mv docs
+
+[33mcommit d7de773caa5b82535540138803086e4cb23b07c2[m
+Author: sumire-kkt <sumire.kkt@gmail.com>
+Date:   Wed Jun 7 00:42:08 2017 +0900
+
+    update web
