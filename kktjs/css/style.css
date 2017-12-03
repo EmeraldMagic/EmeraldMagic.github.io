@@ -82,9 +82,6 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .tp_diadark .app-header .fa-fw, .tp_diadark .app-footer .fa-fw, .tp_diadark .column-footer .fa-fw {
   text-shadow: unset;
 }
-.tp_diadark .app-footer .fa-fw, .tp_diadark .column-footer .fa-fw {
-  text-shadow: unset;
-}
 .tp_diadark.color .app-header, .tp_diadark.color .column-footer {color: #9BAEC8;}
 
 /* Mastodon Dark Diamonds(bottoms) */
@@ -137,9 +134,6 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .tp_diablue .app-header .fa-fw, .tp_diablue .app-footer .fa-fw, .tp_diablue .column-footer .fa-fw {
   text-shadow: unset;
 }
-.tp_diablue .app-footer .fa-fw, .tp_diablue .column-footer .fa-fw {
-  text-shadow: unset;
-}
 .tp_diablue.color .app-header, .tp_diablue.color .column-footer {color: #9BBED8;}
 
 /* bbv SandyWhite Diamonds(bottoms) */
@@ -187,6 +181,61 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border-top: 1px solid #363947;
 }
 .bm_diawhite ::-webkit-scrollbar-thumb, .bm_diawhite ::-webkit-scrollbar-thumb:hover{background: #363947;}
+
+
+/* Pirouette Green Diamonds(tops) */
+.tp_diagreen #pkl{fill:#3b6684;}
+.tp_diagreen #pkd{fill:#3d7289;}
+.tp_diagreen .app-header .fa-fw, .tp_diagreen .app-footer .fa-fw, .tp_diagreen .column-footer .fa-fw {
+  text-shadow: -1px 0 0 #dee064, 0 -1px 0 #dee064, 0 1px 0 #dee064, 1px 0 0 #dee064;
+}
+.tp_diagreen.color .app-header, .tp_diagreen.color .column-footer {color: #5b4b43;}
+
+/* Pirouette Night Diamonds(bottoms) */
+.bm_diaorange #grl{fill:#ffdaaa;}
+.bm_diaorange #grd{fill:#ffedce;}
+.bm_diaorange #cbl{stroke:#fcfaf5; fill:none;}
+.bm_diaorange #cbp{stroke:#ffc0a5; fill:#fcfaf5}
+
+.bm_diaorange.color .scrollable, .bm_diaorange.color .column-header{color: #6a4643;}
+.bm_diaorange .color-pk, .bm_diaorange a{color: #ed649c;} /**/
+.bm_diaorange .color-gr{color: #7b5d4d;} /**/
+.bm_diaorange .color-disable{color: #ccc;}
+.bm_diaorange .status-name .color-pk{color: #ed649c;} /**/
+
+.bm_diaorange .bgcolor   {background: #7b5d4d;} /**/
+.bm_diaorange .bgcolor-pk{background: #3d7289;} /**/
+.bm_diaorange .bgcolor-gr{background: #D3665E;} /**/
+.bm_diaorange .bgcolor-disable{background: #ccc;}
+.bm_diaorange .bgcolor-wh, .bm_diaorange .scrollable.bgcolor-wh{background: rgba(255,255,255, .85);} /**/
+
+.bm_diaorange .border{border: solid 2px #ffc0a5; box-shadow: 0 2px 2px rgba(0, 0, 0, .18);} /**/
+.bm_diaorange .border-lite{border: solid 1px #6a4643;}
+.bm_diaorange .border-dash{border-bottom: 1px dashed #6a4643;}
+
+.bm_diaorange .scrollable, .bm_diaorange .column-header{background: rgba(220, 196, 171, .25);}
+
+.bm_diaorange .content{ /**/
+  color: #6a4643;
+  background: linear-gradient(to bottom, rgba(252, 250, 245, 1) 0%, rgba(252, 242, 220, 1) 75%, rgba(252, 240, 220, 1) 65%, rgba(248, 236, 205, 1) 100%);
+}
+.bm_diaorange .fixed .border{
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);;
+}
+.bm_diaorange .bluesheet{
+  background: #ccc;
+}
+.bm_diaorange .search-container input, .bm_diaorange input.report_text{
+  color: #6a4643;
+}
+.bm_diaorange .action-bar, .bm_diaorange .action-bar > div:not(.button){
+  color: #7b5d4d; /**/
+}
+.bm_diaorange .setting-header {
+  border-bottom: 1px solid #6a4643;
+  border-top: 1px solid #6a4643;
+}
+.bm_diaorange ::-webkit-scrollbar-thumb, .bm_diaorange ::-webkit-scrollbar-thumb:hover{background: #6a4643;}
 
 
 /*.themetest #pkl{fill:#e0ea95;}

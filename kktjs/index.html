@@ -5,7 +5,7 @@
     <title>kktjs</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0925">
+    <link rel="stylesheet" href="css/style.css?v=1202">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -1126,16 +1126,16 @@
                 </div>
               </div>
               <div class="flex account-bar">
-                <div v-on:click="acct_id=''; fetchAcct()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'katsu' == acct_type }"><i class="fa fa-fw fa-comments-o"></i>All</div>
-                <div v-on:click="acct_id=''; fetchMedia()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'media' == acct_type }"><i class="fa fa-fw fa-photo"></i>Media</div>
-                <div v-on:click="acct_id=''; fetchFollow()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follow' == acct_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follow</div>
-                <div v-on:click="acct_id=''; fetchFollower()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follower' == acct_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follower</div>
+                <div v-on:click="resetAcctColumn();fetchAcct();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'katsu' == acct_type }"><i class="fa fa-fw fa-comments-o"></i>All</div>
+                <div v-on:click="resetAcctColumn();fetchMedia();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'media' == acct_type }"><i class="fa fa-fw fa-photo"></i>Media</div>
+                <div v-on:click="resetAcctColumn();fetchFollow();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follow' == acct_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follow</div>
+                <div v-on:click="resetAcctColumn();fetchFollower();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follower' == acct_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follower</div>
               </div>
               <div v-if="user.id == acct_targetid" class="flex account-bar">
-                <div v-on:click="acct_id=''; fetchFav()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'fav' == acct_type }"><i class="fa fa-fw fa-star-o"></i>Favourite</div>
-                <div v-on:click="acct_id=''; fetchMute()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'mute' == acct_type }"><i class="fa fa-fw fa-microphone-slash"></i>Mute</div>
-                <div v-on:click="acct_id=''; fetchBlock()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'block' == acct_type }"><i class="fa fa-fw fa-ban"></i>Block</div>
-                <div v-if="acct.locked" v-on:click="acct_id=''; fetchFollowRequest()" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'request' == acct_type }"><i class="fa fa-fw fa-hourglass"></i>Request</div>
+                <div v-on:click="resetAcctColumn();fetchFav();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'fav' == acct_type }"><i class="fa fa-fw fa-star-o"></i>Favourite</div>
+                <div v-on:click="resetAcctColumn();fetchMute();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'mute' == acct_type }"><i class="fa fa-fw fa-microphone-slash"></i>Mute</div>
+                <div v-on:click="resetAcctColumn();fetchBlock();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'block' == acct_type }"><i class="fa fa-fw fa-ban"></i>Block</div>
+                <div v-if="acct.locked" v-on:click="resetAcctColumn();fetchFollowRequest();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'request' == acct_type }"><i class="fa fa-fw fa-hourglass"></i>Request</div>
               </div>
             </div>
             <div v-if="!hasAcctRel && (hasAcct || hasUser)">
@@ -1725,6 +1725,14 @@
                 <label v-else for="checkwide" class="button color-wh bgcolor">OFF</label>
               </div>
 
+              <div class="flex end action-bar">
+                <span>AutoLayout Mode</span>
+                <input type="checkbox" id="checkauto" class="invisible" v-model="optAutoLayout">
+                <label v-if="optColumnWide" for="checkwide" class="button color-wh bgcolor-disable">OFF</label>
+                <label v-else-if="optAutoLayout" for="checkauto" class="button color-wh bgcolor-pk">ON</label>
+                <label v-else for="checkauto" class="button color-wh bgcolor">OFF</label>
+              </div>
+
               <h3><i class="fa fa-fw fa-photo"></i> View: 表示をアレンジしちゃおう </h3>
               <div class="flex end action-bar">
               <span>Media AutoPlay</span>
@@ -1734,6 +1742,14 @@
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optAutoPlay }" for="vone">OFF</label>
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optAutoPlay }" for="vtwo">GIF</label>
                 <label class="button color-wh bgcolor-disable" for="">ALL</label>
+              </div>
+
+              <div class="flex end action-bar">
+                <span>Change Media Height</span>
+                <input type="radio" class="invisible" id="hone" value="" v-model="optMediaHeight">
+                <input type="radio" class="invisible" id="htwo" value="tall" v-model="optMediaHeight">
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optMediaHeight }" for="hone">x1</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'tall' == optMediaHeight }" for="htwo">x2</label>
               </div>
 
               <div class="flex end action-bar">
@@ -1774,6 +1790,9 @@
               <div class="flex end">
                 <label v-on:click="optThemeTops = 'tp_diablue'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'tp_diablue' == optThemeTops }">bbv DeepBlue Diamonds</label>
               </div>
+              <div class="flex end">
+                <label v-on:click="optThemeTops = 'tp_diagreen'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'tp_diagreen' == optThemeTops }">Pirouette Green Diamonds</label>
+              </div>
               <div class="flex end action-bar"><span>Bottoms</span></div>
               <div class="flex end">
                 <label v-on:click="optThemeBottoms = 'bm_diadark'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diadark' == optThemeBottoms }">Mastodon Dark Diamonds</label>
@@ -1783,6 +1802,9 @@
               </div>
               <div class="flex end">
                 <label v-on:click="optThemeBottoms = 'bm_diawhite'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diawhite' == optThemeBottoms }">bbv SandyWhite Diamonds</label>
+              </div>
+              <div class="flex end">
+                <label v-on:click="optThemeBottoms = 'bm_diaorange'" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 'bm_diaorange' == optThemeBottoms }">Pirouette Orange Diamonds</label>
               </div>
               <h3><i class="fa fa-fw fa-bell"></i> Notif: PUSH通知(PC)の内容を選んでね </h3>
               <div class="flex end action-bar">
@@ -1945,13 +1967,13 @@
   </body>
 </html>
 
-<!-- <script src="js/vue233.js"></script> -->
-<script src="js/vue.min.js"></script>
+<script src="js/vue233.js"></script>
+<!-- <script src="js/vue.min.js"></script> -->
 
 <script src="js/addtohomescreen.min.js"></script>
 <script src="js/inobounce.min.js"></script>
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=1002"></script>
+<script src="js/main.js?v=1202"></script>
 <script src="js/picker.js"></script>
