@@ -264,6 +264,12 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   background-size: auto;
 }
 
+.appicon{
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+}
+
 /* ===========================
     Common Elements
 =========================== */
@@ -396,6 +402,16 @@ div.column-footer{
 .action-bar .fa-fw.fa-paperclip{
   width: 18px;
 }
+.action-bar .fa-fw.fa-thumb-tack{
+  width: 18px;
+  font-size: 16px;
+}
+.fa-fw.fa-thumb-tack.fa-rotate-270{
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+  -webkit-transform: rotate(315deg);
+  -ms-transform: rotate(315deg);
+  transform: rotate(315deg);
+}
 
 .app-header .fa-fw, .app-footer .fa-fw, .column-footer .fa-fw{
   text-shadow: -1px 0 0 #f5e33a, 0 -1px 0 #f5e33a, 0 1px 0 #f5e33a, 1px 0 0 #f5e33a;
@@ -516,7 +532,7 @@ div.column-footer{
   flex: 1 1 auto;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: none;
 }
 .column-header{
   background: rgba(212,220,171,0.5);

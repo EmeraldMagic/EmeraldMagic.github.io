@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
   <head>
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=1202">
+    <link rel="stylesheet" href="css/style.css?v=1209">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -27,7 +27,10 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
   </head>
   <body>
-
+<!--
+kktCSS V10.0 Copyright (c) 2017 Salil Gupta Released under the MIT License. (https://github.com/MasterDalK/kktCSS/blob/master/LICENSE.md)
+kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
+-->
     <script type="text/x-template" id="modal-image">
       <transition name="modal">
         <div class="modal-mask">
@@ -185,7 +188,7 @@
       <confirm v-if="showConfirm">
         <div slot="header">
 
-          <div class="status flex" v-if="['delete','report','fav','unfav','reblog','unreblog','bookmark'].indexOf(issue.confirmtype) != -1">
+          <div class="status flex" v-if="['delete','report','fav','unfav','reblog','unreblog','pin','unpin','bookmark'].indexOf(issue.confirmtype) != -1">
             <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
             <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
             <div class="content border">
@@ -390,6 +393,20 @@
               <div class="flex center">
                 <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
                 <span class="button full color-wh bgcolor-pk" v-on:click="showConfirm = false; actUnBlock(issue, true);">OK</span>
+              </div>
+            </div>
+            <div v-else-if="'pin' == issue.confirmtype">
+              <h3>カツ!を固定しますか？</h3>
+                <div class="flex center">
+                <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
+                <span class="button full color-wh bgcolor-gr" v-on:click="showConfirm = false; actPin(issue, true);">OK</span>
+              </div>
+            </div>
+            <div v-else-if="'unpin' == issue.confirmtype">
+              <h3>カツ!の固定を解除しますか？</h3>
+              <div class="flex center">
+                <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
+                <span class="button full color-wh bgcolor-pk" v-on:click="showConfirm = false; actUnPin(issue, true);">OK</span>
               </div>
             </div>
             <div v-else-if="'bookmark' == issue.confirmtype">
@@ -1125,6 +1142,68 @@
                   </div>
                 </div>
               </div>
+              <div v-for="(issue, index) in accts_pinned" class="status-wrapper">
+                <!-- PINNED -->
+                <div class="status flex">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden">
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-else class="color-pk">{{issue.account.username}}</a>
+                        <small class="color-gr">@{{issue.account.acct}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <div v-if="0 != issue.spoiler_text.length">
+                        <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
+                        <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                      <div v-else>
+                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
+                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                      </a>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper control">
+                      <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
+                    </div>
+                    <div v-if="(( issue.sensitive && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
+                      <h4 v-if="issue.sensitive">Sensitive contents</h4>
+                      <h4 v-else>Media contents</h4>
+                      <small>Click to view</small>
+                    </div>
+                    <div class="action-bar flex end">
+                      <div class="hidden">
+                        <!-- <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small> -->
+                        <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                        <i v-else v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i><small>:Pinned</small>
+                      </div>
+                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
+                      <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                      <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="flex account-bar">
                 <div v-on:click="resetAcctColumn();fetchAcct();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'katsu' == acct_type }"><i class="fa fa-fw fa-comments-o"></i>All</div>
                 <div v-on:click="resetAcctColumn();fetchMedia();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'media' == acct_type }"><i class="fa fa-fw fa-photo"></i>Media</div>
@@ -1260,7 +1339,9 @@
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                        <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                        <!-- <i v-else-if="acct_type=='katsu'" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i> -->
+                        <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
                       </div>
                       <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
@@ -1612,7 +1693,7 @@
                 <div v-for="(draft, index) in content_text_drafts" class="action-bar flex end draft">
                   <i v-on:click="draftToContent(index, false)" class="fa fa-fw fa-copy"></i>
                   <i v-on:click="draftToContent(index, true)" class="fa fa-fw fa-arrow-up"></i>
-                  <span class="full text center hidden">{{draft}}</span>
+                  <span class="full text center hidden" v-html="$options.filters.formatEmojiDraft(draft)"></span>
                 </div>
               </div>
 
@@ -1853,68 +1934,92 @@
               <h4>バグは <span v-on:click="search_tag='kktjs';runHash()" class="color-pk">#kktjs</span> を付けてカツ!してくれると嬉しいかな。</h4>
               <h4>私(<span v-on:click="runAcct(17)" class="color-pk">@sumire</span>)に直接送ってくれても大丈夫だよ。</h4>
 
+              <h3 class="setting-header">🍨🍨🍨 アイコンについて 🍨🍨🍨</h3>
+              <img class="appicon" src="/kktjs/img/apple-touch-icon.png"><br>
+              <small>
+                kktjs WebApp Icon is a derivative of <a href="https://github.com/southrop/kirakiratter_design/">"Kirakiratter Design Logo"</a> by ロップ / <a href="https://github.com/southrop/kirakiratter_design/blob/master/logo/LICENSE">CC BY 4.0</a>. <br>
+                kktjs WebApp Icon is licensed under <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> by Sumire.<br>
+              </small>
               <h3 class="setting-header">🍨🍨🍨 開発ステータス 🍨🍨🍨</h3>
-              <h3>アプリで使える機能(v1.1)</h3>
+              <h3>アプリで使える機能(v1.2)</h3>
               <small>
                 ログイン/ログアウト/Webアプリ設定<br>
                 カツ!機能(メディア投稿,CW,NSFW,絵文字入力)<br>
                 ドラッグ＆ドロップでメディア投稿(PC)<br>
                 キーボードショートカット(カツ!/検索)<br>
-                Home/Local/通知 TLのカツ!ストリーミング受信/削除<br>
+                Home/Local/通知 TLのカツ!ストリーミング取得/削除<br>
                 Home/Local/通知/Fav済/ユーザー/タグ のカツ!一覧取得<br>
-                Home/Local のカツ!一覧を遡って取得<br>
-                通知/Fav済/ユーザー/タグ のカツ!一覧を遡って取得<br>
-                フォロー/フォロワー のアカウント一覧を遡って取得<br>
-                ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
-                ユーザーのフォロー/フォロワー一覧 取得<br>
+                Home/Local/通知/Fav済/ユーザー/タグ を遡って取得<br>
+                カツ!の CW/NSFW,画像/ビデオ/gifv(ループ再生) 表示<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧 取得<br>
+                ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
+                フォロー/フォロワー 一覧取得<br>
+                フォロー/フォロワー 一覧を遡って取得<br>
                 フォローリクエスト中のアカウント一覧 取得<br>
                 フォローリクエスト中のアカウントの 認証/拒否<br>
-                検索した結果(アカウント/タグ/カツの一覧) 取得<br>
+                検索した結果(アカウント/タグ) 取得<br>
                 お気に入り/ブースト/フォロー の登録と解除<br>
                 カツ!/お気に入り/ブースト/フォロー の確認ウィンドウ<br>
                 ミュート/ブロック の登録と解除、確認ウィンドウ<br>
-                カツ!の CW/NSFW,画像/ビデオ/gifv(ループ再生) 表示<br>
                 カツ!の 削除<br>
                 カツ!の 通報<br>
-                ヘッダアイコンでカラム切替機能<br>
+                ヘッダアイコンのカラム移動機能<br>
                 デスクトップ通知(PC)と、通知音再生(PC)<br>
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
                 通信エラーの表示<br>
               </small><br>
-              <h3>拡張機能(v1.1)</h3>
+              <h3>拡張機能(v1.2)</h3>
               <small>
-                カラーテーマ機能(3テーマ)<br>
-                デスクトップ通知音の切替機能(PC)<br>
-                1-3カラム表示+切替機能<br>
+                カラーテーマ機能(4テーマ)<br>
+                1,2,3カラム表示+Home/Local TLのワイドカラム化<br>
+                画面のリサイズ/回転時に最適なカラム数に切り替え<br>
+                Home/Local TLの画像や映像を全て隠すオプション<br>
+                Home/Local TLに 最新/上底/下底スクロールボタンを追加<br>
+                Home/Local TLに カツ!表示数目標を設定(200カツ!)<br>
+                Local TLにしおりをはさむ機能(削除カツ未対応)<br>
+                フォロー/フォロワー一覧 をユーザー情報内で表示<br>
+                カツ!詳細/ユーザー情報 リンクのボタン化<br>
                 カツ!の 下書きの保存<br>
                 カツ!の 本文と注意文の入れ替え<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
-                カツ!一覧に カツ!表示数目標を設定(必要以上に描画しない)<br>
-                疑似ページの最新/上底/下底スクロールボタンを追加<br>
-                Local TLにしおりをはさむ機能(削除カツ未対応)<br>
-                カツ!詳細/ユーザー情報 リンクのボタン化<br>
-                フォロー/フォロワー一覧 をユーザー情報内で表示<br>
-                Home/Local TLの画像や映像を全て隠すオプション<br>
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
-                ヘッダに お気に入り、Webアプリ設定アイコン追加<br>
+                スワイプでカラムを呼び出す機能(カラムは固定)<br>
+                戻るボタンでアプリを閉じない(Android)<br>
+                ヘッダに お気に入り、Webアプリ設定アイコンを追加<br>
+                デスクトップ通知音の切替機能(PC)<br>
                 通信エラーメッセージ<br>
               </small><br>
-              <h3>アプリにまだない機能(v1.1)</h3>
+              <h3>アプリにまだない機能(v1.2)</h3>
               <small>
+                [mst2.0.0]カスタム絵文字の表示/入力<br>
                 Home/Local/通知 のカツ!フィルタ<br>
-                連合TLの 取得<br>
+                タグ TLのカツ!ストリーミング取得/削除<br>
+                連合 TLのカツ!一覧取得<br>
+                [mst2.1.0]リストの一覧を取得<br>
+                [mst2.1.0]リスト TLのカツ!ストリーミング取得/削除<br>
+                [mst2.1.0]リスト TLのカツ!一覧取得<br>
+                [mst2.1.0]リスト TLのカツ!を遡って取得<br>
+                [mst2.1.0]リストの追加<br>
+                [mst2.1.0]リストに登録済みのアカウント一覧 取得<br>
+                [mst2.1.0]アカウントを リストに登録/リストから解除<br>
+                シェア機能(Web Share API/Android Chrome)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
+              </small><br>
+              <h3>Mastodon/kktで対応待ちの機能(v1.2)</h3>
+              <small>
+                [mst v?]検索した結果(カツの一覧) 取得<br>
+                [mst1.6.0]ピン留めカツ! の取得<br>
+                [mst1.6.0]ピン留め の登録と解除<br>
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
+                [mst2.1.0]リストTL専用カラム<br>
                 Web Push(Android)<br>
                 カツ!を 翻訳<br>
                 通知 TLのインスタンスフィルター<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
                 カツ!した当時のLocal TLへタイムスリップする機能<br>
-                ワード検索機能(Mastodon API未実装)<br>
                 Youtube動画の展開<br>
               </small>
               <h3>スマートフォンアプリで追加されるかもしれない拡張機能</h3>
@@ -1975,5 +2080,5 @@
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=1202"></script>
+<script src="js/main.js?v=1209"></script>
 <script src="js/picker.js"></script>
