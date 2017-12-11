@@ -292,8 +292,7 @@
 .category-title > span {
   margin-left: 10px; }
 
-.category-content {
-  padding: 0 5px 0 5px; }
+.category-content { }
 
 .default-content {
   position: absolute;

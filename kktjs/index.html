@@ -1,19 +1,19 @@
 ﻿<!DOCTYPE html>
-<html prefix="og: http://ogp.me/ns#">
+<html lang="ja" prefix="og: http://ogp.me/ns#">
   <head>
+    <link rel="canonical" href="https://sumire.work/kktjs/">
     <meta charset="utf-8">
     <title>kktjs</title>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+
     <link rel="stylesheet" href="css/emojipicker.css">
     <link rel="stylesheet" href="css/style.css?v=1209">
-    <link rel="stylesheet" href="css/addtohomescreen.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta content="#aaa" name="theme-color">
     <!-- OGP -->
     <meta property="og:title" content="kktjs" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sumire.work/kktjs/" />
-    <meta property="og:image" content="https://sumire.work/kktjs/img/apple-touch-icon.png" />
+    <meta property="og:image" content="https://sumire.work/kktjs/img/touch/apple-touch-icon.png" />
     <meta property="og:site_name"  content="sumire.work/kktjs" />
     <meta property="og:description" content="キラキラッターをもっと素敵にするWebクライアント" />
     <!-- iOS Safari FullScreen -->
@@ -24,7 +24,9 @@
     <!-- Icons -->
     <link rel="icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="shortcut icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
-    <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/touch/apple-touch-icon.png">
+    <!-- PWA (alpha_test) -->
+    <link rel="manifest" href="js/manifest.json">
   </head>
   <body>
 <!--
@@ -86,8 +88,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       <svg width="0" height="0" class="invisible" xmlns="http://www.w3.org/2000/svg">
         <g id="cb">
-          <line id="cbl" y2="12.412" x2="10.03575" y1="0.833" x1="10.03575" stroke-miterlimit="10" stroke-width="2"/>
-          <path id="cbp" d="m9.76,1c0,0 -4.8235,0.92675 -8,5.833c5.42675,1 8,5.334 8,5.334" stroke-miterlimit="10" stroke-linecap="round" stroke-width="2"/>
+          <line class="cbl" y2="12.412" x2="10.03575" y1="0.833" x1="10.03575" stroke-miterlimit="10" stroke-width="2"/>
+          <path class="cbp" d="m9.76,1c0,0 -4.8235,0.92675 -8,5.833c5.42675,1 8,5.334 8,5.334" stroke-miterlimit="10" stroke-linecap="round" stroke-width="2"/>
         </g>
       </svg>
 
@@ -99,8 +101,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
           <defs>
             <pattern id="pttops" patternUnits="userSpaceOnUse" height="24" width="18">
-              <rect id="pkl" height="24" width="18" y="0" x="0"/>
-              <path id="pkd" d="m0 12 9-12 9 12-9 12z"/>
+              <rect class="pkl" height="24" width="18" y="0" x="0"/>
+              <path class="pkd" d="m0 12 9-12 9 12-9 12z"/>
             </pattern>
           </defs>
           <rect width="100%" height="100%" style="fill: url(#pttops)"/>
@@ -443,7 +445,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div>
               Setting<input type="checkbox" id="showSetting" v-model="showSetting">
               Search<input type="checkbox" id="showSearch" v-model="showSearch">
-              Form<input type="checkbox" id="optAllNsfw" v-model="showForm">
+              Form<input type="checkbox" id="showForm" v-model="showForm">
             </div>
             <h3>Options</h3>
             <div>
@@ -455,6 +457,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <button v-on:click="playSound('soundex')">excelent boop</button>
             <button onClick="notif('test',null);var b = document.getElementById('sound');b.click();">notif test</button>
             <button v-on:click="result_run = 'test'">Info</button><br>
+            <!--<button disabled class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Enable Push Messaging</button> -->
             <!-- <input type="text" v-model="repository" readonly>
             <button v-on:click="reopenWsHome">Home Stream ReConn</button>
             <button v-on:click="pingWsHome">Ping Home Stream Socket</button>
@@ -1098,9 +1101,11 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="flex">
                 <img :src="checkAvatar(acct.avatar)" class="avatar">
                 <div class="content">
-                  <a v-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
+                  <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash" v-model="profile.name">
+                  <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
                   <a v-else class="color-pk">{{acct.username}}</a>
                   <small class="color-gr">@{{acct.acct}}</small>
+                  <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash name_b" v-model="profile.name_b">
                   <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   <span>{{acct.statuses_count}} </span>Katsu!
                   <div>
@@ -1127,6 +1132,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <span v-if="acct.req_block" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="acct_relation[0].blocking" v-on:click="actUnBlock(acct)" class="button mini color-wh bgcolor-pk">UnBlock</span>
                     <span v-else v-on:click="actBlock(acct)" class="button mini color-wh bgcolor">Block</span>
+                  </div>
+                  <div v-if="user.id == acct_targetid " class="flex end action-bar">
+                    <span></span>
+                    <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                    <span v-else-if="!showacctProfile" v-on:click="editProfile" class="button mini color-wh bgcolor">Edit</span>
+                    <span v-else-if="showacctProfile" v-on:click="showacctProfile = !showacctProfile; profile = [];" class="button mini color-wh bgcolor">Cancel</span>
+                    <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                    <span v-else-if="showacctProfile" v-on:click="runProfile" class="button mini color-wh bgcolor-pk">Save</span>
                   </div>
                 </div>
               </div>
@@ -1914,7 +1927,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h3 class="setting-header">📛📛📛 Account Setting 📛📛📛</h3>
               <div class="flex end action-bar">
                 <span>User Profile</span>
-                <label v-on:click="runProfile" class="button color-wh bgcolor-gr">Open kkt</label>
+                <label v-on:click="openProfile" class="button color-wh bgcolor-gr">Open kkt</label>
               </div>
 
               <div class="flex end action-bar ">
@@ -1935,7 +1948,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h4>私(<span v-on:click="runAcct(17)" class="color-pk">@sumire</span>)に直接送ってくれても大丈夫だよ。</h4>
 
               <h3 class="setting-header">🍨🍨🍨 アイコンについて 🍨🍨🍨</h3>
-              <img class="appicon" src="/kktjs/img/apple-touch-icon.png"><br>
+              <img class="appicon" src="/kktjs/img/touch/apple-touch-icon.png" alt=""><br>
               <small>
                 kktjs WebApp Icon is a derivative of <a href="https://github.com/southrop/kirakiratter_design/">"Kirakiratter Design Logo"</a> by ロップ / <a href="https://github.com/southrop/kirakiratter_design/blob/master/logo/LICENSE">CC BY 4.0</a>. <br>
                 kktjs WebApp Icon is licensed under <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> by Sumire.<br>
@@ -1971,7 +1984,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h3>拡張機能(v1.2)</h3>
               <small>
                 カラーテーマ機能(4テーマ)<br>
-                1,2,3カラム表示+Home/Local TLのワイドカラム化<br>
+                1,2,3カラム表示+Home/Local TLdetailのワイドカラム化<br>
                 画面のリサイズ/回転時に最適なカラム数に切り替え<br>
                 Home/Local TLの画像や映像を全て隠すオプション<br>
                 Home/Local TLに 最新/上底/下底スクロールボタンを追加<br>
@@ -2003,7 +2016,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 [mst2.1.0]リストの追加<br>
                 [mst2.1.0]リストに登録済みのアカウント一覧 取得<br>
                 [mst2.1.0]アカウントを リストに登録/リストから解除<br>
-                シェア機能(Web Share API/Android Chrome)<br>
+                photo/video/richのOGP展開<br>
+                シェア機能(Web Share API対応)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
               </small><br>
               <h3>Mastodon/kktで対応待ちの機能(v1.2)</h3>
@@ -2015,7 +2029,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
                 [mst2.1.0]リストTL専用カラム<br>
-                Web Push(Android)<br>
+                Push通知(Android)<br>
                 カツ!を 翻訳<br>
                 通知 TLのインスタンスフィルター<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
@@ -2024,7 +2038,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </small>
               <h3>スマートフォンアプリで追加されるかもしれない拡張機能</h3>
               <small>
-                PUSH通知(Android/iOS)<br>
+                PUSH通知(iOS)<br>
               </small>
 
             </div>
@@ -2045,8 +2059,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
           <defs>
             <pattern id="ptbottoms" patternUnits="userSpaceOnUse" height="24" width="18">
-              <rect id="pkl" height="24" width="18" y="0" x="0"/>
-              <path id="pkd" d="m0 12 9-12 9 12-9 12z"/>
+              <rect class="pkl" height="24" width="18" y="0" x="0"/>
+              <path class="pkd" d="m0 12 9-12 9 12-9 12z"/>
             </pattern>
           </defs>
           <rect width="100%" height="100%" style="fill: url(#ptbottoms)"/>
@@ -2060,8 +2074,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
           <defs>
             <pattern id="ptshoes" patternUnits="userSpaceOnUse" height="114" width="80">
-              <rect id="grl" height="114" width="80" y="0" x="0"/>
-              <path id="grd" d="m0 57 40-57 40 57-40 57z"/>
+              <rect class="grl" height="114" width="80" y="0" x="0"/>
+              <path class="grd" d="m0 57 40-57 40 57-40 57z"/>
             </pattern>
           </defs>
           <rect width="100%" height="100%" style="fill: url(#ptshoes)"/>
@@ -2072,6 +2086,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
   </body>
 </html>
 
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="css/addtohomescreen.css">
+
 <!-- <script src="js/vue233.js"></script> -->
 <script src="js/vue.min.js"></script>
 
@@ -2080,5 +2098,5 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 <script src="js/emojione.js"></script>
 <script src="js/lodash.js"></script>
 
-<script src="js/main.js?v=1209"></script>
-<script src="js/picker.js?v=1209"></script>
+<script src="js/main_readable.js?v=1209"></script>
+<script src="js/picker.js"></script>
