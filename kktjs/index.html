@@ -4,11 +4,12 @@
     <link rel="canonical" href="https://sumire.work/kktjs/">
     <meta charset="utf-8">
     <title>kktjs</title>
-
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=1211">
+    <link rel="stylesheet" href="css/style.css?v=1213">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <meta content="#aaa" name="theme-color">
+    <meta content="#000" name="theme-color">
     <!-- OGP -->
     <meta property="og:title" content="kktjs" />
     <meta property="og:type" content="website" />
@@ -195,10 +196,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
             <div class="content border">
               <div class="status-name flex start">
-                <div class="hidden">
+                <div class="hidden full">
                   <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                   <a v-else class="color-pk">{{issue.account.username}}</a>
-                  <small class="color-gr">@{{issue.account.acct}}</small>
+                  <small class="color-gr">‭@{{issue.account.acct}}</small>
                 </div>
                 <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
               </div>
@@ -241,10 +242,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
             <div class="content border">
               <div class="status-name flex start">
-                <div class="hidden">
+                <div class="hidden full">
                   <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
                   <a v-else class="color-pk">{{user.username}}</a>
-                  <small class="color-gr">@{{user.acct}}</small>
+                  <small class="color-gr">‭@{{user.acct}}</small>
                 </div>
                 <!-- <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span> -->
               </div>
@@ -292,7 +293,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content">
               <a v-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
               <a v-else class="color-pk">{{acct.username}}</a>
-              <small class="color-gr">@{{acct.acct}}</small>
+              <small class="color-gr">‭@{{acct.acct}}</small>
               <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
               <span>{{acct.statuses_count}} </span>Katsu!
               <div>
@@ -513,7 +514,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div>
                       <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <div class="status-name flex start">
                       <div class="hidden">
@@ -529,10 +530,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
-                        <small class="color-gr">@{{issue.reblog.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
                     </div>
@@ -587,10 +588,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
-                        <small class="color-gr">@{{issue.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                     </div>
@@ -672,10 +673,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
-                        <small class="color-gr">@{{issue.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                     </div>
@@ -754,7 +755,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div>
                       <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <div class="status-name flex start">
                       <div class="hidden">
@@ -772,10 +773,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
-                        <small class="color-gr">@{{issue.status.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.status.created_at | formatDate}}</span>
                     </div>
@@ -823,10 +824,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
-                        <small class="color-gr">@{{issue.status.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.status.created_at | formatDate}}</span>
                     </div>
@@ -849,10 +850,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <!-- <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div> -->
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
-                        <small class="color-gr">@{{issue.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.account.created_at | formatDate}}</span>
                     </div>
@@ -882,10 +883,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
-                    <div class="hidden">
+                    <div class="hidden full">
                       <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                   </div>
@@ -942,10 +943,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
-                    <div class="hidden">
+                    <div class="hidden full">
                       <a v-if="0 != detail.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(detail.account.display_name)"></a>
                       <a v-else class="color-pk">{{detail.account.username}}</a>
-                      <small class="color-gr">@{{detail.account.acct}}</small>
+                      <small class="color-gr">‭@{{detail.account.acct}}</small>
                     </div>
                     <small class="status-time color-gr"> {{detail.created_at | formatDateFull}}</small>
                   </div>
@@ -981,7 +982,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <img v-if="null != detail_card.image" :src="detail_card.image">
                     <div class="detail-content">
                       <span>{{detail_card.title}}</span><br>
-                      <small>{{detail_card.description}}</small><br>
+                      <!-- <small>{{detail_card.description}}</small><br> -->
                       <small>{{detail_card.url | formatDomain }}</small>
                     </div>
                   </a>
@@ -1031,10 +1032,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
-                    <div class="hidden">
+                    <div class="hidden full">
                       <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                   </div>
@@ -1104,7 +1105,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash" v-model="profile.name">
                   <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
                   <a v-else class="color-pk">{{acct.username}}</a>
-                  <small class="color-gr">@{{acct.acct}}</small>
+                  <small class="color-gr">‭@{{acct.acct}}</small>
                   <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash name_b" v-model="profile.name_b">
                   <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   <span>{{acct.statuses_count}} </span>Katsu!
@@ -1162,10 +1163,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
-                        <small class="color-gr">@{{issue.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                     </div>
@@ -1243,7 +1244,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div>
                       <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <div class="status-name flex start">
                       <div class="hidden">
@@ -1259,10 +1260,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
-                        <small class="color-gr">@{{issue.reblog.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
                     </div>
@@ -1317,10 +1318,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                   <div class="content border">
                     <div class="status-name flex start">
-                      <div class="hidden">
+                      <div class="hidden full">
                         <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
-                        <small class="color-gr">@{{issue.account.acct}}</small>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
                       <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                     </div>
@@ -1379,10 +1380,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
-                    <div class="hidden">
+                    <div class="hidden full">
                       <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
                       <a v-else class="color-pk">{{issue.username}}</a>
-                      <small class="color-gr">@{{issue.acct}}</small>
+                      <small class="color-gr">‭@{{issue.acct}}</small>
                       <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                     </div>
                     <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
@@ -1427,10 +1428,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
-                    <div class="hidden">
+                    <div class="hidden full">
                       <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
-                      <small class="color-gr">@{{issue.account.acct}}</small>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
                     <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                   </div>
@@ -1510,10 +1511,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
               <div class="content border">
                 <div class="status-name flex start">
-                  <div class="hidden">
+                  <div class="hidden full">
                     <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
                     <a v-else class="color-pk">{{issue.username}}</a>
-                    <small class="color-gr">@{{issue.acct}}</small>
+                    <small class="color-gr">‭@{{issue.acct}}</small>
                     <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   </div>
                   <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
@@ -1534,10 +1535,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
               <div class="content border">
                 <div class="status-name flex start">
-                  <div class="hidden">
+                  <div class="hidden full">
                     <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
                     <a v-else class="color-pk">{{issue.account.username}}</a>
-                    <small class="color-gr">@{{issue.account.acct}}</small>
+                    <small class="color-gr">‭@{{issue.account.acct}}</small>
                   </div>
                   <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
                 </div>
@@ -1623,10 +1624,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
               <div class="content border">
                 <div class="status-name flex start">
-                  <div class="hidden">
+                  <div class="hidden full">
                     <a v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name)"></a>
                     <a v-else class="color-pk">{{katsu.reply.account.username}}</a>
-                    <small class="color-gr">@{{katsu.reply.account.acct}}</small>
+                    <small class="color-gr">‭@{{katsu.reply.account.acct}}</small>
                   </div>
                   <span class="status-time color-gr"> {{katsu.reply.created_at | formatDate}}</span>
                 </div>
@@ -2083,20 +2084,28 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       </div>
 
     </div><!-- Vue Root -->
+    <script>
+      if('serviceWorker' in navigator && 'PushManager' in window){
+        navigator.serviceWorker.register('sw.js?v=1213', {scope: './'})
+        .then(function(reg){
+          reg.update();
+        })
+        .catch(function(error) {
+          console.error('Service Worker Error', error);
+        });
+      } else {
+        console.warn('Service Worker is not supported');
+      }
+    </script>
+    <!-- <script src="js/vue233.js"></script> -->
+    <script src="js/vue.min.js"></script>
+
+    <script src="js/addtohomescreen.min.js"></script>
+    <script src="js/inobounce.min.js"></script>
+    <script src="js/emojione.js"></script>
+    <script src="js/lodash.min.js"></script>
+
+    <script src="js/main.js?v=1213"></script>
+    <script src="js/picker.js"></script>
   </body>
 </html>
-
-<link rel="stylesheet" href="css/font-awesome.min.css">
-<link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto'>
-<link rel="stylesheet" href="css/addtohomescreen.css">
-
-<!-- <script src="js/vue233.js"></script> -->
-<script src="js/vue.min.js"></script>
-
-<script src="js/addtohomescreen.min.js"></script>
-<script src="js/inobounce.min.js"></script>
-<script src="js/emojione.js"></script>
-<script src="js/lodash.js"></script>
-
-<script src="js/main.js?v=1211"></script>
-<script src="js/picker.js"></script>

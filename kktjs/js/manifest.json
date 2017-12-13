@@ -1,5 +1,5 @@
 {
-  "name"              : "kktjs - Custom Themes for kirakiratter.com -",
+  "name"              : "kktjs",
   "short_name"        : "kktjs",
   "description"       : "キラキラッターをもっと素敵にするWebクライアント",
   "start_url"         : "/kktjs/",
@@ -10,7 +10,7 @@
   }],
   "orientation"       : "any",
   "background_color"  : "#aaa",
-  "theme_color"       : "#aaa",
+  "theme_color"       : "#000",
   "icons": [{
     "src"           : "/kktjs/img/touch/icon-128x128.png",
     "sizes"         : "128x128",

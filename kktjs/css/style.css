@@ -1,6 +1,20 @@
 @charset "utf-8";
 
 @font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'),local('Roboto-Regular'),
+       url(../fonts/roboto.ttf) format('truetype');
+}
+@font-face{
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../fonts/fontawesome-webfont.woff2') format('woff2'),
+       url('../fonts/fontawesome-webfont.woff') format('woff');
+}
+@font-face {
   font-family: "YuGothic M";
   src: local("Yu Gothic Medium");
 }
@@ -90,7 +104,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diadark .cbl{stroke:#282C37; fill:none;}
 .bm_diadark .cbp{stroke:#393F4F; fill:#282C37}
 
-.bm_diadark.color .scrollable, .bm_diadark.color .column-header{color: #9BAEC8;}
+.bm_diadark.color .scrollable, .bm_diadark.color .column-header, .bm_diadark.color .wrapper, .bm_diadark.color .confirm-wrapper{color: #9BAEC8;}
 .bm_diadark .color-pk, .bm_diadark a{color: #B7E1E8;}
 .bm_diadark .color-gr{color: #9BAEC8;}
 .bm_diadark .color-disable{color: #aaa;}
@@ -142,7 +156,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diawhite .cbl{stroke:#fefefc; fill:none;}
 .bm_diawhite .cbp{stroke:#ffffff; fill:#fefefc}
 
-.bm_diawhite.color .scrollable, .bm_diawhite.color .column-header{color: #363947;}
+.bm_diawhite.color .scrollable, .bm_diawhite.color .column-header, .bm_diawhite.color .wrapper, .bm_diawhite.color .confirm-wrapper{color: #363947;}
 .bm_diawhite .color-pk, .bm_diawhite a{color: #ed649c;}
 .bm_diawhite .color-gr{color: #737373;}
 .bm_diawhite .color-disable{color: #ccc;}
@@ -197,7 +211,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diaorange .cbl{stroke:#fcfaf5; fill:none;}
 .bm_diaorange .cbp{stroke:#ffc0a5; fill:#fcfaf5}
 
-.bm_diaorange.color .scrollable, .bm_diaorange.color .column-header{color: #6a4643;}
+.bm_diaorange.color .scrollable, .bm_diaorange.color .column-header, .bm_diaorange.color .wrapper, .bm_diaorange.color .confirm-wrapper{color: #6a4643;}
 .bm_diaorange .color-pk, .bm_diaorange a{color: #ed649c;} /**/
 .bm_diaorange .color-gr{color: #7b5d4d;} /**/
 .bm_diaorange .color-disable{color: #ccc;}
@@ -1085,20 +1099,21 @@ _::-webkit-full-page-media, _:future, :root *:not(textarea):not(input) { /* css 
 /* emoji-picker
 =========================== */
 #emoji-picker{
+  max-width: 100%;
   position: relative;
   top: 0 !important;
   left: 0 !important;
+  margin: 4px 2px;
   -webkit-box-shadow: 0 0 0 0 rgba(50, 50, 50, 1);
   -moz-box-shadow: 0 0 0 0 rgba(50, 50, 50, 1);
   box-shadow: 0 0 0 0 rgba(50, 50, 50, 1);
-  max-width: 100%;
+  border-radius: 0px;
 }
-.category-content{padding: 0;}
 .emoji-section.emoji-content{
   width: 100%;
-  height: calc(100vh - 295px);
+  height: calc(100vh - 265px);
 }
-.icon-tooltip, .emoji-footer, .emoji-title-overlay, #emoji-picker.TooltipBelow:after, #emoji-picker.TooltipAbove:after{
+.icon-tooltip, #emoji-picker>.emoji-header, .emoji-footer, .emoji-title-overlay, #emoji-picker.TooltipBelow:after, #emoji-picker.TooltipAbove:after{
   display:none;
 }
 span.emoji-outer.emoji-sizer{
@@ -1107,4 +1122,18 @@ span.emoji-outer.emoji-sizer{
 div#container{
   height: calc(100vh - 32px);
   overflow-y: hidden;
+}
+.select-category:hover:after, .select-category.active:after {
+    visibility: hidden;
+}
+.emoji-search > .search-wrapper {
+  border: none;
+}
+input.search-emojis{
+  border-radius: 0px;
+  border-bottom: 1px dashed #363947;
+}
+.search-section .fa.fa-search{
+  font-size: 18px;
+  margin-top: 6px;
 }
