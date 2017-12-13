@@ -1,6 +1,6 @@
-const url = 'http://127.0.0.1:8080';
+const url = 'https://sumire.work';
 
-const key = 'v1.2.3';
+const key = 'v1.2.3d';
 
 const cache_keys = [
   key
