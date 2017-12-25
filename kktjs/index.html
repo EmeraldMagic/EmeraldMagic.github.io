@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=1213">
+    <link rel="stylesheet" href="css/style.css?v=1225">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -26,7 +26,7 @@
     <link rel="icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="shortcut icon" href="/kktjs/img/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="apple-touch-icon" sizes="152x152" href="/kktjs/img/touch/apple-touch-icon.png">
-    <!-- PWA (alpha_test) -->
+    <!-- PWA -->
     <link rel="manifest" href="js/manifest.json">
   </head>
   <body>
@@ -412,6 +412,20 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span class="button full color-wh bgcolor-pk" v-on:click="showConfirm = false; actUnPin(issue, true);">OK</span>
               </div>
             </div>
+            <div v-else-if="'list' == issue.confirmtype">
+              <h3>アカウントをリストを追加しますか？</h3>
+                <div class="flex center">
+                <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
+                <span class="button full color-wh bgcolor-gr" v-on:click="showConfirm = false; actList(issue, true);">OK</span>
+              </div>
+            </div>
+            <div v-else-if="'unlist' == issue.confirmtype">
+              <h3>アカウントをリストから外しますか？</h3>
+              <div class="flex center">
+                <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
+                <span class="button full color-wh bgcolor-pk" v-on:click="showConfirm = false; actUnList(issue, true);">OK</span>
+              </div>
+            </div>
             <div v-else-if="'bookmark' == issue.confirmtype">
               <h3>しおりをはさみますか？</h3>
               <div class="flex center">
@@ -432,8 +446,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="scrollable">
             <h3>Columns</h3>
             <div >
-              Home<input type="checkbox" id="showhometl" v-model="showhometl">
-              Local<input type="checkbox" id="showlocaltl" v-model="showlocaltl">
+              Home({{home_type}})<input type="checkbox" id="showhometl" v-model="showhometl">
+              Local({{local_type}})<input type="checkbox" id="showlocaltl" v-model="showlocaltl">
             </div>
             <div>
               Notif<input type="checkbox" id="shownotif" v-model="shownotif">
@@ -441,12 +455,13 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               Acct({{acct_type}})<input type="checkbox" id="showacct" v-model="showacct">
               Hash<input type="checkbox" id="showmanagetl" v-model="showmanagetl">
               Debug<input type="checkbox" id="showDubug" v-model="showDebug">
-              (Local)<input type="checkbox" id="showDubugLocal" v-model="showDebugLocal">
             </div>
             <div>
               Setting<input type="checkbox" id="showSetting" v-model="showSetting">
               Search<input type="checkbox" id="showSearch" v-model="showSearch">
               Form<input type="checkbox" id="showForm" v-model="showForm">
+              (via)<input type="checkbox" id="showDubugLocal" v-model="showDebugLocal">
+              (from)<input type="checkbox" id="showDubugGlobal" v-model="showDebugGlobal">
             </div>
             <h3>Options</h3>
             <div>
@@ -461,11 +476,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <!--<button disabled class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Enable Push Messaging</button> -->
             <!-- <input type="text" v-model="repository" readonly>
             <button v-on:click="reopenWsHome">Home Stream ReConn</button>
-            <button v-on:click="pingWsHome">Ping Home Stream Socket</button>
             <button v-on:click="reopenWsLocal">Local Stream ReConn</button>
-            <button v-on:click="pingWsLocal">Ping Local Stream Socket</button> -->
-            <!-- user.id(loginuser) -->
-            <!-- <input type="text" v-model="user.id" readonly> -->
+            <input type="text" v-model="user.id" readonly>
+            user.id<br>
             <!-- <input type="text" v-model="searchText"> -->
             <!-- <input type="text" v-model="notif_id"> -->
             <input type="text" v-model="detail_targetid">
@@ -498,7 +511,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <input type="text" v-model="local_id_bookmark"> -->
           </div>
         </div>
-
         <!-- HOME -->
         <div :class="[{ invisible: !showhometl }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
           <div class="column-header"><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})</div>
@@ -655,18 +667,28 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
         <!-- LOCAL -->
         <div :class="[{ invisible: !showlocaltl }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
-          <div class="column-header"><i class="fa fa-fw fa-users"></i>Local (Stream: {{connLocal}})</div>
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i v-if="'Global' == local_type" class="fa fa-fw fa-globe"></i>
+                <i v-else class="fa fa-fw fa-users"></i>
+                {{local_type}} (Stream: {{connLocal}})
+              </div>
+              <span class="column-opt"><i v-on:click="toggleLocalOpt()" class="fa fa-fw fa-ellipsis-h"></i></span>
+            </div>
+            <div v-show="local_opt" class="flex">
+              <div v-if="fetch_lock.localws || fetch_lock.local" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Local</div>
+              <div v-else v-on:click="reopenWsLocal('Local');local_opt = false" class="tl-link full color-wh" :class="['Local' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-users"></i>Local</div>
+              <div v-if="fetch_lock.localws || fetch_lock.local" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-globe"></i>Global</div>
+              <div v-else v-on:click="reopenWsLocal('Global');local_opt = false" class="tl-link full color-wh" :class="['Global' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-globe"></i>Global</div>
+            </div>
+          </div>
           <!-- <div :class="{'border-dash-pk':! local_scr && 0 != local_unread}"></div> -->
           <div class="scrollable" id="local" v-on:scroll="handleScrollLocal">
             <div v-if="hasLocal" class="status-list">
               <div v-for="(issue, index) in locals" v-if="local_unread <= index" class="status-wrapper" :class="issue.visibility">
                 <div v-if="local_id_bookmark == issue.id" class="status-header flex start bgcolor-bookmark bookmark">
                   <i v-on:click="local_id_bookmark = ''" class="fa fa-fw fa-paperclip big"></i>
-                </div>
-                <div v-if="showDebugLocal" class="status-header flex end">
-                  <small v-if="issue.application">
-                    via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}}</a>
-                  </small>
                 </div>
                 <div class="status flex">
                   <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
@@ -724,6 +746,16 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
                   </div>
+                </div>
+                <div class="status-header flex end">
+                  <small v-if="issue.application && showDebugLocal">
+                    via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}} </a>
+                  </small>
+                </div>
+                <div class="status-header flex end">
+                  <small v-if="issue.account.acct.indexOf('@') != -1">
+                    from <a target="_blank" rel="noopener noreferrer">{{issue.account.acct.split('@')[1]}}</a>
+                  </small>
                 </div>
               </div>
             </div>
@@ -1134,7 +1166,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <span v-else-if="acct_relation[0].blocking" v-on:click="actUnBlock(acct)" class="button mini color-wh bgcolor-pk">UnBlock</span>
                     <span v-else v-on:click="actBlock(acct)" class="button mini color-wh bgcolor">Block</span>
                   </div>
-                  <div v-if="user.id == acct_targetid " class="flex end action-bar">
+                  <div v-if="user.id == acct_targetid" class="flex end action-bar">
                     <span></span>
                     <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="!showacctProfile" v-on:click="editProfile" class="button mini color-wh bgcolor">Edit</span>
@@ -1502,7 +1534,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
             <div v-if="searchs.hashtags && 0 != searchs.hashtags.length"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
             <div class="status flex wrap">
-              <a v-for="issue in searchs.hashtags" href="javascript:void(0)" v-on:click="showSearch = false; search_tag = issue; runHash();" class="search-result">#{{issue}}</a>
+              <span v-for="issue in searchs.hashtags" v-on:click="showSearch = false; search_tag = issue; runHash();" class="list-link border-lite full color-pk bgcolor-wh">#{{issue}}</span>
             </div>
 
             <div v-if="searchs.accounts && 0 != searchs.accounts.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
@@ -1662,6 +1694,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{katsu.reply.id}}</small>
                   </div>
                   <small v-if="'public' != katsu.reply.visibility">{{katsu.reply.visibility}}</small>
+                  <i v-on:click="addContent(katsu.reply.url); katsu['in_reply_to_id'] = ''; katsu.reply = [];" class="fa fa-fw fa-arrow-circle-down"></i>
                   <i v-on:click="katsu['in_reply_to_id'] = ''; katsu.reply = [];" class="fa fa-fw fa-times"></i>
                 </div>
               </div>
@@ -1807,10 +1840,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="flex end action-bar"><span>Primary Timeline: {{ optPtl }}</span></div>
               <div class="flex end action-bar">
                 <span class="invisible"></span>
-                <!-- <input type="radio" class="invisible" id="tthree" value="3" v-model="optPtl"> -->
-                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optPtl }" for="tone" v-on:click="optPtl = 1;runCustom();">local</label>
-                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo" v-on:click="optPtl = 2;runCustom();">home</label>
-                <label class="button color-wh bgcolor-disable" for="">federated</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optPtl }" for="tone" v-on:click="optPtl = 1;runCustom();">Local</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo" v-on:click="optPtl = 2;runCustom();">Home</label>
+                <label class="button color-wh bgcolor-disable" for="">Global</label>
               </div>
 
               <div class="flex end action-bar">
@@ -2003,20 +2035,19 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 ヘッダに お気に入り、Webアプリ設定アイコンを追加<br>
                 デスクトップ通知音の切替機能(PC)<br>
                 通信エラーメッセージ<br>
+                Local/連合 TLの切り替え機能<br>
               </small><br>
               <h3>アプリにまだない機能(v1.2)</h3>
               <small>
                 [mst2.0.0]カスタム絵文字の表示/入力<br>
                 Home/Local/通知 のカツ!フィルタ<br>
                 タグ TLのカツ!ストリーミング取得/削除<br>
-                連合 TLのカツ!一覧取得<br>
                 [mst2.1.0]リストの一覧を取得<br>
                 [mst2.1.0]リスト TLのカツ!ストリーミング取得/削除<br>
                 [mst2.1.0]リスト TLのカツ!一覧取得<br>
                 [mst2.1.0]リスト TLのカツ!を遡って取得<br>
                 [mst2.1.0]リストの追加<br>
                 [mst2.1.0]リストに登録済みのアカウント一覧 取得<br>
-                [mst2.1.0]アカウントを リストに登録/リストから解除<br>
                 photo/video/richのOGP展開<br>
                 シェア機能(Web Share API対応)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
@@ -2026,16 +2057,18 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 [mst v?]検索した結果(カツの一覧) 取得<br>
                 [mst1.6.0]ピン留めカツ! の取得<br>
                 [mst1.6.0]ピン留め の登録と解除<br>
+                [mst2.1.0]アカウントを リストに登録/リストから解除<br>
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
                 [mst2.1.0]リストTL専用カラム<br>
-                Push通知(Android)<br>
+                投票と集計機能<br>
+                Push通知(Service Worker)<br>
                 カツ!を 翻訳<br>
                 通知 TLのインスタンスフィルター<br>
                 HOME/Local TLの特定ワードを含むカツ!をNSFWで包む機能<br>
                 カツ!した当時のLocal TLへタイムスリップする機能<br>
-                Youtube動画の展開<br>
+                OGP対応サイトの展開(クライアント)<br>
               </small>
               <h3>スマートフォンアプリで追加されるかもしれない拡張機能</h3>
               <small>
@@ -2092,17 +2125,19 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=1213"></script>
+    <script src="js/main.js?v=1225"></script>
     <script src="js/picker.js"></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=1213', {scope: './'})
-        .then(function(reg){
-          reg.update();
-        })
-        .catch(function(error) {
-          console.error('Service Worker Error', error);
+        navigator.serviceWorker.register('sw.js', {scope: './'}).then(reg => {
+
+          reg.addEventListener('updatefound', () => {
+            reg.update();
+          });
+        });
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log("update ok");
         });
       } else {
         console.warn('Service Worker is not supported');

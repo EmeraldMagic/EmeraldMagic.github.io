@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 
 @font-face {
   font-family: 'Roboto';
@@ -388,7 +388,7 @@ div.app-footer{
   transform: translate3d(0, 0, 0);
 }
 div.column-header{
-  padding: 0 12px;
+  padding: 2px 12px;
 }
 div.column-footer{
   bottom: -48px;
@@ -552,6 +552,10 @@ div.column-footer{
   background: rgba(212,220,171,0.5);
 }
 
+.column-opt{
+  margin:0 10px;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -563,6 +567,13 @@ div.column-footer{
 ::-webkit-scrollbar-track {
   border-radius: 50px;
   background: rgba(0,0,0,0.1);
+}
+
+.tl-link{
+  padding: 4px 8px;
+  margin: 4px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /*  Katsu (Status)
@@ -1021,8 +1032,11 @@ small.button {
   -webkit-appearance:none;
 }
 
-.search-result{
-  padding:4px 8px;
+.list-link{
+  padding: 4px 8px;
+  margin: 4px 16px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 /*  Media Modal
 --------------------------- */

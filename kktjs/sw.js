@@ -1,6 +1,7 @@
-const url = 'https://sumire.work';
+const url = 'http://localhost:8080';
+// const url = 'https://sumire.work';
 
-const key = 'v1.2.3d';
+const key = 'v1.2.4_29';
 
 const cache_keys = [
   key
@@ -31,11 +32,13 @@ const file = [
   url + '/kktjs/js/lodash.min.js',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/vue.min.js',
-  url + '/kktjs/js/manifest.json',
-  url + '/kktjs/sw.js'
+  url + '/kktjs/js/picker.js',
+  url + '/kktjs/js/manifest.json'
 ];
 
 self.addEventListener('install', event => {
+  // console.log("install");
+  self.skipWaiting();
   event.waitUntil(
     caches.open(key).then(cache => {
       return Promise.all(
@@ -50,6 +53,8 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
+  // console.log("activate");
+  self.clients.claim();
   event.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(
