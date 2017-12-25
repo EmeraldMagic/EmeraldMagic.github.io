@@ -1,16 +1,16 @@
 {
-  "name"              : "kktjs",
-  "short_name"        : "kktjs",
-  "description"       : "キラキラッターをもっと素敵にするWebクライアント",
-  "start_url"         : "/kktjs/",
-  "display"           : "standalone",
+  "lang"            : "ja",
+  "name"            : "kktjs",
+  "short_name"      : "kktjs",
+  "description"     : "キラキラッターをもっと素敵にするWebクライアント",
+  "start_url"       : "/kktjs/",
+  "display"         : "standalone",
+  "background_color": "#aaa",
+  "theme_color"     : "#000",
   "related_applications": [{
-    "platform": "web",
-    "url": "https://sumire.work/kktjs/"
+    "platform"      : "web",
+    "url"           : "https://sumire.work/kktjs/"
   }],
-  "orientation"       : "any",
-  "background_color"  : "#aaa",
-  "theme_color"       : "#000",
   "icons": [{
     "src"           : "/kktjs/img/touch/icon-128x128.png",
     "sizes"         : "128x128",
