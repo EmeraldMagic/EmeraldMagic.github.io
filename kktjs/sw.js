@@ -1,7 +1,7 @@
-const url = 'http://localhost:8080';
-// const url = 'https://sumire.work';
+// const url = 'http://localhost:8080';
+const url = 'https://sumire.work';
 
-const key = 'v1.2.4_29';
+const key = 'v1.2.4_30';
 
 const cache_keys = [
   key
