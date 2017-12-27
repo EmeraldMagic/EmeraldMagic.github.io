@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=1225">
+    <link rel="stylesheet" href="css/style.css?v=1227">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -507,6 +507,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             home_posy: {{home_posy}}/{{home_posy_b}}<br>
             local_unread: {{local_unread}}/ {{locals.length}},
             local_posy: {{local_posy}}/{{local_posy_b}}<br>
+            notif_posy: {{notif_posy}}/{{notif_posy_b}}<br>
   <!--           katsu_id(bookmark)
             <input type="text" v-model="local_id_bookmark"> -->
           </div>
@@ -772,10 +773,27 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
         <!-- NOTIFICATION -->
         <div v-if="shownotif" id="notif" class="column" :class="{ full: optColumnWide && '1' == optColumns }">
-          <div class="column-header"><i class="fa fa-fw fa-bell"></i>Notification (Stream: {{connHome}})</div>
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i class="fa fa-fw fa-bell"></i>
+                <span v-if="notif_type != ''">{{notif_type}}</span> Notification (Stream: {{connHome}})
+              </div>
+              <!-- <span class="column-opt"><i v-on:click="toggleNotifOpt()" class="fa fa-fw fa-ellipsis-h"></i></span> -->
+            </div>
+            <div v-show="notif_opt" class="flex">
+              <div v-on:click="notif_type = '';notif_opt = false" class="tl-link full color-wh" :class="['' == notif_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-users"></i>Cancel</div>
+            </div>
+              <div v-show="notif_opt" class="flex">
+              <div v-on:click="notif_type = 'Mention';" class="tl-link full color-wh" :class="['Mention' == notif_type ? 'bgcolor-pk' : 'bgcolor']"></i>Mention</div>
+              <div v-on:click="notif_type = 'Favourite';" class="tl-link full color-wh" :class="['Favourite' == notif_type ? 'bgcolor-pk' : 'bgcolor']"></i>Fav</div>
+              <div v-on:click="notif_type = 'Reblog';" class="tl-link full color-wh" :class="['Reblog' == notif_type ? 'bgcolor-pk' : 'bgcolor']"></i>Reblog</div>
+              <div v-on:click="notif_type = 'Follow';" class="tl-link full color-wh" :class="['Follow' == notif_type ? 'bgcolor-pk' : 'bgcolor']"></i>Follow</div>
+            </div>
+          </div>
           <div class="scrollable" v-on:scroll="handleScrollNotif">
             <div v-if="hasNotif" class="status-list">
-              <div v-for="issue in notifs"  v-if="!(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) " class="status-wrapper">
+              <div v-for="issue in notifs"  v-if="!(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) && notifFilter(issue)" class="status-wrapper">
                 <div class="status-header flex start">
                   <i v-if="'mention' == issue.type" class="fa fa-fw fa-reply"></i>
                   <i v-else-if="'reblog' == issue.type" class="fa fa-fw fa-retweet color-on"></i>
@@ -2125,7 +2143,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=1226"></script>
+    <script src="js/main.js?v=1227"></script>
     <script src="js/picker.js"></script>
 
     <script>

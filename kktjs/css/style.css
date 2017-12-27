@@ -585,7 +585,10 @@ div.column-footer{
   padding: 4px 0 8px;
 }
 .status-header{
-  margin: 2px 16px;
+  margin: 0 16px;
+}
+.status-header small{
+  margin: 2px 0;
 }
 .avatar {
   margin: 4px 12px;
