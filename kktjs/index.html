@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0106">
+    <link rel="stylesheet" href="css/style.css?v=0127">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -112,7 +112,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       <div class="app-header control flex">
         <div class="logo-wrapper color-wh">
-          <div class="svgkkt logo"><small>{{app_ver_top}}</small></div>
+          <div v-if="ua != 'pc'" class="svgkkt logo" v-on:click="popLink"><small>{{app_ver_top}}</small></div>
+          <div v-else class="svgkkt logo" v-on:click="toggleLinkLock"><small>{{app_ver_top}}</small></div>
         </div>
         <div class="icon-wrapper flex">
           <i class="fa fa-fw fa-home" v-on:click="runHome"></i>
@@ -120,8 +121,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <!-- <i class="fa fa-fw fa-globe color-disable"></i> -->
           <i class="fa fa-fw fa-bell" v-on:click="runBell"></i>
           <!-- <i class="fa fa-fw fa-at color-disable"></i> -->
-          <i class="fa fa-fw fa-star" v-on:click="runAcctFav"></i>
-          <i class="fa fa-fw fa-list" v-on:click="popSetting"></i>
+          <i class="fa fa-fw fa-star" v-on:click="runUser('fav')"></i>
+          <i class="fa fa-fw fa-list color-disable" v-on:click=""></i>
           <i class="fa fa-fw fa-search" v-on:click="popSearch"></i>
           <i class="fa fa-fw fa-pencil-square-o" v-on:click="popForm"></i>
         </div>
@@ -463,11 +464,11 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               (via)<input type="checkbox" id="showDubugLocal" v-model="showDebugLocal">
               (from)<input type="checkbox" id="showDubugGlobal" v-model="showDebugGlobal">
             </div>
-            <h3>Options</h3>
+<!--             <h3>Options</h3>
             <div>
               Mobile<input type="checkbox" id="optMode" v-model="optMode" disabled>
               AllNSFW(TL) <input type="checkbox" id="optAllNsfw" v-model="optAllNsfw">
-            </div>
+            </div> -->
             <h3>Other Debug</h3>
             <button v-on:click="playSound('sound')">default boop</button>
             <button v-on:click="playSound('soundex')">excelent boop</button>
@@ -507,14 +508,231 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             home_posy: {{home_posy}}/{{home_posy_b}}<br>
             local_unread: {{local_unread}}/ {{locals.length}},
             local_posy: {{local_posy}}/{{local_posy_b}}<br>
+            notif_unread: {{notif_unread}}/ {{notifs.length}},
             notif_posy: {{notif_posy}}/{{notif_posy_b}}<br>
   <!--           katsu_id(bookmark)
             <input type="text" v-model="local_id_bookmark"> -->
+            katsu_id(bookmark_Notif)
+            <input type="text" v-model="notif_id_bookmark">
           </div>
         </div>
+        <!-- C-Links -->
+        <div v-if="showLinkLock" class="column mini">
+          <div class="column-header"><i class="fa fa-fw fa-comment"></i>Streams</div>
+          <div class="scrollable">
+            <div class="link-list">
+
+  <!--             <div><i class="fa fa-fw fa-hashtag"></i>Cache</div>
+              <div class="status flex wrap">
+                <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Katsu Detail</span>
+                <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Hashtag</span>
+                <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Account</span>
+              </div> -->
+
+              <!-- <div class="link-header"><i class="fa fa-fw fa-hashtag"></i>Column</div> -->
+              <div class="status flex wrap">
+                <span v-on:click="runHome" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-home"></i>Home</div>
+                </span>
+                <span v-if="fetch_lock.localws || fetch_lock.local" class="list-link border-lite full color bgcolor-disable flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-users"></i>Local</div>
+                </span>
+                <span v-else v-on:click="runLocal();reopenWsLocal('Local');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-users"></i>Local</div>
+                </span>
+                <span v-if="fetch_lock.localws || fetch_lock.local" class="list-link border-lite full color bgcolor-disable flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
+                </span>
+                <span v-else v-on:click="runLocal();reopenWsLocal('Global');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
+                </span>
+                <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
+                  <small>未</small>
+                </span>
+                <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-hashtag"></i>Hashtags</div>
+                  <small>未</small>
+                </span>
+                <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-gamepad"></i>Discord Channels</div>
+                  <small>未</small>
+                </span>
+              </div>
+
+<!--               <div class="link-header"><i class="fa fa-fw fa-cog"></i>Setting</div>
+              <div class="status flex wrap"> -->
+<!--                 <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-cog"></i>AppSetting</div>
+                </span> -->
+<!--                 <span v-on:click="openProfile" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-external-link"></i>Open Profile</div>
+                </span> -->
+<!--                 <span v-on:click="runLogout" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-sign-out"></i>Logout</div>
+                </span> -->
+              <!-- </div> -->
+
+              <div class="link-header"><i class="fa fa-fw fa-search"></i>Search</div>
+              <div class="search-container flex center">
+                <input type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
+                <!-- <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span> -->
+              </div>
+            </div>
+            <div class="user-list">
+              <div v-if="null != user.id" class="status flex">
+                <img :src="checkAvatar(user.avatar_static)" class="avatar border short" v-on:click="runUser('katsu')">
+                <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                <div class="content border short">
+                  <div class="status-name flex start">
+                    <div class="hidden full">
+                      <small class="color-gr">‭@{{user.acct}}</small>
+                      <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
+                    </div>
+                    <span class="status-time color-gr"> </span>
+                  </div>
+                  <div class="status__content">
+                  </div>
+                  <div class="action-bar flex start hidden">
+                      <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
+                      <a v-else class="color-pk">{{user.username}}</a>
+                  </div>
+                </div>
+              </div>
+              <div class="status flex wrap">
+                <span v-on:click="popForm" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-pencil"></i>Katsu!</div>
+                </span>
+  <!--               <span v-on:click="runUser('follow')" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-user-circle-o"></i>Follow</div>
+                  <small>{{user.following_count}}</small>
+                </span>
+                <span v-on:click="runUser('follower')" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-user-circle-o"></i>Follower</div>
+                  <small>{{user.followers_count}}</small>
+                </span>
+                <span v-on:click="runUser('fav')" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-star"></i>Favourite</div>
+                </span> -->
+                <span v-on:click="runBell();notif_type = '';" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-bell"></i>Notification</div>
+                  <small v-if="0 != notif_unread">{{notif_unread}}</small>
+                </span>
+                <span v-on:click="runBell();notif_type = 'Mention'; notif_opt = true;" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-at"></i>Mention</div>
+                  <small v-if="0 != notif_unread_m">{{notif_unread_m}}</small>
+                </span>
+                <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-cog"></i>Setting</div>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex column-footer">
+            <i class="fa fa-fw fa-bars" v-on:click="toggleLinkLock"></i>
+          </div>
+        </div>
+        <!-- C-Links_d -->
+        <div v-if="ua == 'pc' && !showLinkLock" class="column nano">
+          <div class="flex column-footer inside">
+            <i class="fa fa-fw fa-bars" v-on:click="toggleLinkLock"></i>
+          </div>
+        </div>
+        <!-- Discord -->
+        <div :class="[{ invisible: !showhometl || (showhometl && 'Home' == home_type) }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i class="fa fa-fw fa-gamepad"></i>Discord (Stream: {{connDiscord}})
+              </div>
+              <span class="column-opt"><i v-on:click="toggleHomeOpt()" class="fa fa-fw fa-ellipsis-h"></i></span>
+            </div>
+            <div v-show="home_opt" class="flex">
+              <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Back to Home</div>
+              <div v-else v-on:click="home_opt = false; home_type = 'Home';" class="tl-link full color-wh" :class="['Home' == home_type ? 'bgcolor-pk' : 'bgcolor']">Back to Home</div>
+<!--               <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-globe"></i>Other</div>
+              <div v-else v-on:click="home_opt = false; home_type = 'Other'" class="tl-link full color-wh" :class="['Other' == home_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-globe"></i>Other</div> -->
+            </div>
+          </div>
+          <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
+          <div class="scrollable" id="discord" v-on:scroll="handleScrollDiscord">
+            <div v-if="hasDiscord" class="status-list">
+              <div v-for="(issue, index) in discords" v-if="discord_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <!-- NORMAL -->
+                <div class="status flex">
+                  <img :src="checkAvatarDiscord(issue.author)" class="avatar border">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a class="color-pk">{{issue.author.username}}</a>
+                        <small class="color-gr">‭#{{issue.author.discriminator}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.timestamp | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <div>
+                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                    </div>
+                    <!-- <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
+                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                      </a>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper control">
+                      <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
+                    </div>
+                    <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
+                      <h4 v-if="issue.sensitive">Sensitive contents</h4>
+                      <h4 v-else>Media contents</h4>
+                      <small>Click to view</small>
+                    </div>
+                    <div class="action-bar flex end">
+                      <div class="hidden">
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                      </div>
+                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
+                      <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                      <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <div class="flex">loading...</div>
+            </div>
+          </div>
+        </div>
+
         <!-- HOME -->
-        <div :class="[{ invisible: !showhometl }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
-          <div class="column-header"><i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})</div>
+        <div :class="[{ invisible: !showhometl || (showhometl && 'Home' != home_type) }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i class="fa fa-fw fa-home"></i>Home (Stream: {{connHome}})
+              </div>
+              <!-- <span class="column-opt"><i v-on:click="toggleHomeOpt()" class="fa fa-fw fa-ellipsis-h"></i></span> -->
+            </div>
+            <div v-show="home_opt && false" class="flex">
+              <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Home</div>
+              <div v-else v-on:click="home_opt = false" class="tl-link full color-wh" :class="['Home' == home_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-users"></i>Home</div>
+              <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-globe"></i>Other</div>
+              <div v-else v-on:click="home_opt = false; home_type = 'Other'" class="tl-link full color-wh" :class="['Other' == home_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-globe"></i>Other</div>
+            </div>
+          </div>
           <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
           <div class="scrollable" id="home" v-on:scroll="handleScrollHome">
             <div v-if="hasHome" class="status-list">
@@ -1187,7 +1405,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <span v-else v-on:click="actBlock(acct)" class="button mini color-wh bgcolor">Block</span>
                   </div>
                   <div v-if="user.id == acct_targetid" class="flex end action-bar">
-                    <span></span>
+                    <span v-on:click="openProfile" class="button mini color-wh bgcolor-pk">Open</span>
+                    <!-- <span v-on:click="runLogout" class="button mini color-wh bgcolor-pk">Logout</span> -->
                     <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="!showacctProfile" v-on:click="editProfile" class="button mini color-wh bgcolor">Edit</span>
                     <span v-else-if="showacctProfile" v-on:click="showacctProfile = !showacctProfile; profile = [];" class="button mini color-wh bgcolor">Cancel</span>
@@ -1550,6 +1769,119 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       </div>
       <div class="flex">
+        <!-- Links -->
+        <div v-if="showLink" class="column mini leftswipe scrollable bgcolor-wh fixed">
+          <div class="link-list">
+
+<!--             <div><i class="fa fa-fw fa-hashtag"></i>Cache</div>
+            <div class="status flex wrap">
+              <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Katsu Detail</span>
+              <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Hashtag</span>
+              <span v-on:click="" class="list-link border-lite full color-pk bgcolor-wh">Account</span>
+            </div> -->
+
+            <!-- <div class="link-header"><i class="fa fa-fw fa-hashtag"></i>Column</div> -->
+            <div class="status flex wrap">
+              <span v-on:click="runHome" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-home"></i>Home</div>
+              </span>
+              <span v-if="fetch_lock.localws || fetch_lock.local" class="list-link border-lite full color bgcolor-disable flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-users"></i>Local</div>
+              </span>
+              <span v-else v-on:click="runLocal();reopenWsLocal('Local');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-users"></i>Local</div>
+              </span>
+              <span v-if="fetch_lock.localws || fetch_lock.local" class="list-link border-lite full color bgcolor-disable flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
+              </span>
+              <span v-else v-on:click="runLocal();reopenWsLocal('Global');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
+              </span>
+              <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
+                <small>未</small>
+              </span>
+              <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-hashtag"></i>Hashtags</div>
+                <small>未</small>
+              </span>
+              <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-gamepad"></i>Discord Channels</div>
+                <small>未</small>
+              </span>
+            </div>
+
+<!--             <div class="link-header"><i class="fa fa-fw fa-cog"></i>Setting</div>
+            <div class="status flex wrap"> -->
+<!--               <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-cog"></i>App Setting</div>
+              </span> -->
+<!--               <span v-on:click="openProfile" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-external-link"></i>Open Profile</div>
+              </span> -->
+<!--               <span v-on:click="runLogout" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-sign-out"></i>Logout</div>
+              </span> -->
+            <!-- </div> -->
+
+            <div class="link-header"><i class="fa fa-fw fa-search"></i>Search</div>
+            <div class="search-container flex center">
+              <input type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
+              <!-- <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span> -->
+            </div>
+          </div>
+        </div>
+
+        <div v-if="showLink" class="column mini leftswipe user scrollable bgcolor-wh fixed">
+          <div class="user-list">
+            <div v-if="null != user.id" class="status flex">
+              <img :src="checkAvatar(user.avatar_static)" class="avatar border short" v-on:click="runUser('katsu')">
+              <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+              <div class="content border short">
+                <div class="status-name flex start">
+                  <div class="hidden full">
+                    <small class="color-gr">‭@{{user.acct}}</small>
+                    <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
+                  </div>
+                  <span class="status-time color-gr"> </span>
+                </div>
+                <div class="status__content">
+                </div>
+                <div class="action-bar flex start hidden">
+                    <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
+                    <a v-else class="color-pk">{{user.username}}</a>
+                </div>
+              </div>
+            </div>
+            <div class="status flex wrap">
+              <span v-on:click="popForm" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-pencil"></i>Katsu!</div>
+              </span>
+<!--               <span v-on:click="runUser('follow')" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-user-circle-o"></i>Follow</div>
+                <small>{{user.following_count}}</small>
+              </span>
+              <span v-on:click="runUser('follower')" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-user-circle-o"></i>Follower</div>
+                <small>{{user.followers_count}}</small>
+              </span>
+              <span v-on:click="runUser('fav')" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-star"></i>Favourite</div>
+              </span> -->
+              <span v-on:click="runBell();notif_type = '';" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-bell"></i>Notification</div>
+                <small v-if="0 != notif_unread">{{notif_unread}}</small>
+              </span>
+              <span v-on:click="runBell();notif_type = 'Mention'; notif_opt = true;" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-at"></i>Mention</div>
+                <small v-if="0 != notif_unread_m">{{notif_unread_m}}</small>
+              </span>
+              <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-cog"></i>Setting</div>
+              </span>
+            </div>
+          </div>
+        </div>
         <!-- SEARCH -->
         <div v-if="showSearch" class="column scrollable bgcolor-wh fixed">
           <div class="status-list">
@@ -1838,13 +2170,13 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="action-bar form-option border-dash">
                 <div class="flex end action-bar">
                   <span>🔥 お知らせ 🔥</span>
-                  <small>20170913(v1.1.5)</small>
+                  <small>20180126(v1.2.7)</small>
                 </div>
-                <span>今日でキラキラッターが始まって5か月になるね。</span><br>
-                <span>私は、開発のお仕事が忙しい時期に入っちゃって</span><br>
-                <span>アプリがあまり進められない状態...かな</span><br>
-                <span>しばらくは、時間があるときに少しずつ</span><br>
-                <span>進めてていくね。</span><br>
+                <span>新しい機能に向けてメニューと操作を追加したよ</span><br>
+                <span>設定アイコンは、リスト機能にする予定だから、</span><br>
+                <span>新しいアイコンや、スワイプで呼び出してね。</span><br>
+                <span>実況カラムみたいな大きな更新が多いから、</span><br>
+                <span>慎重に進めてていくね。</span><br>
               </div>
 
             </div>
@@ -1981,18 +2313,21 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
 
               <div class="flex end action-bar">
+                <label v-on:click="popSetting" class="button full main color-wh bgcolor">Close</label>
                 <label v-on:click="runSetting" class="button full main color-wh bgcolor-gr">Save</label>
               </div>
 
+<!--               <h3><i class="fa fa-fw fa-bell"></i> Manage: </h3>
+
               <div class="flex end action-bar">
-                <label v-on:click="runReset" class="button full color-wh bgcolor">Reset</label>
-                <label v-on:click="runClear" class="button full color-wh bgcolor-pk">Setting Delete</label>
-              </div>
+                <label v-on:click="runReset" class="button full color-wh bgcolor">Reset Setting</label>
+                <label v-on:click="runClear" class="button full color-wh bgcolor-pk">Delete Setting</label>
+              </div> -->
 
               <h3 class="setting-header">📛📛📛 Account Setting 📛📛📛</h3>
               <div class="flex end action-bar">
                 <span>User Profile</span>
-                <label v-on:click="openProfile" class="button color-wh bgcolor-gr">Open kkt</label>
+                <label v-on:click="openProfile" class="button color-wh bgcolor-gr">Open</label>
               </div>
 
               <div class="flex end action-bar ">
@@ -2012,7 +2347,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h4>バグは <span v-on:click="search_tag='kktjs';runHash()" class="color-pk">#kktjs</span> を付けてカツ!してくれると嬉しいかな。</h4>
               <h4>私(<span v-on:click="runAcct(17)" class="color-pk">@sumire</span>)に直接送ってくれても大丈夫だよ。</h4>
 
-              <h3 class="setting-header">🍨🍨🍨 アイコンについて 🍨🍨🍨</h3>
+              <h3 class="setting-header">🍨🍨🍨アイコンについて🍨🍨🍨</h3>
               <img class="appicon" src="/kktjs/img/touch/apple-touch-icon.png" alt=""><br>
               <small>
                 kktjs WebApp Icon is a derivative of <a href="https://github.com/southrop/kirakiratter_design/">"Kirakiratter Design Logo"</a> by ロップ / <a href="https://github.com/southrop/kirakiratter_design/blob/master/logo/LICENSE">CC BY 4.0</a>. <br>
@@ -2114,7 +2449,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       <info v-if="hasInfo">
         <span slot="header">
-          <div v-on:click="result_run = '';result_lock = false;playSound('sound'+optThemeSound);" class="flex info-wrapper color-wh bgcolor">
+          <div v-on:click="runToast(); result_run = '';result_lock = false;playSound('sound'+optThemeSound);" class="flex info-wrapper color-wh bgcolor">
             <span class="hidden full" v-html="$options.filters.formatEmoji(result_run)"></span>
             <i class="fa fa-fw fa-times"></i>
           </div>
@@ -2135,6 +2470,15 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <button id="sound" class="invisible"></button>
         <button id="soundex" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
+      </div>
+
+      <div v-if="ua != 'pc'" class="app-footer flex control">
+        <div class="margin"></div>
+        <div class="icon-wrapper flex">
+          <i class="fa fa-fw fa-bars" v-on:click="popLink"></i>
+          <i class="fa fa-fw invisible"></i>
+        </div>
+        <div class="margin"></div>
       </div>
 
       <div class="bgapp">
@@ -2158,7 +2502,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0107"></script>
+    <script src="js/main.js?v=0127"></script>
     <script src="js/picker.js"></script>
 
     <script>
