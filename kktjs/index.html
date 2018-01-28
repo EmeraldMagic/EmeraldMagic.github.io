@@ -449,6 +449,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div >
               Home({{home_type}})<input type="checkbox" id="showhometl" v-model="showhometl">
               Local({{local_type}})<input type="checkbox" id="showlocaltl" v-model="showlocaltl">
+              Multl({{multi_type}})<input type="checkbox" id="showmultitl" v-model="showmultitl">
             </div>
             <div>
               Notif<input type="checkbox" id="shownotif" v-model="shownotif">
@@ -512,8 +513,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             notif_posy: {{notif_posy}}/{{notif_posy_b}}<br>
   <!--           katsu_id(bookmark)
             <input type="text" v-model="local_id_bookmark"> -->
-            katsu_id(bookmark_Notif)
-            <input type="text" v-model="notif_id_bookmark">
+<!--             katsu_id(bookmark_Notif)
+            <input type="text" v-model="notif_id_bookmark"> -->
           </div>
         </div>
         <!-- C-Links -->
@@ -638,12 +639,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <i class="fa fa-fw fa-bars" v-on:click="toggleLinkLock"></i>
           </div>
         </div>
-        <!-- Discord -->
+        <!-- AnotherHome -->
         <div :class="[{ invisible: !showhometl || (showhometl && 'Home' == home_type) }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
           <div class="column-header">
             <div class="flex">
               <div class="hidden full">
-                <i class="fa fa-fw fa-gamepad"></i>Discord (Stream: {{connDiscord}})
+                <i class="fa fa-fw fa-gamepad"></i>Home (Stream: {{connHome}})
               </div>
               <span class="column-opt"><i v-on:click="toggleHomeOpt()" class="fa fa-fw fa-ellipsis-h"></i></span>
             </div>
@@ -655,68 +656,17 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             </div>
           </div>
           <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
-          <div class="scrollable" id="discord" v-on:scroll="handleScrollDiscord">
-            <div v-if="hasDiscord" class="status-list">
-              <div v-for="(issue, index) in discords" v-if="discord_unread <= index" class="status-wrapper" :class="issue.visibility">
-                <!-- NORMAL -->
-                <div class="status flex">
-                  <img :src="checkAvatarDiscord(issue.author)" class="avatar border">
-                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
-                  <div class="content border">
-                    <div class="status-name flex start">
-                      <div class="hidden full">
-                        <a class="color-pk">{{issue.author.username}}</a>
-                        <small class="color-gr">‭#{{issue.author.discriminator}}</small>
-                      </div>
-                      <span class="status-time color-gr"> {{issue.timestamp | formatDate}}</span>
-                    </div>
-                    <div class="status__content">
-                      <div>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
-                      </div>
-                    </div>
-                    <!-- <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
-                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
-                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
-                      </a>
-                    </div>
-                    <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
-                    </div>
-                    <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
-                      <h4 v-if="issue.sensitive">Sensitive contents</h4>
-                      <h4 v-else>Media contents</h4>
-                      <small>Click to view</small>
-                    </div>
-                    <div class="action-bar flex end">
-                      <div class="hidden">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
-                      </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
-                      <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
-                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
-                      <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
-                      <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
-                      <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
-                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
-                      <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
-                      <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
-                    </div> -->
-                  </div>
-                </div>
-              </div>
+          <div class="scrollable" id="anootherhome" v-on:scroll="">
+            <!-- Discord -->
+            <div v-if="hasHome" class="status-list">
+
             </div>
+
             <div v-else>
               <div class="flex">loading...</div>
             </div>
           </div>
         </div>
-
         <!-- HOME -->
         <div :class="[{ invisible: !showhometl || (showhometl && 'Home' != home_type) }, { primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column">
           <div class="column-header">
@@ -1142,6 +1092,273 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             </div>
           </div>
         </div>
+        <!-- Multi -->
+        <div :class="[{ invisible: !showmultitl }, { full: optColumnWide && '1' == optColumns }]" class="column">
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i v-if="'Hashtag' == multi_type" class="fa fa-fw fa-globe"></i>
+                <i v-else-if="'List' == multi_type" class="fa fa-fw fa-globe"></i>
+                <i v-else-if="'Discord' == multi_type" class="fa fa-fw fa-globe"></i>
+                <i v-else class="fa fa-fw fa-comment"></i>
+                {{multi_type}} (Stream: {{connDiscord}})
+              </div>
+              <span class="column-opt"><i v-on:click="toggleMultiOpt()" class="fa fa-fw fa-ellipsis-h"></i></span>
+            </div>
+            <div v-show="multi_opt" class="flex">
+              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Select Stream</div>
+              <div v-else v-on:click="multi_opt = false; multi_type = 'Stream';" class="tl-link full color-wh bgcolor">Select Stream</div>
+              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-cog"></i>Close</div>
+              <div v-else v-on:click="multi_opt = false; multi_type = 'Stream';" class="tl-link full color-wh bgcolor">Close</div>
+            </div>
+          </div>
+          <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
+          <div class="scrollable" id="multi" v-on:scroll="handleScrollMulti">
+            <!-- Hashtag -->
+            <div v-if="hasHash" class="status-list">
+              <div v-for="(issue, index) in hashs" v-if="hash_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <div v-if="local_id_bookmark == issue.id" class="status-header flex start bgcolor-bookmark bookmark">
+                  <i v-on:click="local_id_bookmark = ''" class="fa fa-fw fa-paperclip big"></i>
+                </div>
+                <div class="status flex">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-else class="color-pk">{{issue.account.username}}</a>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <div v-if="0 != issue.spoiler_text.length">
+                        <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
+                        <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                      <div v-else>
+                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
+                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                      </a>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper control">
+                      <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
+                    </div>
+                    <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
+                      <h4 v-if="issue.sensitive">Sensitive contents</h4>
+                      <h4 v-else>Media contents</h4>
+                      <small>Click to view</small>
+                    </div>
+                    <div class="action-bar flex end">
+                      <div class="hidden">
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                      </div>
+                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
+                      <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                      <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="status-header flex end">
+                  <small v-if="issue.application && showDebugLocal">
+                    via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}} </a>
+                  </small>
+                </div>
+                <div class="status-header flex end">
+                  <small v-if="issue.account.acct.indexOf('@') != -1">
+                    from <a target="_blank" rel="noopener noreferrer">{{issue.account.acct.split('@')[1]}}</a>
+                  </small>
+                </div>
+              </div>
+            </div>
+            <!-- List -->
+            <div v-else-if="hasList" class="status-list">
+              <div v-for="(issue, index) in lists" v-if="list_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <div v-if="null != issue.reblog" class="status-header flex start">
+                  <i class="fa fa-fw fa-retweet color-on"></i>
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id)">
+                  <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
+                  <div class="full">
+                    <div>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-else class="color-pk">{{issue.account.username}}</span>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
+                    </div>
+                    <div class="status-name flex start">
+                      <div class="hidden">
+                      <span> reblog</span>
+                      </div>
+                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- REBLOG -->
+                <div v-if="null != issue.reblog" class="status flex">
+                  <img :src="checkAvatar(issue.reblog.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.reblog.account.id)">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
+                        <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
+                        <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
+                      <div v-if="0 != issue.reblog.spoiler_text.length">
+                        <div v-if="!issue.reblog.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue.reblog, true)"><small>- SHOW MORE -</small></div>
+                        <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue.reblog, false)"><small>- SHOW LESS -</small></div>
+                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                      </div>
+                      <div v-else>
+                        <span v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                      </div>
+                    </div>
+                    <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
+                      <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                      </a>
+                    </div>
+                    <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
+                      <i v-on:click="updateMediaWrapper(issue.reblog, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
+                    </div>
+                    <div v-if="((( optAllNsfw || issue.reblog.sensitive ) && !issue.reblog.media_opened ) || false === issue.reblog.media_opened ) && 0 != issue.reblog.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue.reblog, true)">
+                      <h4 v-if="issue.reblog.sensitive">Sensitive contents</h4>
+                      <h4 v-else>Media contents</h4>
+                      <small>Click to view</small>
+                    </div>
+                    <div class="action-bar flex end">
+                      <div class="hidden">
+                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.reblog.id}}</small>
+                      </div>
+                      <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
+                      <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
+                      <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-else-if="'private' == issue.reblog.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                      <i v-else-if="issue.reblog.reblogged" v-on:click="actUnReblog(issue.reblog);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue.reblog)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog, false);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                    </div>
+                  </div>
+                </div>
+                <!-- NORMAL -->
+                <div v-else class="status flex">
+                  <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-else class="color-pk">{{issue.account.username}}</a>
+                        <small class="color-gr">‭@{{issue.account.acct}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <div v-if="0 != issue.spoiler_text.length">
+                        <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
+                        <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
+                        <span v-show="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                      <div v-else>
+                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
+                      <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                        <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                      </a>
+                    </div>
+                    <div v-if="0 != issue.media_attachments" class="media-wrapper control">
+                      <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
+                    </div>
+                    <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
+                      <h4 v-if="issue.sensitive">Sensitive contents</h4>
+                      <h4 v-else>Media contents</h4>
+                      <small>Click to view</small>
+                    </div>
+                    <div class="action-bar flex end">
+                      <div class="hidden">
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                      </div>
+                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
+                      <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
+                      <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                      <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                      <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
+                      <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
+                      <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
+                      <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
+                      <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
+                      <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Discord -->
+            <div v-else-if="hasDiscord" class="status-list">
+              <div v-for="(issue, index) in discords" v-if="discord_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <div class="status flex">
+                  <img :src="checkAvatarDiscord(issue.author)" class="avatar border">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a class="color-pk">{{issue.author.username}}</a>
+                        <small class="color-gr">‭#{{issue.author.discriminator}}</small>
+                      </div>
+                      <span class="status-time color-gr"> {{issue.timestamp | formatDate}}</span>
+                    </div>
+                    <div class="status__content">
+                      <div>
+                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="true" class="status-list">
+              <div class="flex">loading...</div>
+            </div>
+            <div v-else>
+              <div class="flex">loading...</div>
+            </div>
+          </div>
+        </div>
         <!-- Detail -->
         <div v-if="showdetail" class="column" :class="{ full: optColumnWide && '1' == optColumns }">
           <div class="column-header"><i class="fa fa-fw fa-comment"></i>Detail</div>
@@ -1405,13 +1622,18 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <span v-else v-on:click="actBlock(acct)" class="button mini color-wh bgcolor">Block</span>
                   </div>
                   <div v-if="user.id == acct_targetid" class="flex end action-bar">
-                    <span v-on:click="openProfile" class="button mini color-wh bgcolor-pk">Open</span>
-                    <!-- <span v-on:click="runLogout" class="button mini color-wh bgcolor-pk">Logout</span> -->
+                    <i v-on:click="popSetting" class="fa fa-fw fa-cog"></i>
                     <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="!showacctProfile" v-on:click="editProfile" class="button mini color-wh bgcolor">Edit</span>
                     <span v-else-if="showacctProfile" v-on:click="showacctProfile = !showacctProfile; profile = [];" class="button mini color-wh bgcolor">Cancel</span>
                     <span v-if="acct.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="showacctProfile" v-on:click="runProfile" class="button mini color-wh bgcolor-pk">Save</span>
+                    <i v-on:click="toggleAcctEx()" class="fa fa-fw fa-ellipsis-h"></i>
+                  </div>
+                  <div v-if="user.id == acct_targetid && showacctEx" class="flex end action-bar">
+                    <span></span>
+                    <span v-on:click="openProfile" class="button mini color-wh bgcolor-pk">Open Profile</span>
+                    <span v-on:click="runLogout" class="button mini color-wh bgcolor-pk">Logout</span>
                   </div>
                 </div>
               </div>
@@ -2313,7 +2535,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
 
               <div class="flex end action-bar">
-                <label v-on:click="popSetting" class="button full main color-wh bgcolor">Close</label>
+                <!-- <label v-on:click="popSetting" class="button full main color-wh bgcolor">Close</label> -->
                 <label v-on:click="runSetting" class="button full main color-wh bgcolor-gr">Save</label>
               </div>
 
@@ -2324,7 +2546,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <label v-on:click="runClear" class="button full color-wh bgcolor-pk">Delete Setting</label>
               </div> -->
 
-              <h3 class="setting-header">📛📛📛 Account Setting 📛📛📛</h3>
+<!--               <h3 class="setting-header">📛📛📛 Account Setting 📛📛📛</h3>
               <div class="flex end action-bar">
                 <span>User Profile</span>
                 <label v-on:click="openProfile" class="button color-wh bgcolor-gr">Open</label>
@@ -2332,7 +2554,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
               <div class="flex end action-bar ">
                 <label v-on:click="runLogout" class="button full main color-wh bgcolor-pk">Logout</label>
-              </div>
+              </div> -->
 
               <br>
 
@@ -2502,7 +2724,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=012702"></script>
+    <script src="js/main.js?v=0128"></script>
     <script src="js/picker.js"></script>
 
     <script>
