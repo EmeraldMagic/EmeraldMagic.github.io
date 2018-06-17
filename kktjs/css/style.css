@@ -1109,6 +1109,15 @@ small.button {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.list-link.slim{
+  padding: 2px 8px;
+  margin: 2px 16px 2px 20px;
+}
+
+.list-link.close{
+  margin-top: 14px;
+}
 /*  Media Modal
 --------------------------- */
 .image.center{

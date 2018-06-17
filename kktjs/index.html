@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0127">
+    <link rel="stylesheet" href="css/style.css?v=0618">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -72,6 +72,20 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     </script>
 
     <script type="text/x-template" id="modal-confirm">
+      <transition name="confirm">
+        <div class="modal-mask">
+
+          <div class="flex center">
+            <div class="column bgcolor-wh">
+              <slot name="header"></slot>
+            </div>
+          </div>
+
+        </div>
+      </transition>
+    </script>
+
+    <script type="text/x-template" id="modal-select">
       <transition name="confirm">
         <div class="modal-mask">
 
@@ -218,7 +232,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                 <a v-for="media in issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                  <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                  <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                   <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                 </a>
               </div>
@@ -264,7 +278,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                 <a v-for="media in issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                  <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                  <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                   <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                 </a>
               </div>
@@ -440,6 +454,47 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
       </confirm>
 
+      <stselecter v-if="showStreamSelecter">
+        <span slot="header">
+          <div class="form-option full">
+            <h3>Stream Selecter</h3>
+            <!-- Selecter -->
+            <div class="status-list">
+              <div v-if="stream_lists && 0 != stream_lists.length" class="link-header"><i class="fa fa-fw fa-list"></i> Lists</div>
+              <div v-for="issue in stream_lists" class="flex">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">{{issue}}</div>
+                <div v-else v-on:click="multi_opt = false; showStreamSelecter = false; reopenWsMulti('List', issue);" class="list-link full color-wh bgcolor">{{issue}}</div>
+              </div>
+              <div v-show="stream_lists && 0 != stream_lists.length" class="flex">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-plus"></i>New List</div>
+                <div v-else v-on:click="" class="list-link full color-wh bgcolor"><i class="fa fa-fw fa-plus"></i> New List</div>
+              </div>
+              <div v-if="stream_tags && 0 != stream_tags.length" class="link-header"><i class="fa fa-fw fa-hashtag"></i> Hashtags</div>
+              <div v-for="issue in stream_tags" class="flex">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">#{{issue}}</div>
+                <div v-else v-on:click="multi_opt = false; showStreamSelecter = false; reopenWsMulti('Hashtag', issue);" class="list-link full color-wh bgcolor">#{{issue}}</div>
+              </div>
+              <div class="search-container bgcolor-wh flex center">
+                <input v-focus type="text" class="border-dash" @keyup.enter="" onKeyup="inputHashtag(this)"><br>
+                <span v-on:click="AddStreamTag(hashtag_text);" class="color-wh bgcolor-gr button">Add</span>
+              </div>
+              <div v-show="stream_tags && 0 != stream_tags.length" class="flex">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
+                <div v-else v-on:click="" class="list-link full color-wh bgcolor"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
+              </div>
+              <div v-if="stream_channels && 0 != stream_channels.length" class="link-header"><i class="fa fa-fw fa-gamepad"></i> Discord Channels</div>
+              <div v-for="issue in stream_channels" class="flex">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">{{issue}}</div>
+                <div v-else v-on:click="multi_opt = false; showStreamSelecter = false; reopenWsMulti('Discord', issue);" class="list-link full color-wh bgcolor">{{issue}}</div>
+              </div>
+            </div>
+            <div class="flex center">
+              <span class="button list-link close full color-wh bgcolor-gr" v-on:click="showStreamSelecter = false;">Close</span>
+            </div>
+          </div>
+        </span>
+      </stselecter>
+
       <!-- DEBUG -->
       <div class="flex column-list">
         <div v-if="showDebug" class="column debug">
@@ -551,14 +606,26 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
                   <small>未</small>
                 </span>
-                <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                <span v-if="stream_opened == 'lists'" v-for="issue in stream_lists" v-on:click="stream_opened == '';reopenWsMulti('List', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><small>{{issue}}</small></div>
+                </span>
+                <span v-on:click="toggleStreamOpened('tags')" class="list-link border-lite full color bgcolor-disable flex end">
                   <div class="hidden full"><i class="fa fa-fw fa-hashtag"></i>Hashtags</div>
                   <small>未</small>
                 </span>
-                <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+                <span v-if="stream_opened == 'tags'" v-for="issue in stream_tags" v-on:click="return;stream_opened = '';reopenWsMulti('Hashtag', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><small>#{{issue}}</small></div>
+                </span>
+                <span v-on:click="toggleStreamOpened('channels')" class="list-link border-lite full color bgcolor-disable flex end">
                   <div class="hidden full"><i class="fa fa-fw fa-gamepad"></i>Discord Channels</div>
                   <small>未</small>
                 </span>
+<!--                 <span v-if="stream_opened == 'channels'" v-for="issue in stream_channels" v-on:click="stream_opened = '';reopenWsMulti('Discord', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><small>{{issue}}</small></div>
+                </span> -->
+<!--                 <span v-on:click="runRefresh();" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Refresh</div>
+                </span> -->
               </div>
 
 <!--               <div class="link-header"><i class="fa fa-fw fa-cog"></i>Setting</div>
@@ -732,7 +799,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -790,7 +857,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -885,7 +952,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1007,7 +1074,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.status.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.status.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1097,22 +1164,22 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="column-header">
             <div class="flex">
               <div class="hidden full">
-                <i v-if="'Hashtag' == multi_type" class="fa fa-fw fa-globe"></i>
-                <i v-else-if="'List' == multi_type" class="fa fa-fw fa-globe"></i>
-                <i v-else-if="'Discord' == multi_type" class="fa fa-fw fa-globe"></i>
+                <i v-if="'Hashtag' == multi_type" class="fa fa-fw fa-hashtag"></i>
+                <i v-else-if="'List' == multi_type" class="fa fa-fw fa-list"></i>
+                <i v-else-if="'Discord' == multi_type" class="fa fa-fw fa-gamepad"></i>
                 <i v-else class="fa fa-fw fa-comment"></i>
-                {{multi_type}} (Stream: {{connDiscord}})
+                {{multi_type}} {{multi_name}} (Stream: {{connDiscord}})
               </div>
               <span class="column-opt"><i v-on:click="toggleMultiOpt()" class="fa fa-fw fa-ellipsis-h"></i></span>
             </div>
             <div v-show="multi_opt" class="flex">
-              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Select Stream</div>
-              <div v-else v-on:click="multi_opt = false; multi_type = 'Stream';" class="tl-link full color-wh bgcolor">Select Stream</div>
-              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-cog"></i>Close</div>
-              <div v-else v-on:click="multi_opt = false; multi_type = 'Stream';" class="tl-link full color-wh bgcolor">Close</div>
+              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-exchange"></i>Change Stream</div>
+              <div v-else v-on:click="showStreamSelecter = true;" class="tl-link full color-wh bgcolor"><i class="fa fa-fw fa-exchange"></i>Change Stream</div>
+              <div v-if="fetch_lock.multiws || fetch_lock.multi" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-times"></i>Close</div>
+              <div v-else v-on:click="multi_opt = false;" class="tl-link full color-wh bgcolor"><i class="fa fa-fw fa-times"></i>Close</div>
             </div>
           </div>
-          <!-- <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div> -->
+          <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div>
           <div class="scrollable" id="multi" v-on:scroll="handleScrollMulti">
             <!-- Hashtag -->
             <div v-if="hasHash" class="status-list">
@@ -1146,7 +1213,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1237,7 +1304,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1295,7 +1362,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1351,9 +1418,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
             </div>
-            <div v-else-if="true" class="status-list">
-              <div class="flex">loading...</div>
-            </div>
             <div v-else>
               <div class="flex">loading...</div>
             </div>
@@ -1391,7 +1455,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                     <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                       <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
@@ -1405,7 +1469,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                   <div class="action-bar flex end">
                     <div class="hidden">
-                      <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                      <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
+                      <i v-else-if="issue.account.id == user.id && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
+                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                      <small v-if="issue.pinned">:Pinned</small>
+                      <small v-else>:{{issue.id}}</small>
                     </div>
                     <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
@@ -1453,7 +1522,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div v-if="0 != detail.media_attachments" class="media-wrapper flex">
                     <a v-for="media in detail.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                       <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
@@ -1485,7 +1554,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                   <div class="action-bar flex end">
                     <div class="hidden">
-                      <i v-on:click="actBookmark(detail)" class="fa fa-fw fa-paperclip"></i><small>:{{detail.id}}</small>
+                      <i v-if="detail.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="detail.pinned" v-on:click="actUnPin(detail)" class="fa fa-fw fa-thumb-tack"></i>
+                      <i v-else-if="detail.account.id == user.id && 'direct' != detail.visibility && 'private' != detail.visibility" v-on:click="actPin(detail)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
+                      <i v-else v-on:click="actBookmark(detail)" class="fa fa-fw fa-paperclip"></i>
+                      <small v-if="detail.pinned">:Pinned</small>
+                      <small v-else>:{{detail.id}}</small>
                     </div>
                     <small v-if="'public' != detail.visibility">{{detail.visibility}}</small>
                     <i v-on:click="runForm(detail)" class="fa fa-fw fa-reply"></i>
@@ -1540,7 +1614,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                     <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                       <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                     </a>
                   </div>
@@ -1554,7 +1628,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                   <div class="action-bar flex end">
                     <div class="hidden">
-                      <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                      <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                      <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
+                      <i v-else-if="issue.account.id == user.id && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
+                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                      <small v-if="issue.pinned">:Pinned</small>
+                      <small v-else>:{{issue.id}}</small>
                     </div>
                     <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
@@ -1677,7 +1756,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1774,7 +1853,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.reblog.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1832,7 +1911,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -1847,8 +1926,11 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div class="action-bar flex end">
                       <div class="hidden">
                         <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
-                        <!-- <i v-else-if="acct_type=='katsu'" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i> -->
-                        <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small>
+                        <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
+                        <i v-else-if="acct_type=='katsu' && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
+                        <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small v-if="issue.pinned">:Pinned</small>
+                        <small v-else>:{{issue.id}}</small>
                       </div>
                       <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
@@ -1943,7 +2025,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                        <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                         <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                       </a>
                     </div>
@@ -2023,14 +2105,26 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
                 <small>未</small>
               </span>
-              <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+              <span v-if="stream_opened == 'lists'" v-for="issue in stream_lists" v-on:click="stream_opened == '';reopenWsMulti('List', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><small>#{{issue}}</small></div>
+              </span>
+              <span v-on:click="toggleStreamOpened('tags')" class="list-link border-lite full color bgcolor-disable flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-hashtag"></i>Hashtags</div>
                 <small>未</small>
               </span>
-              <span v-on:click="" class="list-link border-lite full color bgcolor-disable flex end">
+              <span v-if="stream_opened == 'tags'" v-for="issue in stream_tags" v-on:click="return;stream_opened = '';reopenWsMulti('Hashtag', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><small>#{{issue}}</small></div>
+              </span>
+              <span v-on:click="toggleStreamOpened('channels')" class="list-link border-lite color full bgcolor-disable flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-gamepad"></i>Discord Channels</div>
                 <small>未</small>
               </span>
+<!--               <span v-if="stream_opened == 'channels'" v-for="issue in stream_channels" v-on:click="stream_opened = '';reopenWsMulti('Discord', issue);runMulti();multi_opt = false;" class="list-link slim border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><small>{{issue}}</small></div>
+              </span> -->
+<!--               <span v-on:click="runRefresh();" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Refresh</div>
+              </span> -->
             </div>
 
 <!--             <div class="link-header"><i class="fa fa-fw fa-cog"></i>Setting</div>
@@ -2169,7 +2263,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
                   <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
                     <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                     <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
@@ -2258,7 +2352,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper flex">
                   <a v-for="media in katsu.reply.media_attachments" @click="modal = media;showModal = true;">
                     <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="media.preview_url" class="media">
+                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" class="media">
                     <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
@@ -2576,7 +2670,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 kktjs WebApp Icon is licensed under <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> by Sumire.<br>
               </small>
               <h3 class="setting-header">🍨🍨🍨 開発ステータス 🍨🍨🍨</h3>
-              <h3>アプリで使える機能(v1.2)</h3>
+              <h3>アプリで使える機能(v1.3)</h3>
               <small>
                 ログイン/ログアウト/Webアプリ設定<br>
                 カツ!機能(メディア投稿,CW,NSFW,絵文字入力)<br>
@@ -2585,6 +2679,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 Home/Local/通知 TLのカツ!ストリーミング取得/削除<br>
                 Home/Local/通知/Fav済/ユーザー/タグ のカツ!一覧取得<br>
                 Home/Local/通知/Fav済/ユーザー/タグ を遡って取得<br>
+                ピン留めカツ! の取得<br>
                 カツ!の CW/NSFW,画像/ビデオ/gifv(ループ再生) 表示<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧 取得<br>
                 ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
@@ -2596,6 +2691,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 お気に入り/ブースト/フォロー の登録と解除<br>
                 カツ!/お気に入り/ブースト/フォロー の確認ウィンドウ<br>
                 ミュート/ブロック の登録と解除、確認ウィンドウ<br>
+                ピン留め の登録と解除、確認ウィンドウ<br>
                 カツ!の 削除<br>
                 カツ!の 通報<br>
                 ヘッダアイコンのカラム移動機能<br>
@@ -2603,15 +2699,17 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
                 通信エラーの表示<br>
               </small><br>
-              <h3>拡張機能(v1.2)</h3>
+              <h3>拡張機能(v1.3)</h3>
               <small>
                 カラーテーマ機能(4テーマ)<br>
+                ショートカットメニュー<br>
                 1,2,3カラム表示+Home/Local TLdetailのワイドカラム化<br>
                 画面のリサイズ/回転時に最適なカラム数に切り替え<br>
                 Home/Local TLの画像や映像を全て隠すオプション<br>
                 Home/Local TLに 最新/上底/下底スクロールボタンを追加<br>
                 Home/Local TLに カツ!表示数目標を設定(200カツ!)<br>
                 Local TLにしおりをはさむ機能(削除カツ未対応)<br>
+                通知の未読数を表示(独自)<br>
                 フォロー/フォロワー一覧 をユーザー情報内で表示<br>
                 カツ!詳細/ユーザー情報 リンクのボタン化<br>
                 カツ!の 下書きの保存<br>
@@ -2626,31 +2724,34 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 通信エラーメッセージ<br>
                 Local/連合 TLの切り替え機能<br>
               </small><br>
-              <h3>アプリにまだない機能(v1.2)</h3>
+              <h3>アプリにまだない機能(v1.3)</h3>
               <small>
-                [mst2.0.0]カスタム絵文字の表示/入力<br>
+                カスタム絵文字の表示/入力<br>
                 Home/Local/通知 のカツ!フィルタ<br>
                 タグ TLのカツ!ストリーミング取得/削除<br>
-                [mst2.1.0]リストの一覧を取得<br>
-                [mst2.1.0]リスト TLのカツ!ストリーミング取得/削除<br>
-                [mst2.1.0]リスト TLのカツ!一覧取得<br>
-                [mst2.1.0]リスト TLのカツ!を遡って取得<br>
-                [mst2.1.0]リストの追加<br>
-                [mst2.1.0]リストに登録済みのアカウント一覧 取得<br>
+                リストの一覧を取得<br>
+                リスト TLのカツ!ストリーミング取得/削除<br>
+                リスト TLのカツ!一覧取得<br>
+                リスト TLのカツ!を遡って取得<br>
+                リストの追加<br>
+                リストに登録済みのアカウント一覧 取得<br>
+                連合インスタンス一覧 取得<br>
+                連合インスタンスの情報 取得<br>
                 photo/video/richのOGP展開<br>
                 シェア機能(Web Share API対応)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
+                [未公開]アカウントを リストに登録/リストから解除<br>
+                [未公開]フォローリクエスト数を表示<br>
+                通知の未読数を表示(API)<br>
+                (v2.3.0以降の各種新機能)<br>
               </small><br>
-              <h3>Mastodon/kktで対応待ちの機能(v1.2)</h3>
+              <h3>Mastodon/kktで対応待ちの機能(v1.3)</h3>
               <small>
-                [mst v?]検索した結果(カツの一覧) 取得<br>
-                [mst1.6.0]ピン留めカツ! の取得<br>
-                [mst1.6.0]ピン留め の登録と解除<br>
-                [mst2.1.0]アカウントを リストに登録/リストから解除<br>
+                [mst v?]検索した結果(全体のカツ!) 取得<br>
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
-                [mst2.1.0]リストTL専用カラム<br>
+                リストTL専用カラム<br>
                 投票と集計機能<br>
                 Push通知(Service Worker)<br>
                 カツ!を 翻訳<br>
@@ -2692,6 +2793,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <button id="sound" class="invisible"></button>
         <button id="soundex" class="invisible"></button>
         <small class="invisible">Refresh: {{dummy}}</small>
+        <img src="img/missing_header.png">
       </div>
 
       <div v-if="ua != 'pc'" class="app-footer flex control">
@@ -2724,8 +2826,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0128"></script>
-    <script src="js/picker.js"></script>
+    <script src="js/main.js?v=0618"></script>
+    <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
