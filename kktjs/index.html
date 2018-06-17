@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0618">
+    <link rel="stylesheet" href="css/style.css?v=0618a">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -1927,7 +1927,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden">
                         <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                         <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
-                        <i v-else-if="acct_type=='katsu' && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
+                        <i v-else-if="(acct_type=='katsu' || acct_type=='media') && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
                         <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
                         <small v-if="issue.pinned">:Pinned</small>
                         <small v-else>:{{issue.id}}</small>
@@ -2831,7 +2831,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0618', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
