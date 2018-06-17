@@ -2831,7 +2831,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0618', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
