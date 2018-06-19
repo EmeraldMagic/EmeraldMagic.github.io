@@ -316,6 +316,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
               <a v-else class="color-pk">{{issue.username}}</a>
               <small class="color-gr">‭@{{issue.acct}}</small>
+              <span v-if="issue.bot"><small>[Bot]</small></span>
               <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
               <span>{{issue.statuses_count}} </span>Katsu!
               <div>
@@ -662,6 +663,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="status-name flex start">
                     <div class="hidden full">
                       <small class="color-gr">‭@{{user.acct}}</small>
+                      <span v-if="user.bot"><small>[Bot]</small></span>
                       <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                     </div>
                     <span class="status-time color-gr"> </span>
@@ -2062,6 +2064,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
                       <a v-else class="color-pk">{{issue.username}}</a>
                       <small class="color-gr">‭@{{issue.acct}}</small>
+                      <span v-if="issue.bot"><small>[Bot]</small></span>
                       <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                     </div>
                     <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
@@ -2267,6 +2270,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="status-name flex start">
                   <div class="hidden full">
                     <small class="color-gr">‭@{{user.acct}}</small>
+                    <span v-if="user.bot"><small>[Bot]</small></span>
                     <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   </div>
                   <span class="status-time color-gr"> </span>
@@ -2332,6 +2336,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
                     <a v-else class="color-pk">{{issue.username}}</a>
                     <small class="color-gr">‭@{{issue.acct}}</small>
+                    <span v-if="issue.bot"><small>[Bot]</small></span>
                     <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   </div>
                   <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
