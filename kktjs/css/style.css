@@ -130,7 +130,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diadark .bluesheet{
   background: #000000;
 }
-.bm_diadark .search-container input, .bm_diadark .content input, .bm_diadark input.report_text{
+.bm_diadark .search-container input, .bm_diadark .select-container input, .bm_diadark .content input, .bm_diadark input.report_text{
   color: #FFFFFF;
 }
 .bm_diadark .action-bar, .bm_diadark .action-bar > div:not(.button){
@@ -185,7 +185,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diawhite .bluesheet{
   background: #ccc;
 }
-.bm_diawhite .search-container input, .bm_diawhite .content input, .bm_diawhite input.report_text{
+.bm_diawhite .search-container input, .bm_diawhite .select-container input, .bm_diawhite .content input, .bm_diawhite input.report_text{
   color: #363947;
 }
 .bm_diawhite .action-bar, .bm_diawhite .action-bar > div:not(.button){
@@ -240,7 +240,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diaorange .bluesheet{
   background: #ccc;
 }
-.bm_diaorange .search-container input, .bm_diaorange .content input, .bm_diaorange input.report_text{
+.bm_diaorange .search-container input, .bm_diaorange .select-container input, .bm_diaorange .content input, .bm_diaorange input.report_text{
   color: #6a4643;
 }
 .bm_diaorange .action-bar, .bm_diaorange .action-bar > div:not(.button){
@@ -342,11 +342,12 @@ textarea{
 }
 
 div#app{
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
 }
 div.bgapp{
   top: 0;
@@ -357,6 +358,8 @@ div.bgapp{
 }
 
 div.app-header{
+  top: 0px;
+  position: fixed;
   width: 100%;
   height: 48px;
   border-bottom: 2px solid #e1c152;
@@ -364,7 +367,6 @@ div.app-header{
   transform: translate3d(0, 0, 0);
 }
 div.app-header.control{
-  margin-top: -48px;
   padding: 14px 0;
 }
 div.app-header .logo-wrapper{
@@ -413,7 +415,6 @@ div.column-footer{
   position: absolute;
   width: calc(100% - 160px);
   height: 36px;
-  z-index: 4;
   margin: 0 80px;
 }
 div.column-footer.inside{
@@ -516,6 +517,11 @@ div.column-footer.inside{
   margin: 8px 6px 0 0;
 }
 
+.select-container .fa-fw.fa-times{
+  font-size: 19px;
+  margin-top: 5px;
+}
+
 .status-list.notif{
   min-height: calc(100vh - 159px);
 }
@@ -527,7 +533,8 @@ div.column-footer.inside{
 .action-bar .fa-fw:not(.color-disable),
 .app-header .fa-fw:not(.color-disable),
 .column-footer .fa-fw:not(.color-disable),
-.media-wrapper.control .fa-fw:not(.color-disable){
+.media-wrapper.control .fa-fw:not(.color-disable),
+.select-container .fa-fw:not(.color-disable){
   cursor: pointer;
 }
 /*  App Elements
@@ -555,7 +562,11 @@ div.column-footer.inside{
 }
 
 .column-list {
+  position: fixed;
+  top: 48px;
+  width: 100%;
   height: calc(100vh - 84px);
+  z-index: 5;
 }
 .column {
   width: 412px;
@@ -592,7 +603,7 @@ div.column-footer.inside{
 }
 .column.leftswipe {
   position: absolute;
-  top: calc(100% - 15px);
+  top: unset;
   left: 0;
 }
 .column.leftswipe.user {
@@ -611,7 +622,7 @@ div.column-footer.inside{
   flex: 1 1 auto;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-overflow-scrolling: none;
+  -webkit-overflow-scrolling: touch;
 }
 .column-header{
   background: rgba(212,220,171,0.5);
@@ -934,11 +945,13 @@ small.button {
 /*    Setting
 =========================== */
 .column.fixed{
-  margin-top: calc(84px - 100vh);
+  margin-top: 48px;
   height: calc(100vh - 84px);
   width: 100%;
+  z-index: 10;
 }
 .column.fixed.leftswipe{
+  margin-top: 68px;
   height: calc(100vh - 303px);
 }
 .column.fixed.leftswipe.user{
@@ -1023,6 +1036,19 @@ small.button {
   margin-bottom: 4px;
   cursor: pointer;
 }
+.select-container input {
+  width: calc(100% - 180px);
+  text-indent: 4px;
+  margin: 0 4px 0 26px;
+  padding: 4px;
+  background:none;
+  outline: none;
+  -webkit-appearance:none;
+}
+.select-container .button{
+  padding: 4px 16px;
+  margin: 2px;
+}
 /*  Login
 =========================== */
 .title{
@@ -1038,7 +1064,7 @@ small.button {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: 6;
+  z-index: 20;
 }
 .modal-mask {
   position: fixed;
@@ -1124,7 +1150,10 @@ small.button {
 
 .list-link.slim{
   padding: 2px 8px;
-  margin: 2px 16px 2px 20px;
+  margin: 4px 16px 4px 20px;
+}
+.status-list .list-link{
+  margin: 2px 4px;
 }
 
 .list-link.close{
