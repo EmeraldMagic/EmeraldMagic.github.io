@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0724">
+    <link rel="stylesheet" href="css/style.css?v=0725">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -2299,22 +2299,23 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
             </div>
             <!-- Normal -->
-            <div v-if="!hasStreamList" class="status-list">
+            <div v-show="!hasStreamList" class="status-list">
               <div class="link-header"><i class="fa fa-fw fa-list"></i> Lists</div>
               <div v-for="issue in stream_lists" class="flex select-container">
-                <i v-if="showStreamEdit" v-on:click="runRemoveList(issue.id);" class="fa fa-fw fa-times"></i>
+                <i v-if="showStreamEdit && (fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists)" class="fa fa-fw fa-times color-disable"></i>
+                <i v-else-if="showStreamEdit" v-on:click="runRemoveList(issue.id);" class="fa fa-fw fa-times"></i>
                 <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link full color-wh bgcolor-disable hidden">{{issue.title}}</div>
                 <div v-else v-on:click="showStream=false;runMulti('List', issue.id);reopenWsMulti('List', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor hidden">{{issue.title}}</div>
                 <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link color-wh bgcolor-disable"><i class="fa fa-fw fa-user-o"></i></div>
                 <div v-else v-on:click="stream_list=issue;listprofile.name=issue.title;checkListProfile();document.getElementById('list_name').value=issue.title;fetchListAcctBackup();fetchListAcct();" class="list-link color-wh bgcolor"><i class="fa fa-fw fa-user-o"></i></div>
               </div>
-              <div v-if="showStreamEdit && !isListMax" class="select-container list bgcolor-wh flex center">
-                <input type="text" class="border-dash" @keyup.enter="runAddList" onKeyup="inputList(this);"><br>
+              <div v-show="showStreamEdit && !isListMax" class="select-container list bgcolor-wh flex center">
+                <input type="text" class="border-dash" id="list_name_new" @keyup.enter="runAddList" onKeyup="inputList(this);"><br>
                 <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="color-wh bgcolor-disable button"><i class="fa fa-fw fa-spinner fa-pulse color-wh"></i></span>
                 <span v-else-if="stream_list_text_check" v-on:click="runAddList" class="color-wh bgcolor-pk button">Add</span>
                 <span v-else class="color-wh bgcolor-disable button">Add</span>
               </div>
-              <div v-else class="flex">
+              <div v-show="!showStreamEdit || isListMax" class="flex">
                 <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists || isListMax" class="list-link full color-wh bgcolor-disable hidden"><i class="fa fa-fw fa-plus"></i> New List</div>
                 <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor hidden"><i class="fa fa-fw fa-plus"></i> New List</div>
               </div>
@@ -2325,14 +2326,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable hidden">#{{issue}}</div>
                 <div v-else v-on:click="showStream=false;runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor hidden">#{{issue}}</div>
               </div>
-              <div v-if="showStreamEdit && !isHashtagMax" class="select-container bgcolor-wh flex center">
-                <input type="text" class="border-dash" @keyup.enter="checkStreamHashtag(search_tag);" onKeyup="inputSearch(this)"><br>
-                <span v-on:click="checkStreamHashtag(search_tag);" class="color-wh bgcolor-gr button">Check</span>
+              <div v-show="showStreamEdit && !isHashtagMax" class="select-container bgcolor-wh flex center">
+                <input type="text" class="border-dash" id="hashtag_name_new" @keyup.enter="checkStreamHashtag();" onKeyup="inputSearch(this)"><br>
+                <span v-on:click="checkStreamHashtag();" class="color-wh bgcolor-gr button">Check</span>
                 <span v-if="fetch_lock.search" class="color-wh bgcolor-disable button"><i class="fa fa-fw fa-spinner fa-pulse color-wh"></i></span>
                 <span v-else-if="stream_hashtag_text == ''" class="color-wh bgcolor-disable button">Add</span>
                 <span v-else v-on:click="addStreamHashtag" class="color-wh bgcolor-pk button">Add</span>
               </div>
-              <div v-else class="flex">
+              <div v-show="!showStreamEdit || isHashtagMax" class="flex">
                 <div v-if="fetch_lock.multiws || fetch_lock.multi || isHashtagMax" class="list-link full color-wh bgcolor-disable hidden"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
                 <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor hidden"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
               </div>
@@ -2998,12 +2999,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0724"></script>
+    <script src="js/main.js?v=0725"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0724', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0725', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();

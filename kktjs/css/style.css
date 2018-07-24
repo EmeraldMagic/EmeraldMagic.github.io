@@ -110,14 +110,14 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 
 .bm_diadark.color .scrollable, .bm_diadark.color .column-header, .bm_diadark.color .wrapper, .bm_diadark.color .confirm-wrapper{color: #9BAEC8;}
 .bm_diadark .color-pk, .bm_diadark a{color: #B7E1E8;}
-.bm_diadark .color-gr{color: #9BAEC8;}
-.bm_diadark .color-disable{color: #aaa;}
+.bm_diadark .color-gr{color: #7c8ca3;} /*  */
+.bm_diadark .color-disable{color: #c8c8c8;}
 .bm_diadark .status-name .color-pk{color: #FFFFFF;}
 
-.bm_diadark .bgcolor   {background: #9BAEC8;}
+.bm_diadark .bgcolor   {background: #7c8ca3;} /*  */
 .bm_diadark .bgcolor-pk{background: #2588D0;}
 .bm_diadark .bgcolor-gr{background: #282C37;}
-.bm_diadark .bgcolor-disable{background: #aaa;}
+.bm_diadark .bgcolor-disable{background: #c8c8c8;}
 .bm_diadark .bgcolor-wh, .bm_diadark .scrollable.bgcolor-wh{background: #444B5D;}
 
 .bm_diadark .border{border: solid 2px #393F4F;}
@@ -143,7 +143,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border-bottom: 1px solid #9BAEC8;
   border-top: 1px solid #9BAEC8;
 }
-.bm_diadark ::-webkit-scrollbar-thumb, .bm_diadark ::-webkit-scrollbar-thumb:hover{background: #9BAEC8;}
+.bm_diadark ::-webkit-scrollbar-thumb, .bm_diadark ::-webkit-scrollbar-thumb:hover{background: #7c8ca3;} /*  */
 
 
 /* bbv DeepBlue Diamonds(tops) */
@@ -1166,7 +1166,7 @@ small.button {
 /*  Search Modal
 --------------------------- */
 .search-container input {
-  width: 259px;
+  width: calc(100% - 120px);
   text-indent: 4px;
   margin: 4px 12px;
   padding: 4px;
