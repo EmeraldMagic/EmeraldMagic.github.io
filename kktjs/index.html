@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0626">
+    <link rel="stylesheet" href="css/style.css?v=0724">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -144,28 +144,36 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <div class="margin"></div>
       </div>
 
-      <div v-if="null == at" class="column flex center">
+      <div v-if="null == at" class="flex center">
         <div class="modal-mask">
           <div class="modal-wrapper">
-            <div class="modal-container bgsvg-pk">
+            <div class="flex login-container bgsvg-pk">
 
-              <div class="text center color-wh">
-                <div class="title">
-                  <h2>{{app_name}} v{{app_ver}}</h2>
-                  Custom Themes for kirakiratter.com<br>
-                </div>
+              <div class="column text center color-wh login">
                 <div>
+                  <h2>{{app_name}} v{{app_ver}}</h2>
+                  Custom Themes for <a href="https://kirakiratter.com/">kirakiratter.com</a>
+                </div>
+                <div class="flex login_opt">
+                  <span v-on:click="autologin = true" class="tl-link full color-wh" :class="[autologin ? 'bgcolor-gr' : 'bgcolor']">通常認証</span>
+                  <span v-on:click="autologin = false" class="tl-link full color-wh" :class="[!autologin ? 'bgcolor-gr' : 'bgcolor']">コード認証</span>
+                </div>
+                <div v-if="autologin">
                   <h3>- アプリ認証 -</h3>
                   kirakiratter.comにログインして、<br>
                   アプリからのアクセスを許可してね。<br>
-                  色々なテーマでキラキラッターを楽しんでね。<br>
                   <button v-on:click="runAuth" class="color-wh bgcolor-gr">App Authorize</button>
                 </div>
-                <div v-show="!autologin">
-                  <h3>- コードログイン -</h3>
-                  テスト用にCodeを使ったログインもあるよ。<br>
-                  <input type="text" v-model="code" placeholder="ここにCodeを張り付けてね"><br>
-                  <button v-on:click="fetchToken" class="color-wh bgcolor-gr">Token Login</button>
+                <div v-else>
+                  <h3>- コードでアプリ認証 -</h3>
+                  kirakiratter.comにログインして、<br>
+                  アプリの認証コードを取得してね。<br>
+                  <button v-on:click="runAuth" class="color-wh bgcolor-gr">App Authorize</button><br>
+                  コードを張り付けてボタンを押してね。<br>　
+                  <span class="flex">
+                    <input type="text" v-model="code" class="border-lite"><br>
+                    <span v-on:click="fetchToken" class="button bgcolor-gr color-wh border-lite">Start</span>
+                  </span>
                 </div>
                 <small>{{result_run}}</small>
               </div>
@@ -217,7 +225,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <a v-else class="color-pk">{{issue.account.username}}</a>
                   <small class="color-gr">‭@{{issue.account.acct}}</small>
                 </div>
-                <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
               </div>
               <div class="status__content">
                 <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -245,18 +254,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <h4 v-else>Media contents</h4>
                 <small>Click to view</small>
               </div>
-              <div class="action-bar flex end">
+              <div class="action-bar flex end wrap">
                 <div class="hidden">
-                  <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{issue.id}}</small>
-                  <span v-for="media in issue.media_attachments">
-                    <a :href="media.url" rel="nofollow noopener" target="_blank">
-                      <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                      <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                    </a>
-                  </span>
-                  <small class="dummy">_</small>
+                  <i class="fa fa-fw fa-paperclip color-disable"></i>
+                  <small class="time">{{issue.created_at | formatDate}}</small>
+                  <small>(id:{{issue.id}})</small>
                 </div>
-                <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
               </div>
             </div>
           </div>
@@ -270,7 +273,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <a v-else class="color-pk">{{user.username}}</a>
                   <small class="color-gr">‭@{{user.acct}}</small>
                 </div>
-                <!-- <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span> -->
+                <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
               </div>
               <div class="status__content">
                 <span v-html="$options.filters.formatContentSP(issue.spoiler_text)"></span>
@@ -300,16 +304,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
               <div class="action-bar flex end">
                 <div>
-                  <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                  <span v-for="media in issue.media_attachments">
-                    <a>
-                      <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-disable"></i>
-                      <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                    </a>
-                  </span>
-                  <small class="dummy">_</small>
+                  <i class="fa fa-fw fa-paperclip color-disable"></i>
+                  <!-- <small class="time">{{issue.created_at | formatDate}}</small> -->
                 </div>
-                <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                 <i class="fa fa-fw fa-reply color-disable"></i>
                 <i class="fa fa-fw fa-retweet color-disable"></i>
                 <i class="fa fa-fw fa-star color-disable"></i>
@@ -321,11 +318,15 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div v-else class="status flex">
             <img :src="checkAvatar(issue.avatar)" class="avatar border">
             <div class="content">
-              <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
-              <a v-else class="color-pk">{{issue.username}}</a>
-              <small class="color-gr">‭@{{issue.acct}}</small>
-              <span v-if="issue.bot"><small>[Bot]</small></span>
-              <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
+              <div class="status-name flex start">
+                <div class="hidden full">
+                  <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                  <a v-else class="color-pk">{{issue.username}}</a>
+                  <small class="color-gr">‭@{{issue.acct}}</small>
+                </div>
+                <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span>
+                <small v-if="issue.bot" class="status-info">[Bot]</small>
+              </div>
               <span>{{issue.statuses_count}} </span>Katsu!
               <div>
                 <span>{{issue.following_count}} </span>Follow /
@@ -491,7 +492,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div>
               Setting<input type="checkbox" id="showSetting" v-model="showSetting">
               Search<input type="checkbox" id="showSearch" v-model="showSearch">
-              Select<input type="checkbox" id="showStreamSelect" v-model="showStreamSelect">
+              Stream<input type="checkbox" id="showStream" v-model="showStream">
               Form<input type="checkbox" id="showForm" v-model="showForm">
             </div>
             <div>
@@ -526,7 +527,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <button v-on:click="searchAcctObj">Load Account</button>
             search_user<br>
             <input type="text" onKeyup="inputSearch(this)">
-            <button v-on:click="runMulti('Hashtag', search_tag);reopenWsMulti('Hashtag', search_tag);">Load HashTL</button>
+            <button v-on:click="runMulti('Hashtag', search_text);reopenWsMulti('Hashtag', search_text);">Load HashTL</button>
+            stream_list.id<br>
+            <input type="text" v-model="stream_list.id">
+            <button v-on:click="popStream(); return; fetchListAcct();">Load List</button>
             search_tag<br>
             <input type="text" v-model="home_id">
             katsu_id(home_min)<br>
@@ -554,7 +558,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
         <!-- C-Links -->
         <div v-if="showLinkLock" class="column mini">
-          <div class="column-header"><i class="fa fa-fw fa-comment"></i>Streams</div>
+          <div class="column-header"><i class="fa fa-fw fa-comment"></i>TimeLine</div>
           <div class="scrollable">
             <div class="link-list">
 
@@ -574,19 +578,18 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span v-else v-on:click="runLocal();reopenWsLocal('Global');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
                   <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
                 </span>
-                <span v-on:click="toggleStreamOpened('lists')" class="list-link border-lite full color bgcolor-disable flex end">
+                <span v-on:click="toggleStreamOpened('lists')" class="list-link border-lite full bgcolor-wh flex end">
                   <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
-                  <small>未</small>
                 </span>
                 <div v-if="stream_opened == 'lists'" class="full">
-                  <span v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link slim color-wh bgcolor-disable flex end">
+                  <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link slim color-wh bgcolor-disable flex end">
                     <div class="hidden full"><small>loading...</small></div>
                   </span>
-                  <span v-else v-for="issue in stream_lists" v-on:click="runMulti('List', issue);reopenWsMulti('List', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
-                    <div class="hidden full"><small>{{issue}}</small></div>
+                  <span v-else v-for="issue in stream_lists" v-on:click="runMulti('List', issue.id);reopenWsMulti('List', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
+                    <div class="hidden full"><small>{{issue.title}}</small></div>
                   </span>
-                  <span v-on:click="popStreamSelecter" class="list-link slim border-lite bgcolor-wh flex end">
-                    <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Edit Streams</small></div>
+                  <span v-on:click="popStream" class="list-link slim border-lite bgcolor-wh flex end">
+                    <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Open Streams</small></div>
                   </span>
                 </div>
                 <span v-on:click="toggleStreamOpened('tags')" class="list-link border-lite full bgcolor-wh flex end">
@@ -599,8 +602,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <span v-else v-for="issue in stream_hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
                     <div class="hidden full"><small>#{{issue}}</small></div>
                   </span>
-                  <span v-on:click="popStreamSelecter" class="list-link slim border-lite  bgcolor-wh flex end">
-                    <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Edit Streams</small></div>
+                  <span v-on:click="popStream" class="list-link slim border-lite  bgcolor-wh flex end">
+                    <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Open Streams</small></div>
                   </span>
                 </div>
                 <span v-on:click="toggleStreamOpened('channels_d')" class="list-link border-lite full color bgcolor-disable flex end">
@@ -628,13 +631,18 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </span> -->
               <!-- </div> -->
 
-              <div class="link-header"><i class="fa fa-fw fa-search"></i>Search</div>
-              <div class="search-container flex center">
-                <input type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
-                <!-- <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span> -->
-              </div>
             </div>
             <div class="user-list">
+              <div class="link-header"><i class="fa fa-fw fa-search"></i>Search</div>
+              <div class="status flex wrap">
+<!--                 <span v-if="!showLinkSearch" v-on:click="toggleLinkSearch" class="list-link border-lite full bgcolor-wh flex end">
+                  <div class="hidden full"><i class="fa fa-fw fa-search"></i>Search</div>
+                </span> -->
+                <span class="search-container full flex end">
+                  <input type="text" class="border-dash" @keyup.enter="searchAll();toggleLinkSearch();" onKeyup="inputSearch(this)"><br>
+                  <span v-on:click="searchAll();toggleLinkSearch();" class="bgcolor-wh border-lite"><i class="fa fa-fw fa-search"></i></span>
+                </span>
+              </div>
               <div v-if="null != user.id" class="status flex">
                 <img :src="checkAvatar(user.avatar_static)" class="avatar border short" v-on:click="runUser('katsu')">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
@@ -642,10 +650,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="status-name flex start">
                     <div class="hidden full">
                       <small class="color-gr">‭@{{user.acct}}</small>
-                      <span v-if="user.bot"><small>[Bot]</small></span>
-                      <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                     </div>
-                    <span class="status-time color-gr"> </span>
+                    <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span>
+                    <small v-if="user.bot" class="status-info">[Bot]</small>
                   </div>
                   <div class="status__content">
                   </div>
@@ -745,7 +752,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden">
                       <span> reblog</span>
                       </div>
-                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                      <span class="status-info color-gr">({{issue.created_at | formatDate}})</span>
                     </div>
                   </div>
                 </div>
@@ -760,7 +767,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.reblog.visibility">[{{issue.reblog.visibility}}]</small>
+                      <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
@@ -790,16 +798,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                        <span v-for="media in issue.reblog.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i class="fa fa-fw fa-paperclip color-disable"></i>
+                        <small class="time">{{issue.reblog.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -825,7 +826,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -855,16 +857,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -926,7 +921,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -956,16 +952,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1026,7 +1015,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             </div>
           </div>
           <div class="scrollable" v-on:scroll="handleScrollNotif">
-            <div v-if="hasNotif" class="status-list notif">
+            <div v-if="hasNotif" class="status-list high">
               <div v-for="issue in notifs"  v-if="!(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) && notifFilter(issue)" class="status-wrapper" :class="issue.visibility">
                 <div class="status-header flex start">
                   <i v-if="'mention' == issue.type" class="fa fa-fw fa-reply"></i>
@@ -1047,7 +1036,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <span v-else-if="'follow' == issue.type">{{issue.type}} you</span>
                       <span v-else>{{issue.type}} your katsu!</span>
                       </div>
-                      <span v-if="'mention' != issue.type" class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                      <span v-if="'mention' != issue.type" class="status-info color-gr">({{issue.created_at | formatDate}})</span>
                     </div>
                   </div>
                 </div>
@@ -1062,7 +1051,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
                         <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.status.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.status.visibility">[{{issue.status.visibility}}]</small>
+                      <small v-if="issue.status.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.status.spoiler_text)" v-if="0 != issue.status.spoiler_text.length"></span>
@@ -1085,14 +1075,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                        <span v-for="media in issue.status.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i class="fa fa-fw fa-paperclip color-disable"></i>
+                        <small class="time">{{issue.status.created_at | formatDate}}</small>
                       </div>
                       <small v-if="'public' != issue.status.visibility">{{issue.status.visibility}}</small>
                       <i v-on:click="runForm(issue.status)" class="fa fa-fw fa-reply"></i>
@@ -1120,7 +1104,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
                         <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.status.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.status.visibility">[{{issue.status.visibility}}]</small>
+                      <small v-if="issue.status.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.status.spoiler_text)" v-if="0 != issue.status.spoiler_text.length"></span>
@@ -1128,14 +1113,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                        <span v-for="media in issue.status.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i class="fa fa-fw fa-paperclip color-disable"></i>
+                        <small class="time">{{issue.status.created_at | formatDate}}</small>
                       </div>
                       <i v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
@@ -1153,12 +1132,16 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.account.created_at | formatDate}}</span>
+                      <span v-if="issue.account.locked"><i class="fa fa-fw fa-lock"></i></span>
+                      <small v-if="issue.account.bot" class="status-info">[Bot]</small>
                     </div>
                     <div class="status__content">
                     </div>
                     <div class="action-bar flex end">
-                      <i></i>
+                      <div class="hidden nodot">
+                        <i class="fa fa-fw fa-user-o color-disable"></i>
+                        <small class="time">{{issue.account.created_at | formatDate}}</small>
+                      </div>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
                   </div>
@@ -1179,9 +1162,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <i v-else-if="'List' == multi_type" class="fa fa-fw fa-list"></i>
                 <i v-else-if="'Discord' == multi_type" class="fa fa-fw fa-gamepad"></i>
                 <i v-else class="fa fa-fw fa-comment"></i>
-                {{multi_type}}: {{multi_name}} <small>(Stream: {{connMulti}})</small>
+                {{multi_type}}: {{multi_name}} <small v-if="multi_name != multi_target">(id: {{multi_target}})</small> <small>(Stream: {{connMulti}})</small>
               </div>
-              <span class="column-opt"><i v-on:click="popStreamSelecter" class="fa fa-fw fa-exchange"></i></span>
+              <span class="column-opt"><i v-on:click="popStream" class="fa fa-fw fa-exchange"></i></span>
             </div>
           </div>
           <div :class="{'border-dash-pk':! home_scr && 0 != home_unread}"></div>
@@ -1202,7 +1185,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -1232,16 +1216,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1285,7 +1262,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden">
                       <span> reblog</span>
                       </div>
-                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                      <span class="status-info color-gr">({{issue.created_at | formatDate}})</span>
                     </div>
                   </div>
                 </div>
@@ -1300,7 +1277,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.reblog.visibility">[{{issue.reblog.visibility}}]</small>
+                      <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
@@ -1330,16 +1308,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                        <span v-for="media in issue.reblog.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i class="fa fa-fw fa-paperclip color-disable"></i>
+                        <small class="time">{{issue.reblog.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1365,7 +1336,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -1395,16 +1367,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1433,7 +1398,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a class="color-pk">{{issue.author.username}}</a>
                         <small class="color-gr">‭#{{issue.author.discriminator}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.timestamp | formatDate}}</span>
+                      <span class="status-info color-gr"> {{issue.timestamp | formatDate}}</span>
                     </div>
                     <div class="status__content">
                       <div>
@@ -1449,7 +1414,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-else class="flex">nothing...?</div>
             </div>
             <div v-else>
-              <div class="flex"><span class="button color-wh bgcolor-pk" v-on:click="popStreamSelecter"><i class="fa fa-fw fa-exchange"></i> Select Stream</span></div>
+              <div class="flex"><span class="button color-wh bgcolor-pk" v-on:click="popStream"><i class="fa fa-fw fa-exchange"></i> Select Stream</span></div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -1460,7 +1425,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
         <!-- Detail -->
         <div v-if="showdetail" class="column" :class="{ full: optColumnWide && '1' == optColumns }">
-          <div class="column-header"><i class="fa fa-fw fa-comment"></i>Detail (<small>id:{{detail.id}}</small>)</div>
+          <div class="column-header"><i class="fa fa-fw fa-comment"></i>Detail <small>(id:{{detail.id}})</small></div>
           <div class="scrollable">
             <!-- ANCESTORS -->
             <div v-if="hasDetailUp" class="status-list">
@@ -1474,7 +1439,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-else class="color-pk">{{issue.account.username}}</a>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
-                    <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                    <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="status__content">
                     <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -1507,16 +1473,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
                       <i v-else-if="issue.account.id == user.id && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
-                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                      <span v-for="media in issue.media_attachments">
-                        <a :href="media.url" rel="nofollow noopener" target="_blank">
-                          <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                          <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                        </a>
-                      </span>
-                      <small class="dummy">_</small>
+                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                      <small class="time">{{issue.created_at | formatDate}}</small>
                     </div>
-                    <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                     <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                     <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1544,7 +1503,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-else class="color-pk">{{detail.account.username}}</a>
                       <small class="color-gr">‭@{{detail.account.acct}}</small>
                     </div>
-                    <small class="status-time color-gr"> {{detail.created_at | formatDateFull}}</small>
+                      <small v-if="detail.account.locked"><i class="fa fa-fw fa-lock"></i></small>
+                      <small v-if="detail.account.bot" class="status-info">[Bot]</small>
+                      <small>[{{detail.visibility}}]</small>
+                      <small v-if="detail.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="detail-time flex end">
                   </div>
@@ -1574,6 +1536,17 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <h4 v-else>Media contents</h4>
                     <small>Click to view</small>
                   </div>
+                  <div v-if="0 != detail.media_attachments.length" class="action-bar flex end">
+                    <div class="full hidden nodot">
+                      <small>media links:</small>
+                      <span v-for="media in detail.media_attachments" v-if="checkDummy(media.url)">
+                        <a :href="media.url" rel="nofollow noopener" target="_blank">
+                          <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
+                          <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
                   <a v-if="hasDetailCard" class="flex center detail-card bgcolor-wh" :href="detail_card.url" target="_blank" rel="noopener noreferrer">
                     <img v-if="null != detail_card.image" :src="detail_card.image">
                     <div class="detail-content">
@@ -1593,21 +1566,15 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                   </div>
                   <div class="action-bar flex end wrap">
-                    <div class="hidden nodot">
+                    <div class="">
                       <i v-if="detail.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="detail.pinned" v-on:click="actUnPin(detail)" class="fa fa-fw fa-thumb-tack"></i>
                       <i v-else-if="detail.account.id == user.id && 'direct' != detail.visibility && 'private' != detail.visibility" v-on:click="actPin(detail)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
-                      <i v-else v-on:click="actBookmark(detail)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                      <span v-for="media in detail.media_attachments">
-                        <a :href="media.url" rel="nofollow noopener" target="_blank">
-                          <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                          <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                        </a>
-                      </span>
-                      <small class="dummy">_</small>
+                      <i v-else v-on:click="actBookmark(detail)" class="fa fa-fw fa-paperclip"></i>
+                      <small class="time">{{detail.created_at | formatDateFull}}</small>
                     </div>
                     <div class="action-bar flex end">
-                      <small v-if="'public' != detail.visibility">{{detail.visibility}}</small>
+                      <dummy></dummy>
                       <i v-on:click="runForm(detail)" class="fa fa-fw fa-reply"></i>
                       <i v-if="detail.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == detail.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1645,7 +1612,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-else class="color-pk">{{issue.account.username}}</a>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
-                    <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                    <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="status__content">
                     <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -1678,16 +1646,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
                       <i v-else-if="issue.account.id == user.id && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
-                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                      <span v-for="media in issue.media_attachments">
-                        <a :href="media.url" rel="nofollow noopener" target="_blank">
-                          <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                          <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                        </a>
-                      </span>
-                      <small class="dummy">_</small>
+                      <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                      <small class="time">{{issue.created_at | formatDate}}</small>
                     </div>
-                    <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                     <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                     <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                     <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1711,7 +1672,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
         <!-- Account -->
         <div v-if="showacct" class="column" :class="{ full: optColumnWide && '1' == optColumns }">
-          <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account (<small>id:{{acct.id}}</small>)</div>
+          <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account <small>(id:{{acct.id}})</small></div>
           <div class="scrollable" id="acct" v-on:scroll="handleScrollAcct">
             <div v-if="hasAcctRel" class="account-info">
               <div v-if="acct.header.indexOf('original/missing.png') == -1" class="acct-header-wrapper">
@@ -1720,13 +1681,17 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="flex">
                 <img :src="checkAvatar(acct.avatar)" class="avatar">
                 <div class="content">
-                  <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash" v-model="profile.name">
-                  <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
-                  <a v-else class="color-pk">{{acct.username}}</a>
-                  <small class="color-gr">‭@{{acct.acct}}</small>
-                  <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash name_b" v-model="profile.name_b">
-                  <span v-if="acct.bot"><small>[Bot]</small></span>
-                  <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span><br>
+                  <div class="status-name flex start">
+                    <div class="hidden full">
+                      <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash" v-model="profile.name">
+                      <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
+                      <a v-else class="color-pk">{{acct.username}}</a>
+                      <small class="color-gr">‭@{{acct.acct}}</small>
+                      <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash name_b" v-model="profile.name_b">
+                    </div>
+                    <span v-if="acct.locked"><i class="fa fa-fw fa-lock"></i></span>
+                    <span v-if="acct.bot"><small>[Bot]</small></span>
+                  </div>
                   <span>{{acct.statuses_count}} </span>Katsu!
                   <div>
                     <span>{{acct.following_count}} </span>Follow /
@@ -1785,7 +1750,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
               </div>
-              <div v-for="(issue, index) in accts_pinned" class="status-wrapper" :class="issue.visibility">
+              <div v-for="(issue, index) in acct_pinned" class="status-wrapper" :class="issue.visibility">
                 <!-- PINNED -->
                 <div class="status flex">
                   <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
@@ -1797,7 +1762,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -1830,16 +1796,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <!-- <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:{{issue.id}}</small> -->
                         <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                         <i v-else-if="issue.account.id != user.id" class="fa fa-fw fa-thumb-tack color-disable"></i>
-                        <i v-else v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-else v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1887,7 +1846,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden">
                       <span> reblog</span>
                       </div>
-                      <span class="status-time color-gr">({{issue.created_at | formatDate}})</span>
+                      <span class="status-info color-gr">({{issue.created_at | formatDate}})</span>
                     </div>
                   </div>
                 </div>
@@ -1902,7 +1861,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.reblog.created_at | formatDate}}</span>
+                    <small v-if="'public' != issue.reblog.visibility">[{{issue.reblog.visibility}}]</small>
+                    <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
@@ -1932,16 +1892,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i class="fa fa-fw fa-paperclip color-disable"></i><small>:</small>
-                        <span v-for="media in issue.reblog.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i class="fa fa-fw fa-paperclip color-disable"></i>
+                        <small class="time">{{issue.reblog.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.reblog.visibility">{{issue.reblog.visibility}}</small>
                       <i v-on:click="runForm(issue.reblog)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.reblog.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.reblog.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -1967,7 +1920,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -2000,16 +1954,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <i v-if="issue.req_pin" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                         <i v-else-if="issue.pinned" v-on:click="actUnPin(issue)" class="fa fa-fw fa-thumb-tack"></i>
                         <i v-else-if="issue.account.id == user.id && (acct_type=='katsu' || acct_type=='media') && 'direct' != issue.visibility && 'private' != issue.visibility" v-on:click="actPin(issue)" class="fa fa-fw fa-thumb-tack fa-rotate-270"></i>
-                        <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-else v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -2036,10 +1983,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
                       <a v-else class="color-pk">{{issue.username}}</a>
                       <small class="color-gr">‭@{{issue.acct}}</small>
-                      <span v-if="issue.bot"><small>[Bot]</small></span>
-                      <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                     </div>
-                    <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                    <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span>
+                    <small v-if="issue.bot" class="status-info">[Bot]</small>
                   </div>
                   <div class="status__content">
                   </div>
@@ -2065,7 +2011,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
             </div>
-            <div v-else-if="fetch_lock.acct">
+            <div v-else-if="fetch_lock.acct" class="status-list high">
               <div class="flex">loading...</div>
             </div>
           </div>
@@ -2074,7 +2020,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <!-- MANAGE -->
         <div :class="[{ invisible: !showmanagetl }, { full: optColumnWide && '1' == optColumns }]" class="column">
         <div class="column-header"><i class="fa fa-fw fa-hashtag"></i>Hashtag: -</div>
-          <div class="scrollable" v-on:scroll="handleScrollHash">
+          <div class="scrollable" v-on:scroll="">
             <div v-if="hasManage" class="status-list">
               <div v-for="(issue, index) in manages" :class="issue.visibility">
                 <div class="status flex">
@@ -2087,7 +2033,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
-                      <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
+                      <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                      <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
                       <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
@@ -2117,16 +2064,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
-                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                        <span v-for="media in issue.media_attachments">
-                          <a :href="media.url" rel="nofollow noopener" target="_blank">
-                            <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                            <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                          </a>
-                        </span>
-                        <small class="dummy">_</small>
+                        <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                        <small class="time">{{issue.created_at | formatDate}}</small>
                       </div>
-                      <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
                       <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
                       <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
@@ -2178,19 +2118,18 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <span v-else v-on:click="runLocal();reopenWsLocal('Global');local_opt = false;" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Global</div>
               </span>
-              <span v-on:click="toggleStreamOpened('lists')" class="list-link border-lite full color bgcolor-disable flex end">
+              <span v-on:click="toggleStreamOpened('lists')" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-list"></i>Lists</div>
-                <small>未</small>
               </span>
               <div v-if="stream_opened == 'lists'" class="full">
-                <span v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link slim color-wh bgcolor-disable flex end">
+                <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link slim color-wh bgcolor-disable flex end">
                   <div class="hidden full"><small>loading...</small></div>
                 </span>
-                <span v-else v-for="issue in stream_lists" v-on:click="runMulti('List', issue);reopenWsMulti('List', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
-                  <div class="hidden full"><small>{{issue}}</small></div>
+                <span v-else v-for="issue in stream_lists" v-on:click="runMulti('List', issue.id);reopenWsMulti('List', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
+                  <div class="hidden full"><small>{{issue.title}}</small></div>
                 </span>
-                <span v-on:click="popStreamSelecter" class="list-link slim border-lite bgcolor-wh flex end">
-                  <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Edit Streams</small></div>
+                <span v-on:click="popStream" class="list-link slim border-lite bgcolor-wh flex end">
+                  <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Open Streams</small></div>
                 </span>
               </div>
               <span v-on:click="toggleStreamOpened('tags')" class="list-link border-lite full bgcolor-wh flex end">
@@ -2203,8 +2142,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span v-else v-for="issue in stream_hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);multi_opt = false;" class="list-link slim border-lite bgcolor-wh flex end">
                   <div class="hidden full"><small>#{{issue}}</small></div>
                 </span>
-                <span v-on:click="popStreamSelecter" class="list-link slim border-lite  bgcolor-wh flex end">
-                  <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Edit Streams</small></div>
+                <span v-on:click="popStream" class="list-link slim border-lite  bgcolor-wh flex end">
+                  <div class="hidden full"><small><i class="fa fa-fw fa-pencil"></i>Open Streams</small></div>
                 </span>
               </div>
               <span v-on:click="toggleStreamOpened('channels_d')" class="list-link border-lite color full bgcolor-disable flex end">
@@ -2218,7 +2157,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="hidden full"><i class="fa fa-fw fa-globe"></i>Refresh</div>
               </span> -->
             </div>
-
 <!--             <div class="link-header"><i class="fa fa-fw fa-cog"></i>Setting</div>
             <div class="status flex wrap"> -->
 <!--               <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
@@ -2231,12 +2169,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="hidden full"><i class="fa fa-fw fa-sign-out"></i>Logout</div>
               </span> -->
             <!-- </div> -->
-
-            <div class="link-header"><i class="fa fa-fw fa-search"></i>Search</div>
-            <div class="search-container flex center">
-              <input type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
-              <!-- <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span> -->
-            </div>
           </div>
         </div>
 
@@ -2249,10 +2181,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="status-name flex start">
                   <div class="hidden full">
                     <small class="color-gr">‭@{{user.acct}}</small>
-                    <span v-if="user.bot"><small>[Bot]</small></span>
-                    <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span><br>
                   </div>
-                  <span class="status-time color-gr"> </span>
+                  <span v-if="user.locked"><i class="fa fa-fw fa-lock"></i></span>
+                  <small v-if="user.bot" class="status-info">[Bot]</small>
                 </div>
                 <div class="status__content">
                 </div>
@@ -2277,40 +2208,122 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <span v-on:click="popSetting" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-cog"></i>Setting</div>
               </span>
+              <span v-if="!showLinkSearch" v-on:click="toggleLinkSearch" class="list-link border-lite full bgcolor-wh flex end">
+                <div class="hidden full"><i class="fa fa-fw fa-search"></i>Search</div>
+              </span>
+              <span v-else class="search-container full flex end">
+                <input v-focus type="text" class="border-dash" @keyup.enter="searchAll();toggleLinkSearch();" onKeyup="inputSearch(this)"><br>
+                <span v-on:click="searchAll();toggleLinkSearch();" class="bgcolor-wh border-lite"><i class="fa fa-fw fa-search"></i></span>
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- SELECTER -->
-        <div v-if="showStreamSelect"  class="column scrollable bgcolor-wh fixed">
+        <!-- STREAM -->
+        <div v-show="showStream" class="column scrollable bgcolor-wh fixed">
 
           <div class="form-option full">
             <div class="action-bar flex end">
-              <h3>Stream Selecter</h3>
+              <h3>Streams</h3>
               <span>Edit: </span>
               <span v-if="showStreamEdit" v-on:click="toggleShowStreamEdit" class="color-wh bgcolor-pk button mini">ON</span>
               <span v-else v-on:click="toggleShowStreamEdit" class="color-wh bgcolor button mini">OFF</span>
             </div>
-            <!-- Selecter -->
-            <div class="status-list">
-              <div v-if="stream_lists" class="link-header"><i class="fa fa-fw fa-list"></i> Lists</div>
-              <div v-for="issue in stream_lists" class="flex">
-                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">{{issue}}</div>
-                <div v-else v-on:click="showStreamSelect=false;runMulti('List', issue);reopenWsMulti('List', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor">{{issue}}</div>
+            <!-- ManageStream -->
+            <div v-show="hasStreamList" class="status-list">
+              <div class="link-header"><i class="fa fa-fw fa-user-circle-o"></i> Accounts <small>(List id: {{stream_list.id}})</small></div>
+              <div class="flex select-container">
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link full color-wh bgcolor-disable hidden"><i class="fa fa-fw fa-pencil"></i> {{stream_list.title}}</div>
+                <div v-else-if="!showStreamEdit" v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor hidden"><i class="fa fa-fw fa-pencil"></i> {{stream_list.title}}</div>
+                <input v-focus v-show="showStreamEdit && !fetch_lock.multiws && !fetch_lock.multi && !fetch_lock.lists" type="text" class="border-dash" id="list_name" @keyup.enter="runListProfile" onKeyup="inputListProfile(this)">
+
+                <span v-if="!fetch_lock.multiws && !fetch_lock.multi && !fetch_lock.lists && showStreamEdit" class="flex">
+                  <span v-if="stream_list.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                  <span v-else v-on:click="listprofile.name=issue.name;checkListProfile();document.getElementById('list_name').value=stream_list.title;toggleShowStreamEdit();" class="button mini color-wh bgcolor">Cancel</span>
+                  <span v-if="stream_list.req_profile" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                  <span v-else-if="stream_list_profile_check" v-on:click="runListProfile" class="color-wh bgcolor-pk button">Save</span>
+                  <span v-else class="button mini color-wh bgcolor-disable">Save</span>
+                </span>
+
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link color-wh bgcolor-disable">Close</div>
+                <div v-else v-on:click="fetchListAll(); stream_list_users=[]; stream_list_users_bu=[]; stream_list_users_relation=[]; stream_list=[];" class="list-link color-wh bgcolor-gr">Close</div>
               </div>
-              <div v-if="showStreamEdit" class="select-container bgcolor-wh flex center">
-                <div class="list-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-plus"></i> New List</div>
+              <div class="flex account-bar">
+                <div v-on:click="resetStreamList();fetchListAcct();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'listed' == stream_list_type }"><i class="fa fa-fw fa-user-o"></i>Listed</div>
+                <div v-on:click="resetStreamList();runListSearch();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'search' == stream_list_type }"><i class="fa fa-fw fa-search"></i>Search</div>
+                <div v-on:click="resetStreamList();fetchListFollow();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follow' == stream_list_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follow</div>
+<!--                 <div v-on:click="resetStreamList();fetchListFollower();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'follower' == stream_list_type }"><i class="fa fa-fw fa-user-circle-o"></i>Follower</div> -->
+              </div>
+              <div class="status-list">
+                <div v-if="'search'==stream_list_type" class="action-bar bgcolor-wh flex center">
+                  <small>フォローしているアカウントから探す</small>
+                  <input type="checkbox" id="checkfollowing" class="invisible" v-model="stream_list_following">
+                  <label v-if="stream_list_following" for="checkfollowing" class="button color-wh bgcolor-pk">ON</label>
+                  <label v-else for="checkfollowing" class="button color-wh bgcolor">OFF</label>
+                </div>
+                <div v-if="'search'==stream_list_type" class="search-container action-bar bgcolor-wh flex center">
+                  <input v-focus type="text" class="border-dash" @keyup.enter="fetchListSearch" onKeyup="inputSearch(this)"><br>
+                  <span v-on:click="fetchListSearch" class="color-wh bgcolor-gr button">Search</span>
+                </div>
+                <div v-for="issue in stream_list_users" class="status flex">
+                  <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showStream = false; runAcct(issue.id);">
+                  <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                  <div class="content border">
+                    <div class="status-name flex start">
+                      <div class="hidden full">
+                        <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                        <a v-else class="color-pk">{{issue.username}}</a>
+                        <small class="color-gr">‭@{{issue.acct}}</small>
+                      </div>
+                      <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span>
+                      <small v-if="issue.bot" class="status-info">[Bot]</small>
+                    </div>
+                    <div class="status__content">
+                    </div>
+                    <div class="action-bar flex end">
+                      <i></i>
+                      <div v-if="user.id != issue.id">
+                        <span v-if="issue.req_list" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
+                        <span v-else-if="!isListFollow(issue.id)" class="button mini color-wh bgcolor-disable">Add</span>
+                        <span v-else-if="isList(issue.id)" v-on:click="actUnList(issue)" class="button mini color-wh bgcolor-pk">Remove</span>
+                        <span v-else-if="!isList(issue.id)" v-on:click="actList(issue)" class="button mini color-wh bgcolor">Add</span>
+                      </div>
+                      <i v-on:click="showStream = false; runAcct(issue.id);" class="fa fa-fw fa-user-circle-o"></i>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="'follow'==stream_list_type && !isListFollowMax" class="search-container action-bar bgcolor-wh flex center">
+                  <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="full color-wh bgcolor-disable button">Next</span>
+                  <span v-else v-on:click="fetchListFollow" class="full color-wh bgcolor-gr button">Next</span>
+                </div>
+              </div>
+            </div>
+            <!-- Normal -->
+            <div v-if="!hasStreamList" class="status-list">
+              <div class="link-header"><i class="fa fa-fw fa-list"></i> Lists</div>
+              <div v-for="issue in stream_lists" class="flex select-container">
+                <i v-if="showStreamEdit" v-on:click="runRemoveList(issue.id);" class="fa fa-fw fa-times"></i>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link full color-wh bgcolor-disable hidden">{{issue.title}}</div>
+                <div v-else v-on:click="showStream=false;runMulti('List', issue.id);reopenWsMulti('List', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor hidden">{{issue.title}}</div>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link color-wh bgcolor-disable"><i class="fa fa-fw fa-user-o"></i></div>
+                <div v-else v-on:click="stream_list=issue;listprofile.name=issue.title;checkListProfile();document.getElementById('list_name').value=issue.title;fetchListAcctBackup();fetchListAcct();" class="list-link color-wh bgcolor"><i class="fa fa-fw fa-user-o"></i></div>
+              </div>
+              <div v-if="showStreamEdit && !isListMax" class="select-container list bgcolor-wh flex center">
+                <input type="text" class="border-dash" @keyup.enter="runAddList" onKeyup="inputList(this);"><br>
+                <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="color-wh bgcolor-disable button"><i class="fa fa-fw fa-spinner fa-pulse color-wh"></i></span>
+                <span v-else-if="stream_list_text_check" v-on:click="runAddList" class="color-wh bgcolor-pk button">Add</span>
+                <span v-else class="color-wh bgcolor-disable button">Add</span>
               </div>
               <div v-else class="flex">
-                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-plus"></i> New List</div>
-                <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor"><i class="fa fa-fw fa-plus"></i> New List</div>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists || isListMax" class="list-link full color-wh bgcolor-disable hidden"><i class="fa fa-fw fa-plus"></i> New List</div>
+                <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor hidden"><i class="fa fa-fw fa-plus"></i> New List</div>
               </div>
               <!-- -->
-              <div v-if="stream_hashtags" class="link-header"><i class="fa fa-fw fa-hashtag"></i> Hashtags</div>
+              <div class="link-header"><i class="fa fa-fw fa-hashtag"></i> Hashtags</div>
               <div v-for="issue in stream_hashtags" class="flex select-container">
                 <i v-if="showStreamEdit" v-on:click="removeStreamHashtag(issue);" class="fa fa-fw fa-times"></i>
-                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">#{{issue}}</div>
-                <div v-else v-on:click="showStreamSelect=false;runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor">#{{issue}}</div>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable hidden">#{{issue}}</div>
+                <div v-else v-on:click="showStream=false;runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor hidden">#{{issue}}</div>
               </div>
               <div v-if="showStreamEdit && !isHashtagMax" class="select-container bgcolor-wh flex center">
                 <input type="text" class="border-dash" @keyup.enter="checkStreamHashtag(search_tag);" onKeyup="inputSearch(this)"><br>
@@ -2320,126 +2333,124 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span v-else v-on:click="addStreamHashtag" class="color-wh bgcolor-pk button">Add</span>
               </div>
               <div v-else class="flex">
-                <div v-if="fetch_lock.multiws || fetch_lock.multi || isHashtagMax" class="list-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
-                <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi || isHashtagMax" class="list-link full color-wh bgcolor-disable hidden"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
+                <div v-else v-on:click="toggleShowStreamEdit" class="list-link full color-wh bgcolor hidden"><i class="fa fa-fw fa-plus"></i> New Hashtag</div>
               </div>
               <!-- -->
-              <div v-if="stream_channels" class="link-header"><i class="fa fa-fw fa-gamepad"></i> Discord Channels</div>
+              <div class="link-header"><i class="fa fa-fw fa-gamepad"></i> Discord Channels</div>
               <div v-for="issue in stream_channels" class="flex">
-                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable">{{issue}}</div>
-                <div v-else v-on:click="return;showStreamSelect=false;runMulti('Discord', issue);reopenWsMulti('Discord', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor-disable">{{issue}}</div>
+                <div v-if="fetch_lock.multiws || fetch_lock.multi" class="list-link full color-wh bgcolor-disable hidden">{{issue}}</div>
+                <div v-else v-on:click="return;showStream=false;runMulti('Discord', issue);reopenWsMulti('Discord', issue);multi_opt=false;showStreamEdit=false;" class="list-link full color-wh bgcolor-disable hidden">{{issue}}</div>
               </div>
             </div>
 <!--             <div class="flex center">
-              <span class="button list-link close full color-wh bgcolor-gr" v-on:click="showStreamSelect = false;">Close</span>
+              <span class="button list-link close full color-wh bgcolor-gr" v-on:click="showStream = false;">Close</span>
             </div> -->
           </div>
         </div>
         <!-- SEARCH -->
         <div v-if="showSearch" class="column scrollable bgcolor-wh fixed">
-          <div class="status-list">
+          <div class="form-option full">
+            <div class="status-list">
 
-            <div class="search-container bgcolor-wh flex center">
-              <input v-focus type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
-              <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span>
-            </div>
+              <div class="search-container action-bar bgcolor-wh flex center">
+                <input v-focus type="text" class="border-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)"><br>
+                <span v-on:click="searchAll" class="color-wh bgcolor-gr button">Search</span>
+              </div>
 
-            <div v-if="searchs.hashtags && 0 != searchs.hashtags.length"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
-            <div class="status flex wrap">
-              <span v-for="issue in searchs.hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);" class="list-link border-lite full color-pk bgcolor-wh">#{{issue}}</span>
-            </div>
+              <div v-if="searchs.hashtags && 0 != searchs.hashtags.length"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
+              <div class="status flex wrap">
+                <span v-for="issue in searchs.hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);" class="list-link border-lite full color-pk bgcolor-wh">#{{issue}}</span>
+              </div>
 
-            <div v-if="searchs.accounts && 0 != searchs.accounts.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
-            <div v-for="issue in searchs.accounts" class="status flex">
-              <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
-              <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
-              <div class="content border">
-                <div class="status-name flex start">
-                  <div class="hidden full">
-                    <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
-                    <a v-else class="color-pk">{{issue.username}}</a>
-                    <small class="color-gr">‭@{{issue.acct}}</small>
-                    <span v-if="issue.bot"><small>[Bot]</small></span>
-                    <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span><br>
+              <div v-if="searchs.accounts && 0 != searchs.accounts.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
+              <div v-for="issue in searchs.accounts" class="status flex">
+                <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
+                <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                <div class="content border">
+                  <div class="status-name flex start">
+                    <div class="hidden full">
+                      <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                      <a v-else class="color-pk">{{issue.username}}</a>
+                      <small class="color-gr">‭@{{issue.acct}}</small>
+                    </div>
+                      <span v-if="issue.locked"><i class="fa fa-fw fa-lock"></i></span>
+                      <small v-if="issue.bot" class="status-info">[Bot]</small>
                   </div>
-                  <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
-                </div>
-                <div class="status__content">
-                </div>
-                <div class="action-bar flex end">
-                  <i></i>
-                  <i v-on:click="showSearch = false; runAcct(issue.id);" class="fa fa-fw fa-user-circle-o"></i>
+                  <div class="status__content">
+                  </div>
+                  <div class="action-bar flex end">
+                    <div class="hidden nodot">
+                      <i class="fa fa-fw fa-user-o color-disable"></i>
+                      <small class="time">{{issue.created_at | formatDate}}</small>
+                    </div>
+                    <i v-on:click="showSearch = false; runAcct(issue.id);" class="fa fa-fw fa-user-circle-o"></i>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>Katsu!</div>
-            <div v-for="(issue, index) in searchs.statuses" class="status flex">
+              <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>Katsu!</div>
+              <div v-for="(issue, index) in searchs.statuses" class="status flex">
 
-              <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
-              <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
-              <div class="content border">
-                <div class="status-name flex start">
-                  <div class="hidden full">
-                    <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
-                    <a v-else class="color-pk">{{issue.account.username}}</a>
-                    <small class="color-gr">‭@{{issue.account.acct}}</small>
+                <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id)">
+                <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
+                <div class="content border">
+                  <div class="status-name flex start">
+                    <div class="hidden full">
+                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                      <a v-else class="color-pk">{{issue.account.username}}</a>
+                      <small class="color-gr">‭@{{issue.account.acct}}</small>
+                    </div>
+                    <small v-if="'public' != issue.visibility">[{{issue.visibility}}]</small>
+                    <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
-                  <span class="status-time color-gr"> {{issue.created_at | formatDate}}</span>
-                </div>
-                <div class="status__content">
-                  <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
-                      <div v-if="0 != issue.spoiler_text.length">
-                    <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
-                    <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                    <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                  <div class="status__content">
+                    <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                        <div v-if="0 != issue.spoiler_text.length">
+                      <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
+                      <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
+                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                    </div>
+                    <div v-else>
+                      <span v-html="$options.filters.formatContent(issue.content)"></span>
+                    </div>
                   </div>
-                  <div v-else>
-                    <span v-html="$options.filters.formatContent(issue.content)"></span>
+                  <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
+                    <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
+                      <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
+                      <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" :alt="media.description" :title="media.description" class="media">
+                      <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+                    </a>
                   </div>
-                </div>
-                <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
-                  <a v-for="media in issue.media_attachments" @click="modal = media;showModal = true;">
-                    <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
-                    <img v-if="('gifv' != media.type || ('gifv' == media.type && '1' == optAutoPlay)) && '/files/small/.preview_url' != media.preview_url" :src="checkMedia(media.preview_url)" :alt="media.description" :title="media.description" class="media">
-                    <i v-if="'video' == media.type || ('gifv' == media.type && '1' == optAutoPlay)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
-                  </a>
-                </div>
-                <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                  <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
-                </div>
-                <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
-                  <h4 v-if="issue.sensitive">Sensitive contents</h4>
-                  <h4 v-else>Media contents</h4>
-                  <small>Click to view</small>
-                </div>
-                <div class="action-bar flex end">
-                  <div class="hidden nodot">
-                    <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i><small>:</small>
-                    <span v-for="media in issue.media_attachments">
-                      <a :href="media.url" rel="nofollow noopener" target="_blank">
-                        <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                        <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                      </a>
-                    </span>
-                    <small class="dummy">_</small>
+                  <div v-if="0 != issue.media_attachments" class="media-wrapper control">
+                    <i v-on:click="updateMediaWrapper(issue, false)" class="fa fa-fw fa-eye bgcolor-wh eye"></i>
                   </div>
-                  <small v-if="'public' != issue.visibility">{{issue.visibility}}</small>
-                  <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
-                  <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
-                  <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
-                  <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
-                  <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
-                  <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
-                  <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
-                  <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
-                  <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                  <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
-                  <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                  <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true)">
+                    <h4 v-if="issue.sensitive">Sensitive contents</h4>
+                    <h4 v-else>Media contents</h4>
+                    <small>Click to view</small>
+                  </div>
+                  <div class="action-bar flex end">
+                    <div class="hidden nodot">
+                      <i v-on:click="actBookmark(issue)" class="fa fa-fw fa-paperclip"></i>
+                      <small class="time">{{issue.created_at | formatDate}}</small>
+                    </div>
+                    <i v-on:click="runForm(issue)" class="fa fa-fw fa-reply"></i>
+                    <i v-if="issue.req_reblog" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="'direct' == issue.visibility" class="fa fa-fw fa-envelope color-disable"></i>
+                    <i v-else-if="'private' == issue.visibility" class="fa fa-fw fa-lock color-disable"></i>
+                    <i v-else-if="issue.reblogged" v-on:click="actUnReblog(issue);" class="fa fa-fw fa-retweet color-on"></i>
+                    <i v-else v-on:click="actReblog(issue)" class="fa fa-fw fa-retweet"></i>
+                    <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
+                    <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
+                    <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
+                    <i v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
+                    <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
+                  </div>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
         <!-- KatsuForm -->
@@ -2481,7 +2492,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <a v-else class="color-pk">{{katsu.reply.account.username}}</a>
                     <small class="color-gr">‭@{{katsu.reply.account.acct}}</small>
                   </div>
-                  <span class="status-time color-gr"> {{katsu.reply.created_at | formatDate}}</span>
+                  <small v-if="'public' != katsu.reply.visibility">[{{katsu.reply.visibility}}]</small>
+                  <small v-if="katsu.reply.sensitive" class="status-info">[Sensitive]</small>
                 </div>
                 <div class="status__content">
                   <span v-html="$options.filters.formatContentS(katsu.reply.spoiler_text)"></span>
@@ -2511,16 +2523,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
                 <div class="action-bar flex end">
                   <div class="hidden">
-                    <i class="fa fa-fw fa-paperclip color-disable"></i><small>:{{katsu.reply.id}}</small>
-                    <span v-for="media in katsu.reply.media_attachments">
-                      <a :href="media.url" rel="nofollow noopener" target="_blank">
-                        <i v-if="'video' == media.type || 'gifv' == media.type" class="fa fa-fw fa-file-video-o color-gr"></i>
-                        <i v-else class="fa fa-fw fa-file-image-o color-gr"></i>
-                      </a>
-                    </span>
-                    <small class="dummy">_</small>
+                    <i class="fa fa-fw fa-paperclip color-disable"></i>
+                    <small class="time">{{katsu.reply.created_at | formatDate}}</small>
                   </div>
-                  <small v-if="'public' != katsu.reply.visibility">{{katsu.reply.visibility}}</small>
                   <i v-on:click="addContent(katsu.reply.url); katsu['in_reply_to_id'] = ''; katsu.reply = [];" class="fa fa-fw fa-arrow-circle-down"></i>
                   <i v-on:click="katsu['in_reply_to_id'] = ''; katsu.reply = [];" class="fa fa-fw fa-times"></i>
                 </div>
@@ -2593,8 +2598,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
                 <div class="flex end action-bar">
                   <span>メディアを隠す(NSFW)</span>
-                  <div v-if="true === katsu['sensitive']" v-on:click="katsu['sensitive'] = false;" class="button color-wh bgcolor-pk">ON</div>
-                  <div v-else v-on:click="katsu['sensitive'] = true;" class="button color-wh bgcolor">OFF</div>
+                  <div v-if="true === katsu['nsfw']" v-on:click="katsu['nsfw'] = false;" class="button color-wh bgcolor-pk">ON</div>
+                  <div v-else v-on:click="katsu['nsfw'] = true;" class="button color-wh bgcolor">OFF</div>
                 </div>
               </div>
 
@@ -2832,21 +2837,31 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 Home/Local/通知/タグ TLのカツ!ストリーム取得/削除<br>
                 Home/Local/通知/Fav済/ユーザー/タグ のカツ!一覧取得<br>
                 Home/Local/通知/Fav済/ユーザー/タグ を遡って取得<br>
-                ピン留めカツ! の取得<br>
+                リストの一覧を取得<br>
+                リスト TLのカツ!ストリーム取得/削除<br>
+                リスト TLのカツ!一覧取得<br>
+                リスト TLのカツ!を遡って取得<br>
+                リストの追加/削除<br>
+                リストに登録済みのアカウント一覧 取得<br>
+                リストにアカウントを登録/解除<br>
+                アカウント検索機能<br>
                 カツ!の CW/NSFW,画像/ビデオ/gifv(ループ再生) 表示<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧 取得<br>
                 ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
+                ピン留めカツ! の取得<br>
                 フォロー/フォロワー 一覧取得<br>
                 フォロー/フォロワー 一覧を遡って取得<br>
                 フォローリクエスト中のアカウント一覧 取得<br>
                 フォローリクエスト中のアカウントの 認証/拒否<br>
                 検索した結果(アカウント/タグ) 取得<br>
-                お気に入り/ブースト/フォロー の登録と解除<br>
+                お気に入り/ブースト/フォロー の登録/解除<br>
                 カツ!/お気に入り/ブースト/フォロー の確認ウィンドウ<br>
-                ミュート/ブロック の登録と解除、確認ウィンドウ<br>
-                ピン留め の登録と解除、確認ウィンドウ<br>
+                ミュート/ブロック の登録/解除、確認ウィンドウ<br>
+                リストにアカウントを登録/解除、確認ウィンドウ<br>
+                ピン留め の登録/解除、確認ウィンドウ<br>
                 カツ!の 削除<br>
                 カツ!の 通報<br>
+                プロファイル編集(名前のみ)<br>
                 ヘッダアイコンのカラム移動機能<br>
                 デスクトップ通知(PC)と、通知音再生(PC)<br>
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
@@ -2854,51 +2869,50 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </small><br>
               <h3>拡張機能(v1.3)</h3>
               <small>
-                カラーテーマ機能(4テーマ)<br>
+                カラーテーマ機能<br>
                 ショートカットメニュー<br>
+                ハッシュタグ TLのショートカット登録機能<br>
                 1,2,3カラム表示+Home/Local TLdetailのワイドカラム化<br>
                 画面のリサイズ/回転時に最適なカラム数に切り替え<br>
                 Home/Local TLの画像や映像を全て隠すオプション<br>
                 Home/Local TLに 最新/上底/下底スクロールボタンを追加<br>
                 Home/Local TLに カツ!表示数目標を設定(200カツ!)<br>
-                ハッシュタグ TLのショートカット機能<br>
+                リスト用検索に未フォローアカウント表示&フォロワー一覧<br>
+                リストのリネーム機能<br>
+                リスト数50、リスト名の文字数300を上限に設定<br>
                 Local TLにしおりをはさむ機能(削除カツ未対応)<br>
-                通知の未読数を表示(独自)<br>
+                通知の未読数を表示<br>
                 フォロー/フォロワー一覧 をユーザー情報内で表示<br>
                 カツ!詳細/ユーザー情報 リンクのボタン化<br>
+                カツ!に含まれるメディアのリンクボタン追加<br>
                 カツ!の 下書きの保存<br>
-                カツ!の 本文と注意文の入れ替え<br>
+                カツ!の 本文と注意文の入れ替え機能<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
+                EmojiOne v2.2.7 採用<br>
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
+                プロファイル(名前)のかんたんUnicodeハック機能を追加<br>
                 スワイプでカラムを呼び出す機能(カラムは固定)<br>
                 戻るボタンでアプリを閉じない(Android)<br>
                 ヘッダに お気に入り、Webアプリ設定アイコンを追加<br>
                 デスクトップ通知音の切替機能(PC)<br>
                 通信エラーメッセージ<br>
                 Local/連合 TLの切り替え機能<br>
+                タグ/リスト TLの切り替え機能<br>
               </small><br>
               <h3>アプリにまだない機能(v1.3)</h3>
               <small>
+                アカウントプロファイルの編集(名前以外)<br>
                 カスタム絵文字の表示/入力<br>
                 Home/Local/通知 のカツ!フィルタ<br>
                 [完成済]ダイレクトメッセージストリーム取得/削除<br>
-                リストの一覧を取得<br>
-                リスト TLのカツ!ストリーム取得/削除<br>
-                リスト TLのカツ!一覧取得<br>
-                リスト TLのカツ!を遡って取得<br>
-                リストの追加<br>
-                リストに登録済みのアカウント一覧 取得<br>
-                連合インスタンス一覧 取得<br>
-                連合インスタンスの情報 取得<br>
                 photo/video/richのOGP展開<br>
                 シェア機能(Web Share API対応)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
-                [完成済]アカウントを リストに登録/リストから解除<br>
                 フォローリクエスト数を表示<br>
-                通知の未読数を表示(API)<br>
                 カツ!を削除して下書きに戻す機能<br>
-                (v2.3.0以降の各種新機能)<br>
+                アカウントのブースト非表示<br>
+                キーボードショートカット(アプリ操作)<br>
               </small><br>
               <h3>Mastodon/kktで対応待ちの機能(v1.3)</h3>
               <small>
@@ -2906,6 +2920,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
+                検索機能とアカウント検索機能の統合<br>
+                インスタンスの情報 取得<br>
+                連合インスタンス一覧 取得<br>
+                連合インスタンスの情報 取得<br>
                 投票と集計機能<br>
                 Push通知(Service Worker)<br>
                 カツ!を 翻訳<br>
@@ -2980,12 +2998,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0626"></script>
+    <script src="js/main.js?v=0724"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0626', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0724', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
