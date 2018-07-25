@@ -1,7 +1,7 @@
 // const url = 'http://localhost:8080';
 const url = 'https://sumire.work';
 
-const key = 'v1.3.3_141';
+const key = 'v1.3.4_18';
 
 const cache_keys = [
   key
@@ -32,6 +32,7 @@ const file = [
   url + '/kktjs/js/lodash.min.js',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/vue.min.js',
+  url + '/kktjs/js/main.js',
   url + '/kktjs/js/picker.js',
   url + '/kktjs/js/manifest.json'
 ];

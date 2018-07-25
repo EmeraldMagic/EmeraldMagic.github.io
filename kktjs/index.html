@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0725">
+    <link rel="stylesheet" href="css/style.css?v=0726">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -221,7 +221,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content border">
               <div class="status-name flex start">
                 <div class="hidden full">
-                  <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                  <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                   <a v-else class="color-pk">{{issue.account.username}}</a>
                   <small class="color-gr">‭@{{issue.account.acct}}</small>
                 </div>
@@ -229,14 +229,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
               </div>
               <div class="status__content">
-                <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                 <div v-if="0 != issue.spoiler_text.length">
                   <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                   <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                  <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                  <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                 </div>
                 <div v-else>
-                  <span v-html="$options.filters.formatContent(issue.content)"></span>
+                  <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                 </div>
               </div>
               <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -269,7 +269,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content border">
               <div class="status-name flex start">
                 <div class="hidden full">
-                  <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
+                  <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name, user.emojis)"></a>
                   <a v-else class="color-pk">{{user.username}}</a>
                   <small class="color-gr">‭@{{user.acct}}</small>
                 </div>
@@ -277,14 +277,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
               </div>
               <div class="status__content">
-                <span v-html="$options.filters.formatContentSP(issue.spoiler_text)"></span>
+                <span v-html="$options.filters.formatContentSP(issue.spoiler_text, issue.emojis)"></span>
                 <div v-if="0 != issue.spoiler_text.length">
                   <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                   <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                  <span v-if="issue.content_opened" v-html="$options.filters.formatContentP(issue.content)"></span>
+                  <span v-if="issue.content_opened" v-html="$options.filters.formatContentP(issue.content, issue.emojis)"></span>
                 </div>
                 <div v-else>
-                  <span v-html="$options.filters.formatContentP(issue.content)"></span>
+                  <span v-html="$options.filters.formatContentP(issue.content, issue.emojis)"></span>
                 </div>
               </div>
               <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -320,7 +320,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="content">
               <div class="status-name flex start">
                 <div class="hidden full">
-                  <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                  <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name, issue.emojis)"></a>
                   <a v-else class="color-pk">{{issue.username}}</a>
                   <small class="color-gr">‭@{{issue.acct}}</small>
                 </div>
@@ -445,7 +445,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
             </div>
             <div v-else-if="'list' == issue.confirmtype">
-              <h3>アカウントをリストを追加しますか？</h3>
+              <h3>アカウントをリストに追加しますか？</h3>
                 <div class="flex center">
                 <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; issue = '';">Cancel</span>
                 <span class="button full color-wh bgcolor-gr" v-on:click="showConfirm = false; actList(issue, true);">OK</span>
@@ -657,7 +657,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="status__content">
                   </div>
                   <div class="action-bar flex start hidden">
-                      <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
+                      <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name, user.emojis)"></a>
                       <a v-else class="color-pk">{{user.username}}</a>
                   </div>
                 </div>
@@ -744,7 +744,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
                   <div class="full">
                     <div>
-                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -763,7 +763,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
+                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name, issue.reblog.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
@@ -771,14 +771,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text, issue.reblog.emojis)"></span>
                       <div v-if="0 != issue.reblog.spoiler_text.length">
                         <div v-if="!issue.reblog.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue.reblog, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue.reblog, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
@@ -822,7 +822,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -830,14 +830,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-show="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-show="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -917,7 +917,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -925,14 +925,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1026,7 +1026,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
                   <div class="full">
                     <div>
-                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -1047,7 +1047,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name)"></a>
+                        <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name, issue.status.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
                         <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
@@ -1055,8 +1055,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.status.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.status.spoiler_text)" v-if="0 != issue.status.spoiler_text.length"></span>
-                      <span v-html="$options.filters.formatContent(issue.status.content)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.status.spoiler_text, issue.status.emojis)" v-if="0 != issue.status.spoiler_text.length"></span>
+                      <span v-html="$options.filters.formatContent(issue.status.content, issue.status.emojis)"></span>
                     </div>
                     <div v-if="0 != issue.status.media_attachments" class="media-wrapper flex">
                       <a v-for="media in issue.status.media_attachments" @click="modal = media;showModal = true;">
@@ -1100,7 +1100,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name)"></a>
+                        <a v-if="0 != issue.status.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.status.account.display_name, issue.status.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.status.account.username}}</a>
                         <small class="color-gr">‭@{{issue.status.account.acct}}</small>
                       </div>
@@ -1108,8 +1108,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.status.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.status.spoiler_text)" v-if="0 != issue.status.spoiler_text.length"></span>
-                      <span v-html="$options.filters.formatContent(issue.status.content)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.status.spoiler_text, issue.status.emojis)" v-if="0 != issue.status.spoiler_text.length"></span>
+                      <span v-html="$options.filters.formatContent(issue.status.content, issue.status.emojis)"></span>
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
@@ -1128,7 +1128,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -1181,7 +1181,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -1189,14 +1189,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1254,7 +1254,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
                   <div class="full">
                     <div>
-                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -1273,7 +1273,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
+                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name, issue.reblog.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
@@ -1281,14 +1281,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text, issue.reblog.emojis)"></span>
                       <div v-if="0 != issue.reblog.spoiler_text.length">
                         <div v-if="!issue.reblog.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue.reblog, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue.reblog, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
@@ -1332,7 +1332,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -1340,14 +1340,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-show="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-show="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1402,7 +1402,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div class="status__content">
                       <div>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                   </div>
@@ -1435,7 +1435,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -1443,14 +1443,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="status__content">
-                    <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                    <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                     <div v-if="0 != issue.spoiler_text.length">
                       <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                       <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                     <div v-else>
-                      <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1499,7 +1499,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != detail.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(detail.account.display_name)"></a>
+                      <a v-if="0 != detail.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(detail.account.display_name, detail.account.emojis)"></a>
                       <a v-else class="color-pk">{{detail.account.username}}</a>
                       <small class="color-gr">‭@{{detail.account.acct}}</small>
                     </div>
@@ -1511,14 +1511,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="detail-time flex end">
                   </div>
                   <div class="status__content">
-                    <span v-html="$options.filters.formatContentS(detail.spoiler_text)"></span>
+                    <span v-html="$options.filters.formatContentS(detail.spoiler_text, detail.emojis)"></span>
                     <div v-if="0 != detail.spoiler_text.length">
                       <div v-if="!detail.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(detail, true)"><small>- SHOW MORE -</small></div>
                       <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(detail, false)"><small>- SHOW LESS -</small></div>
-                      <span v-if="detail.content_opened" v-html="$options.filters.formatContent(detail.content)"></span>
+                      <span v-if="detail.content_opened" v-html="$options.filters.formatContent(detail.content, detail.emojis)"></span>
                     </div>
                     <div v-else>
-                      <span v-html="$options.filters.formatContent(detail.content)"></span>
+                      <span v-html="$options.filters.formatContent(detail.content, detail.emojis)"></span>
                     </div>
                   </div>
                   <div v-if="0 != detail.media_attachments" class="media-wrapper flex">
@@ -1608,7 +1608,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -1616,14 +1616,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="status__content">
-                    <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                    <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                     <div v-if="0 != issue.spoiler_text.length">
                       <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                       <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                     <div v-else>
-                      <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1675,6 +1675,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account <small>(id:{{acct.id}})</small></div>
           <div class="scrollable" id="acct" v-on:scroll="handleScrollAcct">
             <div v-if="hasAcctRel" class="account-info">
+              <div v-if="user.id == acct_targetid && this.user.requesting_count > 0" v-on:click="resetAcctColumn();fetchFollowRequest();" class="button mini color-wh bgcolor-pk"><i class="fa fa-fw fa-info-circle"></i>Follow Request: {{user.requesting_count}}</div>
               <div v-if="acct.header.indexOf('original/missing.png') == -1" class="acct-header-wrapper">
                 <img :src="acct.header" class="media-header">
               </div>
@@ -1684,7 +1685,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="status-name flex start">
                     <div class="hidden full">
                       <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash" v-model="profile.name">
-                      <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name)"></a>
+                      <a v-else-if="0 != acct.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(acct.display_name, acct.emojis)"></a>
                       <a v-else class="color-pk">{{acct.username}}</a>
                       <small class="color-gr">‭@{{acct.acct}}</small>
                       <input v-if="user.id == acct_targetid && showacctProfile" type="text" class="border-dash name_b" v-model="profile.name_b">
@@ -1708,7 +1709,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
                     <span v-if="acct.req_follow" class="button mini color-wh bgcolor"><i class="fa fa-fw fa-spinner fa-pulse"></i></span>
                     <span v-else-if="acct_relation[0].following" v-on:click="actUnFollow(acct)" class="button mini color-wh bgcolor-pk">Following</span>
-                    <span v-else-if="acct_relation[0].requested" class="button mini color-wh bgcolor">Requested</span>
+                    <span v-else-if="acct_relation[0].requested" class="button mini color-wh bgcolor-disable">Requested</span>
                     <span v-else-if="acct_relation[0].blocking" class="button mini color-wh bgcolor-disable">Follow</span>
                     <span v-else v-on:click="actFollow(acct)" class="button mini color-wh bgcolor">Follow</span>
                     <i v-on:click="toggleAcctEx()" class="fa fa-fw fa-ellipsis-h"></i>
@@ -1743,7 +1744,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status__content">
-                    <span v-html="$options.filters.formatContent(acct.note)"></span>
+                    <span v-html="$options.filters.formatContent(acct.note, acct.emojis)"></span>
                     <div class="action-bar flex end">
                       <!-- <small :href="acct.url">id:{{acct.id}}</small> -->
                     </div>
@@ -1758,7 +1759,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -1766,14 +1767,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1827,10 +1828,10 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-if="acct.locked" v-on:click="resetAcctColumn();fetchFollowRequest();" class="acct-select color-wh bgcolor" :class="{ 'bgcolor-pk': 'request' == acct_type }"><i class="fa fa-fw fa-hourglass"></i>Request</div>
               </div>
             </div>
-            <div v-if="!hasAcctRel && (hasAcct || hasUser)">
+            <div v-if="!hasAcctRel && (hasAcct || hasUser)" class="status-list high">
               <div class="flex">loading...</div>
             </div>
-            <div v-if="hasAcct" class="status-list">
+            <div v-if="hasAcct" class="status-list high">
               <div v-for="(issue, index) in accts" class="status-wrapper" :class="issue.visibility">
                 <div v-if="null != issue.reblog" class="status-header flex start">
                   <i class="fa fa-fw fa-retweet color-on"></i>
@@ -1838,7 +1839,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <!-- <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i> -->
                   <div class="full">
                     <div>
-                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></span>
+                      <span v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></span>
                       <span v-else class="color-pk">{{issue.account.username}}</span>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -1857,7 +1858,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name)"></a>
+                        <a v-if="0 != issue.reblog.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.reblog.account.display_name, issue.reblog.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small class="color-gr">‭@{{issue.reblog.account.acct}}</small>
                       </div>
@@ -1865,14 +1866,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <small v-if="issue.reblog.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.reblog.spoiler_text, issue.reblog.emojis)"></span>
                       <div v-if="0 != issue.reblog.spoiler_text.length">
                         <div v-if="!issue.reblog.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue.reblog, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue.reblog, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-if="issue.reblog.content_opened" v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.reblog.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper flex">
@@ -1916,7 +1917,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -1924,14 +1925,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -1973,14 +1974,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
             </div>
-            <div v-else-if="hasUser" class="status-list">
+            <div v-else-if="hasUser" class="status-list high">
               <div v-for="issue in accts_users" class="status flex">
                 <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="runAcct(issue.id)">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                      <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name, issue.emojis)"></a>
                       <a v-else class="color-pk">{{issue.username}}</a>
                       <small class="color-gr">‭@{{issue.acct}}</small>
                     </div>
@@ -2014,6 +2015,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div v-else-if="fetch_lock.acct" class="status-list high">
               <div class="flex">loading...</div>
             </div>
+            <div v-else class="status-list high">
+            </div>
           </div>
         </div>
 
@@ -2029,7 +2032,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                        <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                         <a v-else class="color-pk">{{issue.account.username}}</a>
                         <small class="color-gr">‭@{{issue.account.acct}}</small>
                       </div>
@@ -2037,14 +2040,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                     </div>
                     <div class="status__content">
-                      <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                      <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                       <div v-if="0 != issue.spoiler_text.length">
                         <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                         <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                       <div v-else>
-                        <span v-html="$options.filters.formatContent(issue.content)"></span>
+                        <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -2188,7 +2191,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="status__content">
                 </div>
                 <div class="action-bar flex start hidden">
-                    <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name)"></a>
+                    <a v-if="0 != user.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(user.display_name, user.emojis)"></a>
                     <a v-else class="color-pk">{{user.username}}</a>
                 </div>
               </div>
@@ -2271,7 +2274,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="content border">
                     <div class="status-name flex start">
                       <div class="hidden full">
-                        <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                        <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name, issue.emojis)"></a>
                         <a v-else class="color-pk">{{issue.username}}</a>
                         <small class="color-gr">‭@{{issue.acct}}</small>
                       </div>
@@ -2364,14 +2367,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span v-for="issue in searchs.hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);" class="list-link border-lite full color-pk bgcolor-wh">#{{issue}}</span>
               </div>
 
-              <div v-if="searchs.accounts && 0 != searchs.accounts.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
-              <div v-for="issue in searchs.accounts" class="status flex">
+              <div v-if="searchs.accounts_ex && 0 != searchs.accounts_ex.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
+              <div v-for="issue in searchs.accounts_ex" class="status flex">
                 <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name)"></a>
+                      <a v-if="0 != issue.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.display_name, issue.emojis)"></a>
                       <a v-else class="color-pk">{{issue.username}}</a>
                       <small class="color-gr">‭@{{issue.acct}}</small>
                     </div>
@@ -2398,7 +2401,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="content border">
                   <div class="status-name flex start">
                     <div class="hidden full">
-                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name)"></a>
+                      <a v-if="0 != issue.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(issue.account.display_name, issue.account.emojis)"></a>
                       <a v-else class="color-pk">{{issue.account.username}}</a>
                       <small class="color-gr">‭@{{issue.account.acct}}</small>
                     </div>
@@ -2406,14 +2409,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <small v-if="issue.sensitive" class="status-info">[Sensitive]</small>
                   </div>
                   <div class="status__content">
-                    <span v-html="$options.filters.formatContentS(issue.spoiler_text)"></span>
+                    <span v-html="$options.filters.formatContentS(issue.spoiler_text, issue.emojis)"></span>
                         <div v-if="0 != issue.spoiler_text.length">
                       <div v-if="!issue.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(issue, true)"><small>- SHOW MORE -</small></div>
                       <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(issue, false)"><small>- SHOW LESS -</small></div>
-                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-if="issue.content_opened" v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                     <div v-else>
-                      <span v-html="$options.filters.formatContent(issue.content)"></span>
+                      <span v-html="$options.filters.formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper flex">
@@ -2480,7 +2483,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div v-if="hasReply" class="status-header bgcolor-wh">
               <i class="fa fa-fw fa-reply"></i>
               <span> reply to</span>
-              <span v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name)"></span>
+              <span v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name, katsu.reply.account.emojis)"></span>
               <span v-else class="color-pk">{{katsu.reply.account.username}}</span>
             </div>
             <div v-if="hasReply" class="status flex form bgcolor-wh border-dash">
@@ -2489,7 +2492,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="content border">
                 <div class="status-name flex start">
                   <div class="hidden full">
-                    <a v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name)"></a>
+                    <a v-if="0 != katsu.reply.account.display_name.length" class="color-pk" v-html="$options.filters.formatEmoji(katsu.reply.account.display_name, katsu.reply.account.emojis)"></a>
                     <a v-else class="color-pk">{{katsu.reply.account.username}}</a>
                     <small class="color-gr">‭@{{katsu.reply.account.acct}}</small>
                   </div>
@@ -2497,14 +2500,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <small v-if="katsu.reply.sensitive" class="status-info">[Sensitive]</small>
                 </div>
                 <div class="status__content">
-                  <span v-html="$options.filters.formatContentS(katsu.reply.spoiler_text)"></span>
+                  <span v-html="$options.filters.formatContentS(katsu.reply.spoiler_text, katsu.reply.emojis)"></span>
                   <div v-if="0 != katsu.reply.spoiler_text.length">
                     <div v-if="!katsu.reply.content_opened" class="spoller_link color-wh bgcolor-pk" v-on:click="updateContentWrapper(reply, true)"><small>- SHOW MORE -</small></div>
                     <div v-else class="spoller_link color-wh bgcolor" v-on:click="updateContentWrapper(reply, false)"><small>- SHOW LESS -</small></div>
-                    <span v-if="katsu.reply.content_opened" v-html="$options.filters.formatContent(katsu.reply.content)"></span>
+                    <span v-if="katsu.reply.content_opened" v-html="$options.filters.formatContent(katsu.reply.content, issue.reply.emojis)"></span>
                   </div>
                   <div v-else>
-                    <span v-html="$options.filters.formatContent(katsu.reply.content)"></span>
+                    <span v-html="$options.filters.formatContent(katsu.reply.content, katsu.reply.emojis)"></span>
                   </div>
                 </div>
                 <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper flex">
@@ -2573,7 +2576,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-for="(draft, index) in content_text_drafts" class="action-bar flex end draft">
                   <i v-on:click="draftToContent(index, false)" class="fa fa-fw fa-copy"></i>
                   <i v-on:click="draftToContent(index, true)" class="fa fa-fw fa-arrow-up"></i>
-                  <span class="full text center hidden" v-html="$options.filters.formatEmojiDraft(draft)"></span>
+                  <span class="full text center hidden" v-html="$options.filters.formatEmojiDraft(draft, user.emojis)"></span>
                 </div>
               </div>
 
@@ -2846,6 +2849,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 リストに登録済みのアカウント一覧 取得<br>
                 リストにアカウントを登録/解除<br>
                 アカウント検索機能<br>
+                カスタム絵文字の表示<br>
                 カツ!の CW/NSFW,画像/ビデオ/gifv(ループ再生) 表示<br>
                 カツ!詳細のお気に入り/ブーストしたアカウント一覧 取得<br>
                 ユーザー情報/フォロー情報/カツ!詳細(+OGP展開) 取得<br>
@@ -2854,6 +2858,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 フォロー/フォロワー 一覧を遡って取得<br>
                 フォローリクエスト中のアカウント一覧 取得<br>
                 フォローリクエスト中のアカウントの 認証/拒否<br>
+                フォローリクエスト数を表示<br>
                 検索した結果(アカウント/タグ) 取得<br>
                 お気に入り/ブースト/フォロー の登録/解除<br>
                 カツ!/お気に入り/ブースト/フォロー の確認ウィンドウ<br>
@@ -2890,6 +2895,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 カツ!の 本文と注意文の入れ替え機能<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
+                検索機能とアカウント検索機能の統合<br>
                 EmojiOne v2.2.7 採用<br>
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
                 プロファイル(名前)のかんたんUnicodeハック機能を追加<br>
@@ -2904,13 +2910,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h3>アプリにまだない機能(v1.3)</h3>
               <small>
                 アカウントプロファイルの編集(名前以外)<br>
-                カスタム絵文字の表示/入力<br>
+                カスタム絵文字入力<br>
                 Home/Local/通知 のカツ!フィルタ<br>
                 [完成済]ダイレクトメッセージストリーム取得/削除<br>
                 photo/video/richのOGP展開<br>
                 シェア機能(Web Share API対応)<br>
                 ストリーミング再接続のカツ!漏れ確認<br>
-                フォローリクエスト数を表示<br>
                 カツ!を削除して下書きに戻す機能<br>
                 アカウントのブースト非表示<br>
                 キーボードショートカット(アプリ操作)<br>
@@ -2921,7 +2926,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
-                検索機能とアカウント検索機能の統合<br>
                 インスタンスの情報 取得<br>
                 連合インスタンス一覧 取得<br>
                 連合インスタンスの情報 取得<br>
@@ -2999,12 +3003,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=072502"></script>
+    <script src="js/main.js?v=0726"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=072502', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0726', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
