@@ -424,7 +424,7 @@ div.column-footer.inside{
 /*  Awesome Icons
 --------------------------- */
 .action-bar .fa-fw{
-  width: 32px;
+  width: 31px;
   font-size: 18px;
 }
 .action-bar .fa-fw.fa-retweet{
@@ -558,13 +558,17 @@ div.column-footer.inside{
 /*  App Elements
 --------------------------- */
 .logo{
-  min-width: 135px;
+  min-width: 121px;
   max-width: 30%;
   min-height: 55px;
   position: relative;
   top: -14px;
   text-align: right;
   padding: 28px 10px 0 0;
+  margin-right: 14px;
+}
+.logo > small{
+  margin-right: -14px;
 }
 .status-header.bookmark{
   background-size: 24px 24px;
@@ -586,6 +590,15 @@ div.column-footer.inside{
   height: calc(100vh - 84px);
   z-index: 5;
 }
+.column-list.extra, .column.fixed.extra, .column.fixed.leftswipe.extra.streams {
+  margin-top: 0;
+  top: 0;
+  height: 100vh;
+}
+.column.leftswipe.extra.user {
+    bottom: 0;
+}
+
 .column {
   width: 412px;
   min-width: 336px; /* for iphone 5s */
@@ -1238,9 +1251,10 @@ input.report_text {
 /*  Info Modal
 --------------------------- */
 .column.info{
-  margin-top: calc(84px - 100vh);
+  margin-top: 48px;
   height: 22px;
-  padding: 0 18px 0 10px;
+  padding: 0 10px 0 10px;
+  z-index: 6;
 }
 
 div.info-wrapper{
