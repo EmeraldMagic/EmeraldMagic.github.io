@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0825">
+    <link rel="stylesheet" href="css/style.css?v=0825b">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -44,19 +44,6 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       </transition>
     </script>
 
-
-    <script type="text/x-template" id="modal-info">
-      <transition name="info">
-
-          <div class="flex">
-            <div class="column info">
-              <slot name="header"></slot>
-            </div>
-          </div>
-
-      </transition>
-    </script>
-
     <script type="text/x-template" id="modal-input">
       <transition name="input">
         <div class="modal-mask">
@@ -85,17 +72,15 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       </transition>
     </script>
 
-    <script type="text/x-template" id="modal-select">
-      <transition name="confirm">
-        <div class="modal-mask">
+    <script type="text/x-template" id="modal-info">
+      <transition name="info">
 
-          <div class="flex center">
-            <div class="column bgcolor-wh">
+          <div class="flex toast-list">
+            <div class="column info">
               <slot name="header"></slot>
             </div>
           </div>
 
-        </div>
       </transition>
     </script>
 
@@ -175,7 +160,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <span v-on:click="fetchToken" class="button bgcolor-gr color-wh border-lite">Start</span>
                   </span>
                 </div>
-                <small>{{result_run}}</small>
+                <small>{{result_text}}</small>
               </div>
 
             </div>
@@ -506,7 +491,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <h3>Other Debug</h3>
             <button v-on:click="playSound('sound')">default boop</button>
             <button v-on:click="playSound('soundex')">excelent boop</button>
-            <button v-on:click="result_run = 0 != notifs[0].account.display_name.length ? notifs[0].account.display_name : notifs[0].account.acct; result_run = result_run + ' ' + notifs[0].type + ' '; result_run = notifs[0].type == 'follow' ? result_run + 'you' : result_run + 'your katsu!'">Info</button><br>
+            <button v-on:click="result_text = 0 != notifs[0].account.display_name.length ? notifs[0].account.display_name : notifs[0].account.acct; result_text = result_text + ' ' + notifs[0].type + ' '; result_text = notifs[0].type == 'follow' ? result_text + 'you' : result_text + 'your katsu!'; result_type = 'notif';">Info</button><br>
             <!--<button disabled class="js-push-btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Enable Push Messaging</button> -->
             <!-- <input type="text" v-model="repository" readonly>
             <button v-on:click="reopenWsHome">Home Stream ReConn</button>
@@ -1032,7 +1017,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             </div>
           </div>
           <div class="scrollable" v-on:scroll="handleScrollNotif">
-            <div v-if="hasNotif" class="status-list">
+            <div v-if="hasNotif" class="status-list high">
               <div v-for="issue in notifs"  v-if="!(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) && notifFilter(issue)" class="status-wrapper" :class="issue.visibility">
                 <div class="status-header flex start">
                   <i v-if="'mention' == issue.type" class="fa fa-fw fa-reply"></i>
@@ -1169,14 +1154,14 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
               </div>
-            </div>
-            <div v-else>
-              <div class="flex info-wrapper">Initializing...</div>
-            </div>
             <div class="flex info-wrapper">
               <span v-if="fetch_lock.notif"><i class="fa fa-fw fa-spinner fa-pulse"></i>Notif Loading...</span>
               <span v-else-if="fetch_comp.notif">All Loaded</span>
               <span v-else>TouchEnd to Load Next</span>
+            </div>
+            </div>
+            <div v-else>
+              <div class="flex info-wrapper">Initializing...</div>
             </div>
           </div>
         </div>
@@ -2196,7 +2181,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
         <!-- STREAM -->
         <div v-show="showStream" :class="{ 'extra': 'native' == app_mode }" class="column scrollable bgcolor-wh fixed">
-
+          <div class="half-toast"></div>
           <div class="form-option full">
             <div class="action-bar flex end">
               <h3>Streams</h3>
@@ -2331,6 +2316,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
         <!-- SEARCH -->
         <div v-if="showSearch" :class="{ 'extra': 'native' == app_mode }" class="column scrollable bgcolor-wh fixed">
+          <div class="half-toast"></div>
           <div class="form-option full">
             <div class="status-list">
 
@@ -2439,6 +2425,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <div v-if="showForm" :class="{ 'extra': 'native' == app_mode }" class="column scrollable bgcolor-wh fixed">
           <div class="status-list">
 
+            <div class="half-toast"></div>
             <div class="form-wrapper bgcolor-wh">
               <div v-if="showKatsuDraft" class="form-option border-dash">
                 <div class="action-bar flex end draft">
@@ -2927,9 +2914,13 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       <info v-if="hasInfo">
         <span slot="header">
-          <div v-on:click="runToast(); result_run = '';result_lock = false;playSound('sound'+optThemeSound);" class="flex info-wrapper color-wh bgcolor">
-            <span class="hidden full" v-html="formatEmoji(result_run)"></span>
-            <i class="fa fa-fw fa-times"></i>
+          <div class="flex info-wrapper color-wh bgcolor">
+            <div v-on:click="runToast(true);playSound('sound'+optThemeSound);" class="flex full">
+              <span class="hidden full" v-html="formatEmoji(result_text)"></span>
+            </div>
+            <div v-on:click="runToast(false);playSound('sound'+optThemeSound);" class="flex color-wh bgcolor">
+              <i class="fa fa-fw fa-times"></i>
+            </div>
           </div>
         </span>
       </info>
@@ -2981,12 +2972,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0825a"></script>
+    <script src="js/main.js?v=0825b"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0825', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0825b', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
