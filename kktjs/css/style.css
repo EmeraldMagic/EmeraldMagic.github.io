@@ -82,14 +82,11 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border: solid 1px #7b5d4d;
 }
 .border-dash{
-  border:none;
-  border-bottom: 1px dashed #e1c152;
+  border: dashed 1.5px #e1c152;
 }
-.border-dash-pk{
-  border-top: 2px dashed #ed649c;
-  position: absolute;
-  top: 16px;
-  width: 100%;
+.underline-dash{
+  border:none;
+  border-bottom: dashed 1px #e1c152;
 }
 
 .dummy{color: transparent;}
@@ -122,7 +119,8 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 
 .bm_diadark .border{border: solid 2px #393F4F;}
 .bm_diadark .border-lite{border: solid 1px #9BAEC8;}
-.bm_diadark .border-dash{border-bottom: 1px dashed #9BAEC8;}
+.bm_diadark .border-dash{border: dashed 1px #9BAEC8;}
+.bm_diadark .underline-dash{border-bottom: dashed 1px #9BAEC8;}
 
 .bm_diadark .scrollable, .bm_diadark .column-header {background: rgba(25, 27, 34, 0.5);}
 
@@ -174,7 +172,8 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 
 .bm_diawhite .border{border: solid 2px #ffffff; box-shadow: 0 2px 2px rgba(249, 210, 254, .3);}
 .bm_diawhite .border-lite{border: solid 1px #363947;}
-.bm_diawhite .border-dash{border-bottom: 1px dashed #363947;}
+.bm_diawhite .border-dash{border: dashed 1px #363947;}
+.bm_diawhite .underline-dash{border-bottom: dashed 1px #363947;}
 
 .bm_diawhite .scrollable, .bm_diawhite .column-header{background: rgba(170, 170, 166, .25);}
 
@@ -229,7 +228,8 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 
 .bm_diaorange .border{border: solid 2px #ffc0a5; box-shadow: 0 2px 2px rgba(0, 0, 0, .18);} /**/
 .bm_diaorange .border-lite{border: solid 1px #6a4643;}
-.bm_diaorange .border-dash{border-bottom: 1px dashed #6a4643;}
+.bm_diaorange .border-dash{border: dashed 1px #6a4643;}
+.bm_diaorange .underline-dash{border-bottom: dashed 1px #6a4643;}
 
 .bm_diaorange .scrollable, .bm_diaorange .column-header{background: rgba(220, 196, 171, .25);}
 
@@ -761,7 +761,10 @@ div.column-footer.inside{
   text-overflow: ellipsis;
 }
 .status__content > span > p:not(:last-child), .status__content > div > span > p:not(:last-child) {  /* many block katsu */
-  margin-bottom:20px;
+  margin-bottom: 20px;
+}
+.no-margin .status__content > span > p:not(:last-child), .no-margin .status__content > div > span > p:not(:last-child) {  /* many block katsu */
+  margin-bottom: 0;
 }
 .invisible{ /* linkurl in katsu */
   display: none;
