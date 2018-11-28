@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0829">
+    <link rel="stylesheet" href="css/style.css?v=1128">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -87,7 +87,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optKatsuTrim]" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
 
       <svg width="0" height="0" class="invisible" xmlns="http://www.w3.org/2000/svg">
-        <g id="cb">
+        <g id="cb" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optKatsuTrim]">
           <line class="cbl" y2="12.412" x2="10.03575" y1="0.833" x1="10.03575" stroke-miterlimit="10" stroke-width="2"/>
           <path class="cbp" d="m9.76,1c0,0 -4.8235,0.92675 -8,5.833c5.42675,1 8,5.334 8,5.334" stroke-miterlimit="10" stroke-linecap="round" stroke-width="2"/>
         </g>
@@ -2589,8 +2589,9 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <a v-for="(media, index) in katsu['media_previews']" @click="modal = media;showModal = true;">
                     <img v-if="null != katsu['media_attachments'][index] && ('image' == katsu['media_attachments'][index].type || 'image' == katsu['media_previews'][index].type)" :src="katsu['media_previews'][index].url" class="media">
                     <img v-else-if="'image' == katsu['media_previews'][index].type" :src="media.url" class="media gray">
-                    <video v-else-if="null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)" :src="katsu['media_previews'][index].url" class="media" playsinline muted autoplay loop></video>
-                    <video v-else-if="'video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type" :src="media.url" class="media gray" playsinline muted autoplay loop></video>
+                    <video v-else-if="null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)" :src="katsu['media_previews'][index].url" class="media" playsinline muted loop></video>
+                    <video v-else-if="'video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type" :src="media.url" class="media gray" playsinline muted loop></video>
+                    <i v-if="(null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)) || ('video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
                 <div class="flex center">
@@ -2621,7 +2622,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
 
-              <input type="file" name="file" id="uploader" class="invisible" onchange="preview(this.files)">
+              <input type="file" accept=".jpg,.jpeg,.png,.gif,.webm,.mp4,.m4v,image/jpeg,image/png,image/gif,video/webm,video/mp4" name="file" id="uploader" class="invisible" onchange="preview(this.files)">
 
               <div class="action-bar flex wrap form-option underline-dash">
                 <div class="color bgcolor-in">
@@ -2847,8 +2848,8 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
               <h3 class="setting-header">🍨🍨🍨 アプリ推奨環境 🍨🍨🍨</h3>
               <small>
-                Windows vivaldi/chrome/(firefox)<br>
-                macOS chrome/safari/(firefox)<br>
+                Windows chrome/vivaldi/firefox<br>
+                macOS chrome/safari/firefox<br>
                 Android(4.4以上) chrome58+WebApp化(ホーム画面に追加)<br>
                 iOS(10以上) safari+WebApp化(ホーム画面に追加)<br>
               </small><br>
@@ -2901,7 +2902,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 カツ!の 通報<br>
                 プロファイル編集(名前のみ)<br>
                 ヘッダアイコンのカラム移動機能<br>
-                デスクトップ通知(PC)と、通知音再生(PC)<br>
+                デスクトップ通知(PC)と、通知音再生<br>
                 カツ!の メンション/ハッシュタグ/カツURL を開く<br>
                 通信エラーの表示<br>
               </small><br>
@@ -2935,7 +2936,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 スワイプでカラムを呼び出す機能(カラムは固定)<br>
                 戻るボタンでアプリを閉じない(Android)<br>
                 ヘッダに お気に入り、Webアプリ設定アイコンを追加<br>
-                デスクトップ通知音の切替機能(PC)<br>
+                通知音の切替機能<br>
                 通信エラーメッセージ<br>
                 Local/連合 TLの切り替え機能<br>
                 タグ/リスト TLの切り替え機能<br>
@@ -3040,12 +3041,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0829"></script>
+    <script src="js/main.js?v=1128"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0829', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=1128', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
