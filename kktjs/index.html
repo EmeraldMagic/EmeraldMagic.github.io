@@ -2589,9 +2589,11 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <a v-for="(media, index) in katsu['media_previews']" @click="modal = media;showModal = true;">
                     <img v-if="null != katsu['media_attachments'][index] && ('image' == katsu['media_attachments'][index].type || 'image' == katsu['media_previews'][index].type)" :src="katsu['media_previews'][index].url" class="media">
                     <img v-else-if="'image' == katsu['media_previews'][index].type" :src="media.url" class="media gray">
-                    <video v-else-if="null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)" :src="katsu['media_previews'][index].url" class="media" playsinline muted loop></video>
-                    <video v-else-if="'video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type" :src="media.url" class="media gray" playsinline muted loop></video>
-                    <i v-if="(null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)) || ('video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
+
+                    <img v-else-if="null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type || 'gifv' == katsu['media_attachments'][index].type)" :src="katsu['media_attachments'][index].preview_url" class="media">
+                    <img v-else-if="'video' == katsu['media_previews'][index].type || 'gifv' == katsu['media_previews'][index].type" :src="media.preview_url" class="media gray">
+
+                    <i v-if="(null != katsu['media_attachments'][index] && ('video' == katsu['media_attachments'][index].type)) || ('video' == katsu['media_previews'][index].type)" class="fa fa-fw fa-play-circle-o media-type color-pk"></i>
                   </a>
                 </div>
                 <div class="flex center">
@@ -2960,6 +2962,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </small><br>
               <h3>追加されるかもしれない拡張機能</h3>
               <small>
+                画像/動画を再圧縮してアップロード<br>
                 インスタンスの情報 取得<br>
                 連合インスタンス一覧 取得<br>
                 連合インスタンスの情報 取得<br>
@@ -3041,12 +3044,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=1128"></script>
+    <script src="js/main.js?v=1130"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=1128', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=1130', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
