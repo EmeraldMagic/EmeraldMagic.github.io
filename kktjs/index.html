@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0217">
+    <link rel="stylesheet" href="css/style.css?v=021702">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -826,7 +826,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -901,7 +901,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1017,7 +1017,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1157,7 +1157,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.status.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.status.favourited" v-on:click="actUnFav(issue.status);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.status);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue.status)" v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue.status)" v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>                      <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
                   </div>
@@ -1186,7 +1186,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <i class="fa fa-fw fa-paperclip color-disable"></i>
                         <small class="time">{{formatDate(issue.status.created_at)}}</small>
                       </div>
-                      <i v-if="checkKatsuChain(issue.status)" v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue.status)" v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.status.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.status.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1325,7 +1325,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1429,7 +1429,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1499,7 +1499,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue, false);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -1620,7 +1620,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                     <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                     <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -1800,7 +1800,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                     <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                     <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -1961,7 +1961,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -2069,7 +2069,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.reblog.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.reblog.favourited" v-on:click="actUnFav(issue.reblog);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue.reblog);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue.reblog)" v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.reblog.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.reblog.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -2140,7 +2140,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                       <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                       <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                      <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                       <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                       <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                     </div>
@@ -2570,7 +2570,7 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <i v-if="issue.req_favourite" class="fa fa-fw fa-spinner fa-pulse color-disable"></i>
                     <i v-else-if="issue.favourited" v-on:click="actUnFav(issue);" class="fa fa-fw fa-star color-on"></i>
                     <i v-else v-on:click="actFav(issue);" class="fa fa-fw fa-star"></i>
-                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-commenting-o"></i>
+                    <i v-if="checkKatsuChain(issue)" v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comments-o"></i>
                     <i v-else v-on:click="runDetail(issue.id)" class="fa fa-fw fa-comment-o"></i>
                     <i v-on:click="runAcct(issue.account.id)" class="fa fa-fw fa-user-circle-o"></i>
                   </div>
@@ -3172,12 +3172,12 @@ kktjs v1.2 Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0217"></script>
+    <script src="js/main.js?v=021702"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=0217', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=021702', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
