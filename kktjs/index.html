@@ -305,7 +305,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="action-bar flex end">
                 <div class="hidden nodot">
                   <i class="fa fa-fw fa-paperclip color-disable"></i>
-                  <small class="time">00/00 00:00</small>
+                  <!-- <small class="time">{{formatDate(issue.created_at)}}</small> -->
                 </div>
                 <i class="fa fa-fw fa-reply color-disable"></i>
                 <i class="fa fa-fw fa-retweet color-disable"></i>
@@ -3179,12 +3179,12 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=032501"></script>
+    <script src="js/main.js?v=032502"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=032501', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=032502', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
