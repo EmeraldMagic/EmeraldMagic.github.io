@@ -2704,7 +2704,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="flex center">
                   <div v-for="(media, index) in katsu['media_previews']" class="full">
                     <div v-if="null != katsu['media_attachments'][index]" v-on:click="katsu['media_previews'].splice(index,1);katsu['media_attachments'].splice(index,1);" class="color-wh bgcolor-pk button"><small>Remove</small></div>
-                    <div v-else class="color-wh bgcolor-disable button full"><small>{{media_uploaded}}</small></div>
+                    <div v-else class="color-wh bgcolor-disable button full"><small>{{media_uploaded}}%</small></div>
                   </div>
                 </div>
                 <div class="flex end action-bar">
@@ -3179,12 +3179,12 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=032502"></script>
+    <script src="js/main.js?v=032503"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=032502', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=032503', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
