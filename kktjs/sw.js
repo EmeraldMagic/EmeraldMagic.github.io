@@ -1,13 +1,13 @@
 // const url = 'http://localhost:8080';
 const url = 'https://sumire.work';
 
-const key = 'v1.4.4_249';
+const key = 'v1.4.4_360';
 
 const cache_keys = [
   key
 ];
 const file = [
-  url + '/kktjs/index.html',
+  url + '/kktjs/',
   url + '/kktjs/css/style.css',
   url + '/kktjs/js/main_readable.js',
   url + '/kktjs/css/font-awesome.min.css',

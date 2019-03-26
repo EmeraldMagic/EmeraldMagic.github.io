@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0325">
+    <link rel="stylesheet" href="css/style.css?v=0326">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -701,7 +701,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
               <span class="column-option"><i v-on:click="toggleHomeOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
             </div>
-            <div v-show="showHomeOption" class="flex">
+            <div v-if="showHomeOption" class="flex">
               <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Home</div>
               <div v-else v-on:click="reopenWsHome('Home');showHomeOption = false;" class="tl-link full color-wh" :class="[showHome ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-home"></i>Home</div>
               <div v-if="1 == optColumns && (fetch_lock.homews || fetch_lock.home)" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Local</div>
@@ -878,6 +878,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                   </div>
                 </div>
+                <div class="status-header flex end">
+                  <small v-if="issue.application && showDebugVia">
+                    via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}} </a>
+                  </small>
+                </div>
               </div>
             </div>
             <div v-else>
@@ -906,7 +911,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
               <span class="column-option"><i v-on:click="toggleLocalOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
             </div>
-            <div v-show="showLocalOption" class="flex">
+            <div v-if="showLocalOption" class="flex">
               <div v-if="1 == optColumns && (fetch_lock.localws || fetch_lock.local)" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Home</div>
               <div v-else-if="1 == optColumns" v-on:click="runHome();reopenWsHome('Home');showLocalOption = false;" class="tl-link full color-wh" :class="[showHome ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-home"></i>Home</div>
               <div v-if="fetch_lock.localws || fetch_lock.local" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Local</div>
@@ -996,13 +1001,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.application && showDebugLocal">
+                  <small v-if="issue.application && showDebugVia">
                     via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}} </a>
                   </small>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.account.acct.indexOf('@') != -1">
-                    from <a target="_blank" rel="noopener noreferrer">{{issue.account.acct.split('@')[1]}}</a>
+                  <small v-if="issue.account.acct_from">
+                    from <a :href="'//'+issue.account.acct_from" target="_blank" rel="noopener noreferrer">{{issue.account.acct_from}}</a>
                   </small>
                 </div>
               </div>
@@ -1032,13 +1037,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
               <span v-if="!showNotifOption" class="column-option"><i v-on:click="notif_type = '';toggleNotifOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
             </div>
-            <div v-show="showNotifOption" class="action-bar flex end">
+            <div v-if="showNotifOption" class="action-bar flex end">
               <div class="hidden">
                 <i class="fa fa-fw fa-filter color-disable"></i><small>Filter<span v-if="notif_type != ''">: {{notif_type}}</span> </small>
               </div>
               <div v-on:click="runNotif('all');showNotifOption = false;" class="button mini wide color-wh bgcolor">Clear</div>
             </div>
-              <div v-show="showNotifOption" class="flex">
+              <div v-if="showNotifOption" class="flex">
               <div v-on:click="resetNotifColumn();notif_unread_filter.mention = 0;fetchNotifMention();" class="select-link color-wh bgcolor" :class="['mention' == notif_type || '' == notif_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-reply"></i></i>Mention</div>
               <div v-on:click="resetNotifColumn();notif_unread_filter.fav = 0;fetchNotifFav();" class="select-link color-wh bgcolor" :class="['fav' == notif_type || '' == notif_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-star"></i>Fav</div>
               <div v-on:click="resetNotifColumn();notif_unread_filter.reblog = 0;fetchNotifReblog();" class="select-link color-wh bgcolor" :class="['reblog' == notif_type || '' == notif_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-retweet"></i>Reblog</div>
@@ -1298,13 +1303,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.application && showDebugLocal">
+                  <small v-if="issue.application && showDebugVia">
                     via <a :href="issue.application.website" target="_blank" rel="noopener noreferrer">{{issue.application.name}} </a>
                   </small>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.account.acct.indexOf('@') != -1">
-                    from <a target="_blank" rel="noopener noreferrer">{{issue.account.acct.split('@')[1]}}</a>
+                  <small v-if="issue.account.acct_from">
+                    from <a :href="'//'+issue.account.acct_from" target="_blank" rel="noopener noreferrer">{{issue.account.acct_from}}</a>
                   </small>
                 </div>
               </div>
@@ -1698,6 +1703,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   via <a :href="detail.application.website" target="_blank" rel="noopener noreferrer">{{detail.application.name}}</a>
                 </small>
               </div>
+              <div class="status-header flex end">
+                <small v-if="null != detail.account.acct_from">
+                  from <a :href="'//'+detail.account.acct_from" target="_blank" rel="noopener noreferrer">{{detail.account.acct_from}}</a>
+                </small>
+              </div>
             </div>
             <!-- DESCESTORS -->
             <div v-if="hasDetail && !fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" class="status-list">
@@ -1785,8 +1795,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account <small v-if="!optSimple">(id:{{acct_targetid}})</small></div>
           <div class="scrollable" id="acct" v-on:scroll="handleScrollAcct">
             <div v-if="hasAcctProfile && !fetch_watch.acct_profile && !fetch_watch.acct_profile_rel && !fetch_watch.acct_profile_pin && !fetch_watch.acct_profile_req" class="account-info">
-              <div v-if="isMyAcct && this.user.requesting_count > 0" v-on:click="resetAcctColumn();fetchAcctFollowRequest();" class="button mini color-wh bgcolor-pk"><i class="fa fa-fw fa-info-circle"></i>Follow Request: {{user.requesting_count}}</div>
-              <div v-if="acct.header.indexOf('original/missing.png') == -1" class="acct-header-wrapper">
+              <div v-if="isMyAcct && user_requesting_count > 0" v-on:click="resetAcctColumn();fetchAcctFollowRequest();" class="button mini color-wh bgcolor-pk"><i class="fa fa-fw fa-info-circle"></i>Follow Request: {{user_requesting_count}}</div>
+              <div v-if="!checkHeader(acct.header)" class="acct-header-wrapper">
                 <img :src="acct.header" class="media-header" onerror="this.src=IMG_DUMMY">
               </div>
               <div class="flex">
@@ -2470,7 +2480,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
 
-              <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>KATSU</div>
+              <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>KATSU!</div>
               <div v-for="(issue, index) in searchs.statuses" class="status flex">
 
                 <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id);" onerror="this.src=IMG_DUMMY">
@@ -2842,7 +2852,16 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <label v-else for="checknsfw" class="button color-wh bgcolor">OFF</label>
               </div>
 
-              <h3><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認ウィンドウの設定をしてね </h3>
+
+              <h3><i class="fa fa-fw fa-file-text-o"></i> Form: カツ!データの入力について決めてね </h3>
+              <div class="flex end action-bar">
+              <span>書きかけの保存</span>
+                <input type="checkbox" id="keepform" class="invisible" v-model="optKeepForm">
+                <label v-if="optKeepForm" for="keepform" class="button color-wh bgcolor-pk">ON</label>
+                <label v-else for="keepform" class="button color-wh bgcolor">OFF</label>
+              </div>
+
+              <h3><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認が必要な動作を選択してね </h3>
               <div class="flex end">
                 <small v-on:click="optConfirm['fav'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['fav'] }">Fav</small>
                 <small v-on:click="optConfirm['unfav'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unfav'] }">UnFav</small>
@@ -2850,7 +2869,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <small v-on:click="optConfirm['unreblog'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unreblog'] }">UnBoost</small>
               </div>
               <div class="flex end">
-                <small v-on:click="optConfirm['katsu'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['katsu'] }">Katsu</small>
+                <small v-on:click="optConfirm['katsu'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['katsu'] }">KATSU!</small>
                 <small v-on:click="optConfirm['delete'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['delete'] }">Delete</small>
                 <small v-on:click="optConfirm['follow'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['follow'] }">Follow</small>
                 <small v-on:click="optConfirm['unfollow'] ^= 1;" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optConfirm['unfollow'] }">Remove</small>
@@ -2926,7 +2945,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="flex end action-bar">
                 <span>カツ!フィルター(TL用)</span>
                 <small v-if="'word' == optKatsuFilter">カンマ区切りで入力してね<br>(ex. テスト,てすと,test)(10個まで)</small>
-                <small v-else-if="'regex' == optKatsuFilter">正規表現にも対応してるよ<br>(ex. [\s\S]{140})(140字以上のカツ)</small>
+                <small v-else-if="'regex' == optKatsuFilter">正規表現にも対応してるよ<br>(ex. [\s\S]{140})(140字以上のカツ!)</small>
               </div>
               <div class="flex end action-bar">
                 <small>{{result_text_tmp}}</small>
@@ -3053,7 +3072,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 プロファイル編集(名前のみ)<br>
                 ヘッダアイコンのカラム移動機能<br>
                 デスクトップ通知(PC)と、通知音再生<br>
-                カツ!の メンション/ハッシュタグ/カツURL を開く<br>
+                カツ!の メンション/ハッシュタグ/カツ!URL を開く<br>
                 通信エラーの表示<br>
               </small><br>
               <h3>拡張機能(v1.4)</h3>
@@ -3069,7 +3088,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 リスト用検索に未フォローアカウント表示&フォロワー一覧<br>
                 リストのリネーム機能<br>
                 リスト数50、リスト名の文字数300を上限に設定<br>
-                Local TLにしおりをはさむ機能(削除カツ未対応)<br>
+                Local TLにしおりをはさむ機能(削除カツ!未対応)<br>
                 通知の未読数を表示<br>
                 タグ/リスト TLのカツ!フィルタ(TLで展開可能)<br>
                 フォロー/フォロワー一覧 をユーザー情報内で表示<br>
@@ -3095,7 +3114,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <small>
                 リンク先情報(OGP)の埋め込みhtml展開<br>
                 アカウントプロファイルの編集(名前以外)<br>
-                カツ入力欄のサジェスト機能<br>
+                カツ!入力欄のサジェスト機能<br>
                 カスタム絵文字入力<br>
                 [完成済]ダイレクトメッセージストリーム取得/削除<br>
                 シェア機能(Web Share API対応)<br>
@@ -3179,21 +3198,21 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=032503"></script>
+    <script src="js/main.js?v=0327"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=032503', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=0327', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
           });
         });
-        // navigator.serviceWorker.addEventListener('controllerchange', () => {
-        //   console.log("update ok");
-        // });
-      }else{
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log("update ok");
+        });
+      } else {
         console.warn('Service Worker is not supported');
       }
     </script>
