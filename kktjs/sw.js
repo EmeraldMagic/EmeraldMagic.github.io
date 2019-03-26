@@ -1,7 +1,7 @@
 // const url = 'http://localhost:8080';
 const url = 'https://sumire.work';
 
-const key = 'v1.4.4_360';
+const key = 'v1.4.4_361';
 
 const cache_keys = [
   key
@@ -70,6 +70,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  if(event.request.url == 'https://kirakiratter.com/api/v1/media'){
+    return;
+  };
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
