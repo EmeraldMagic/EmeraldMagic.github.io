@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0326">
+    <link rel="stylesheet" href="css/style.css?v=0507">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -34,6 +34,7 @@
 kktCSS V10.0 Copyright (c) 2017 Salil Gupta Released under the MIT License. (https://github.com/MasterDalK/kktCSS/blob/master/LICENSE.md)
 kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 -->
+
     <script type="text/x-template" id="modal-media">
       <transition name="media">
         <div class="modal-mask">
@@ -201,7 +202,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       <confirm v-if="showConfirm">
         <div slot="header">
 
-          <div class="status flex" v-if="['delete','report','fav','unfav','reblog','unreblog','pin','unpin','bookmark'].indexOf(modal_issue.confirmtype) != -1">
+          <div class="status flex" v-if="['delete','report','fav','unfav','reblog','unreblog','pin','unpin','vote','bookmark'].indexOf(modal_issue.confirmtype) != -1">
             <img :src="checkAvatar(modal_issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(modal_issue.account.id);" onerror="this.src=IMG_DUMMY">
             <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
             <div class="content border">
@@ -225,6 +226,28 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <span v-html="formatContent(modal_issue.content, modal_issue.emojis)"></span>
                 </div>
               </div>
+              <div v-if="null != modal_issue.poll && 0 != modal_issue.poll.options" class="card">
+                <div v-for="(option, index) in modal_issue.poll.options" class="option-name flex start">
+                  <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, modal_issue.poll.emojis)"></span></div>
+                  <small v-if="modal_issue.poll.voted || modal_issue.poll.expired">{{option.votes_count}}票</small>
+                </div>
+                <div v-if="modal_issue.poll.voted || modal_issue.poll.expired" class="flex center">
+                  <div v-if="user.id != modal_issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                    <small v-if="modal_issue.poll.expired">Finished</small>
+                    <small v-else>Voted</small>
+                  </div>
+                </div>
+                <div v-else class="flex center">
+                  <div v-for="(option, index) in modal_issue.poll.options" class="full">
+                    <small v-if="isSetVote(modal_issue.poll, index)" class="color-wh bgcolor-pk button flex wrap">{{index+1}}</small>
+                    <small v-else class="color-wh bgcolor-disable button flex wrap">{{index+1}}</small>
+                  </div>
+                </div>
+                <div>
+                  <small v-if="modal_issue.poll.expired">最終結果 計{{modal_issue.poll.votes_count}}票</small>
+                  <small v-else>投票中 現在{{modal_issue.poll.votes_count}}票 ({{formatDate(modal_issue.poll.expires_at)}}まで)</small>
+                </div>
+              </div>
               <div v-if="0 != modal_issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                 <a v-for="media in modal_issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -240,7 +263,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <h4 v-else>Media contents</h4>
                 <small>Click to view</small>
               </div>
-              <a v-if="null != modal_issue.card" class="flex center detail-card" :href="modal_issue.card.url" target="_blank" rel="noopener noreferrer">
+              <a v-if="null != modal_issue.card" class="flex center card" :href="modal_issue.card.url" target="_blank" rel="noopener noreferrer">
                 <img v-if="null != modal_issue.card.image" :src="modal_issue.card.image" onerror="this.src=IMG_DUMMY">
                 <div class="detail-content hidden">
                   <span>{{modal_issue.card.title}}</span><br>
@@ -280,6 +303,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <span v-html="formatContentConfirm(modal_issue.content, modal_issue.emojis)"></span>
                 </div>
               </div>
+              <div v-if="null != modal_issue.poll && 0 != modal_issue.poll.options" class="card">
+                <div v-for="(option, index) in modal_issue.poll.options" class="option-name flex start">
+                  <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, modal_issue.poll.emojis)"></span></div>
+                  <small v-if="modal_issue.poll.voted || modal_issue.poll.expired">{{option.votes_count}}票</small>
+                </div>
+                <div v-if="modal_issue.poll.voted || modal_issue.poll.expired" class="flex center">
+                  <div v-if="user.id != modal_issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                    <small v-if="modal_issue.poll.expired">Finished</small>
+                    <small v-else>Voted</small>
+                  </div>
+                </div>
+                <div v-else class="flex center">
+                  <div v-for="(option, index) in modal_issue.poll.options" v-if="!modal_issue.poll.expired" class="full">
+                    <small v-if="isSetVote(modal_issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(modal_issue, index);">{{index+1}}</small>
+                    <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(modal_issue, index);">{{index+1}}</small>
+                  </div>
+                  <div class="full">
+                    <small v-if="modal_issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                    <small v-else-if="!checkVote(modal_issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                    <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(modal_issue);">Vote</small>
+                  </div>
+                </div>
+                <div>
+                  <small v-if="modal_issue.poll.expired">最終結果 計{{modal_issue.poll.votes_count}}票</small>
+                  <small v-else>投票中 現在{{modal_issue.poll.votes_count}}票 ({{formatDate(modal_issue.poll.expires_at)}}まで)</small>
+                </div>
+              </div>
               <div v-if="0 != modal_issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                 <a v-for="media in modal_issue.media_attachments">
                   <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -295,7 +345,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <h4 v-else>Media contents</h4>
                 <small>Click to view</small>
               </div>
-              <a v-if="null != modal_issue.card" class="flex center detail-card" :href="modal_issue.card.url" target="_blank" rel="noopener noreferrer">
+              <a v-if="null != modal_issue.card" class="flex center card" :href="modal_issue.card.url" target="_blank" rel="noopener noreferrer">
                 <img v-if="null != modal_issue.card.image" :src="modal_issue.card.image" onerror="this.src=IMG_DUMMY">
                 <div class="detail-content hidden">
                   <span>{{modal_issue.card.title}}</span><br>
@@ -458,6 +508,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span class="button full color-wh bgcolor-pk" v-on:click="showConfirm = false; actUnList(modal_issue, true);">OK</span>
               </div>
             </div>
+            <div v-else-if="'vote' == modal_issue.confirmtype">
+              <h3>投票しますか？</h3>
+              <div class="flex center">
+                <span class="button full color-wh bgcolor" v-on:click="showConfirm = false; modal_issue = '';">Cancel</span>
+                <span class="button full color-wh bgcolor-gr" v-on:click="showConfirm = false; actVote(modal_issue, true);">OK</span>
+              </div>
+            </div>
             <div v-else-if="'bookmark' == modal_issue.confirmtype">
               <h3>しおりをはさみますか？</h3>
               <div class="flex center">
@@ -490,7 +547,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}-{{ua}}</div>
           <div class="scrollable">
             <h3>Columns</h3>
-            <div >
+            <div>
               Home({{home_type}})<input type="checkbox" id="showHome" v-model="showHome">
               Local({{local_type}})<input type="checkbox" id="showLocal" v-model="showLocal">
               Multl({{multi_type}})<input type="checkbox" id="showMulti" v-model="showMulti">
@@ -558,7 +615,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <!-- notif_posy: {{notif_posy}}/{{notif_posy_b}}<br> -->
             multi_unread: {{multi_unread}}/ {{multis.length}},<br>
             <!-- multi_posy: {{multi_posy}}/{{multi_posy_b}}<br> -->
-            notif_unread_filter: {{notif_unread_filter.complete}} {{notif_unread_filter.mention+notif_unread_filter.fav+notif_unread_filter.reblog+notif_unread_filter.follow}}({{notif_unread_filter.mention}}+{{notif_unread_filter.fav}}+{{notif_unread_filter.reblog}}+{{notif_unread_filter.follow}}),
+            notif_unread_filter: {{notif_unread_filter.complete}} {{notif_unread_filter.mention+notif_unread_filter.fav+notif_unread_filter.reblog+notif_unread_filter.follow+notif_unread_filter.others}}({{notif_unread_filter.mention}}+{{notif_unread_filter.fav}}+{{notif_unread_filter.reblog}}+{{notif_unread_filter.follow}}+{{notif_unread_filter.others}}),
           </div>
         </div>
         <!-- S-Links -->
@@ -667,7 +724,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <span v-on:click="runNotif('all');" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-bell"></i>Notification</div>
                 <small v-if="!notif_unread_filter.complete">30+</small>
-                <small v-else-if="0 != notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow">{{notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow}}</small>
+                <small v-else-if="0 != notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow + notif_unread_filter.others">{{notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow + notif_unread_filter.others}}</small>
               </span>
               <span v-on:click="runNotif('mention');showNotifOption = true;" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-at"></i>Mention</div>
@@ -762,6 +819,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <span v-html="formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                         </div>
                       </div>
+                      <div v-if="null != issue.reblog.poll && 0 != issue.reblog.poll.options" class="card">
+                        <div v-for="(option, index) in issue.reblog.poll.options" class="option-name flex start">
+                          <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
+                          <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
+                        </div>
+                        <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                          <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                            <small v-if="issue.reblog.poll.expired">Finished</small>
+                            <small v-else>Voted</small>
+                          </div>
+                        </div>
+                        <div v-else class="flex center">
+                          <div v-for="(option, index) in issue.reblog.poll.options" v-if="!issue.reblog.poll.expired" class="full">
+                            <small v-if="isSetVote(issue.reblog.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                            <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                          </div>
+                          <div class="full">
+                            <small v-if="issue.reblog.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                            <small v-else-if="!checkVote(issue.reblog.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                            <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue.reblog);">Vote</small>
+                          </div>
+                        </div>
+                        <div>
+                          <small v-if="issue.reblog.poll.expired">最終結果 計{{issue.reblog.poll.votes_count}}票</small>
+                          <small v-else>投票中 現在{{issue.reblog.poll.votes_count}}票 ({{formatDate(issue.reblog.poll.expires_at)}}まで)</small>
+                        </div>
+                      </div>
                       <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                         <a v-for="media in issue.reblog.media_attachments" @click="modal_media = media;showMedia = true;">
                           <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -779,7 +863,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <small>Click to view</small>
                       </div>
                     </div>
-                    <a v-if="!issue.caught_katsufilter && null != issue.reblog.card" class="flex center detail-card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="!issue.caught_katsufilter && null != issue.reblog.card" class="flex center card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
@@ -835,6 +919,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <span v-html="formatContent(issue.content, issue.emojis)"></span>
                         </div>
                       </div>
+                      <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                        <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                          <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                          <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                        </div>
+                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                          <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                            <small v-if="issue.poll.expired">Finished</small>
+                            <small v-else>Voted</small>
+                          </div>
+                        </div>
+                        <div v-else class="flex center">
+                          <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                            <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                            <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          </div>
+                          <div class="full">
+                            <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                            <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                            <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                          </div>
+                        </div>
+                        <div>
+                          <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                          <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                        </div>
+                      </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                         <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                           <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -852,7 +963,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <small>Click to view</small>
                       </div>
                     </div>
-                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -957,6 +1068,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <span v-html="formatContent(issue.content, issue.emojis)"></span>
                         </div>
                       </div>
+                      <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                        <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                          <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                          <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                        </div>
+                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                          <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                            <small v-if="issue.poll.expired">Finished</small>
+                            <small v-else>Voted</small>
+                          </div>
+                        </div>
+                        <div v-else class="flex center">
+                          <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                            <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                            <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          </div>
+                          <div class="full">
+                            <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                            <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                            <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                          </div>
+                        </div>
+                        <div>
+                          <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                          <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                        </div>
+                      </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                         <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                           <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -974,7 +1112,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <small>Click to view</small>
                       </div>
                     </div>
-                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -1058,6 +1196,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <i v-else-if="'reblog' == issue.type" class="fa fa-fw fa-retweet color-on"></i>
                   <i v-else-if="'favourite' == issue.type" class="fa fa-fw fa-star color-on"></i>
                   <i v-else-if="'follow' == issue.type" class="fa fa-fw fa-user-plus color-gr"></i>
+                  <i v-else-if="'poll' == issue.type" class="fa fa-fw fa-tasks color-gr"></i>
                   <span v-if="('reblog' == issue.type || 'favourite' == issue.type) && issue.loading_avatar" class="avatar border" v-on:click="runAcct(issue.account.id);"></span>
                   <img v-else-if="'reblog' == issue.type || 'favourite' == issue.type" :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id);" onerror="this.src=IMG_DUMMY">
                   <div class="full">
@@ -1070,6 +1209,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden">
                       <span v-if="'mention' == issue.type">{{issue.type}} your katsu</span>
                       <span v-else-if="'follow' == issue.type">{{issue.type}} you</span>
+                      <span v-else-if="'poll' == issue.type">{{issue.type}} finished</span>
                       <span v-else>{{issue.type}} your katsu</span>
                       </div>
                       <span v-if="'mention' != issue.type" class="status-info color-gr">({{formatDate(issue.created_at)}})</span>
@@ -1095,6 +1235,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <span v-html="formatSpoiler(issue.status.spoiler_text, issue.status.emojis)" v-if="issue.status.spoiler_text"></span>
                       <span v-html="formatContent(issue.status.content, issue.status.emojis)"></span>
                     </div>
+                    <div v-if="null != issue.status.poll && 0 != issue.status.poll.options" class="card">
+                      <div v-for="(option, index) in issue.status.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.status.poll.emojis)"></span></div>
+                        <small v-if="issue.status.poll.voted || issue.status.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.status.poll.voted || issue.status.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.status.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.status.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.status.poll.options" v-if="!issue.status.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.status.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue.status, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue.status, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.status.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.status.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue.status);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.status.poll.expired">最終結果 計{{issue.status.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.status.poll.votes_count}}票 ({{formatDate(issue.status.poll.expires_at)}}まで)</small>
+                      </div>
+                    </div>
                     <div v-if="0 != issue.status.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                       <a v-for="media in issue.status.media_attachments" @click="modal_media = media;showMedia = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1111,7 +1278,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.status.card" class="flex center detail-card" :href="issue.status.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.status.card" class="flex center card" :href="issue.status.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.status.card.image" :src="issue.status.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.status.card.title}}</span><br>
@@ -1137,7 +1304,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
                 <!-- Fav/Reblog -->
-                <div v-else-if="'favourite' == issue.type || 'reblog' == issue.type " class="status flex">
+                <div v-else-if="'favourite' == issue.type || 'reblog' == issue.type || 'poll' == issue.type" class="status flex">
                   <span v-if="issue.loading_avatar" class="avatar border" v-on:click="runAcct(issue.status.account.id);"></span>
                   <img v-else :src="checkAvatar(issue.status.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.status.account.id);" onerror="this.src=IMG_DUMMY">
                   <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
@@ -1154,6 +1321,16 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div class="status-text">
                       <span v-html="formatSpoiler(issue.status.spoiler_text, issue.status.emojis)" v-if="issue.status.spoiler_text"></span>
                       <span v-html="formatContent(issue.status.content, issue.status.emojis)"></span>
+                    </div>
+                    <div v-if="null != issue.status.poll && 0 != issue.status.poll.options" class="card">
+                      <div v-for="(option, index) in issue.status.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.status.poll.emojis)"></span></div>
+                        <small v-if="issue.status.poll.voted || issue.status.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div>
+                        <small v-if="issue.status.poll.expired">最終結果 計{{issue.status.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.status.poll.votes_count}}票 ({{formatDate(issue.status.poll.expires_at)}}まで)</small>
+                      </div>
                     </div>
                     <div class="action-bar flex end">
                       <div class="hidden nodot">
@@ -1259,6 +1436,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <span v-html="formatContent(issue.content, issue.emojis)"></span>
                         </div>
                       </div>
+                      <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                        <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                          <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                          <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                        </div>
+                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                          <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                            <small v-if="issue.poll.expired">Finished</small>
+                            <small v-else>Voted</small>
+                          </div>
+                        </div>
+                        <div v-else class="flex center">
+                          <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                            <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                            <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          </div>
+                          <div class="full">
+                            <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                            <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                            <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                          </div>
+                        </div>
+                        <div>
+                          <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                          <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                        </div>
+                      </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                         <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                           <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1276,7 +1480,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <small>Click to view</small>
                       </div>
                     </div>
-                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="!issue.caught_katsufilter && null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -1361,6 +1565,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <span v-html="formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
                       </div>
                     </div>
+                    <div v-if="null != issue.reblog.poll && 0 != issue.reblog.poll.options" class="card">
+                      <div v-for="(option, index) in issue.reblog.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
+                        <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.reblog.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.reblog.poll.options" v-if="!issue.reblog.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.reblog.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.reblog.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.reblog.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue.reblog);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.reblog.poll.expired">最終結果 計{{issue.reblog.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.reblog.poll.votes_count}}票 ({{formatDate(issue.reblog.poll.expires_at)}}まで)</small>
+                      </div>
+                    </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                       <a v-for="media in issue.reblog.media_attachments" @click="modal_media = media;showMedia = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1377,7 +1608,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.reblog.card" class="flex center detail-card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.reblog.card" class="flex center card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
@@ -1429,6 +1660,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <span v-html="formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
+                    <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                      <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                        <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                      </div>
+                    </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                       <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1445,7 +1703,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -1518,9 +1776,16 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           </div>
         </div>
 
-        <!-- Detail -->
+        <!-- Detail -->"
         <div v-if="showDetail" class="column bgcolor-gray" :class="{ full: optColumnWide && '1' == optColumns }">
-          <div class="column-header"><i class="fa fa-fw fa-comment"></i>Detail <small v-if="!optSimple">(id:{{detail_targetid}})</small></div>
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i class="fa fa-fw fa-comment"></i>Detail <small v-if="!optSimple">(id:{{detail_targetid}})</small>
+              </div>
+              <span class="column-option"><i v-on:click="runDetail(detail_targetid);" class="fa fa-fw fa-refresh"></i></span>
+            </div>
+          </div>
           <div class="scrollable">
             <!-- ANCESTORS -->
             <div v-if="hasDetail && !fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" class="status-list">
@@ -1548,6 +1813,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <span v-html="formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
+                  <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                    <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                      <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                      <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                    </div>
+                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                        <small v-if="issue.poll.expired">Finished</small>
+                        <small v-else>Voted</small>
+                      </div>
+                    </div>
+                    <div v-else class="flex center">
+                      <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                        <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                      </div>
+                      <div class="full">
+                        <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                        <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                        <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                      </div>
+                    </div>
+                    <div>
+                      <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                      <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                    </div>
+                  </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                     <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1563,7 +1855,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <h4 v-else>Media contents</h4>
                     <small>Click to view</small>
                   </div>
-                  <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                  <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
@@ -1605,10 +1897,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <a v-else class="color-pk">{{detail.account.username}}</a>
                       <small>‭@{{detail.account.acct}}</small>
                     </div>
-                      <small v-if="detail.account.locked"><i class="fa fa-fw fa-lock"></i></small>
-                      <small v-if="detail.account.bot" class="status-info">[Bot]</small>
-                      <small>[{{detail.visibility}}]</small>
-                      <small v-if="!optSimple && detail.sensitive" class="status-info"><i class="fa fa-fw fa-exclamation-triangle"></i></small>
+                    <small v-if="detail.account.locked"><i class="fa fa-fw fa-lock"></i></small>
+                    <small v-if="detail.account.bot" class="status-info">[Bot]</small>
+                    <small>[{{detail.visibility}}]</small>
+                    <small v-if="!optSimple && detail.sensitive" class="status-info"><i class="fa fa-fw fa-exclamation-triangle"></i></small>
                   </div>
                   <div class="detail-time flex end">
                   </div>
@@ -1621,6 +1913,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </div>
                     <div v-else>
                       <span v-html="formatContent(detail.content, detail.emojis)"></span>
+                    </div>
+                  </div>
+                  <div v-if="null != detail.poll && 0 != detail.poll.options" class="card">
+                    <div v-for="(option, index) in detail.poll.options" class="option-name flex start">
+                      <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, detail.poll.emojis)"></span></div>
+                      <small v-if="detail.poll.voted || detail.poll.expired">{{option.votes_count}}票</small>
+                    </div>
+                    <div v-if="detail.poll.voted || detail.poll.expired" class="flex center">
+                      <div v-if="user.id != detail.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                        <small v-if="detail.poll.expired">Finished</small>
+                        <small v-else>Voted</small>
+                      </div>
+                    </div>
+                    <div v-else class="flex center">
+                      <div v-for="(option, index) in detail.poll.options" v-if="!detail.poll.expired" class="full">
+                        <small v-if="isSetVote(detail.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(detail, index);">{{index+1}}</small>
+                        <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(detail, index);">{{index+1}}</small>
+                      </div>
+                      <div class="full">
+                        <small v-if="detail.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                        <small v-else-if="!checkVote(detail.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                        <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(detail);">Vote</small>
+                      </div>
+                    </div>
+                    <div>
+                      <small v-if="detail.poll.expired">最終結果 計{{detail.poll.votes_count}}票</small>
+                      <small v-else>投票中 現在{{detail.poll.votes_count}}票 ({{formatDate(detail.poll.expires_at)}}まで)</small>
                     </div>
                   </div>
                   <div v-if="0 != detail.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
@@ -1653,7 +1972,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </span>
                     </div>
                   </div>
-                  <a v-if="null != detail.card" class="flex center detail-card" :href="detail.card.url" target="_blank" rel="noopener noreferrer">
+                  <a v-if="null != detail.card" class="flex center card" :href="detail.card.url" target="_blank" rel="noopener noreferrer">
                     <img v-if="null != detail.card.image" :src="detail.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{detail.card.title}}</span><br>
@@ -1735,6 +2054,55 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <span v-html="formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
+                  <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                    <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                      <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                      <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                    </div>
+                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                        <small v-if="issue.poll.expired">Finished</small>
+                        <small v-else>Voted</small>
+                      </div>
+                    </div>
+                    <div v-else class="flex center">
+                      <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                        <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                      </div>
+                      <div class="full">
+                        <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                        <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                        <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                      </div>
+                    </div>
+                    <div>
+                      <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                      <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                    </div>
+                  </div>
+                  <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                    <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                      <div class="hidden full">{{index+1}}. {{option.title}}</div>
+                      <small>{{option.votes_count}}票</small>
+                    </div>
+                    <div v-if="issue.poll.voted" class="flex center">
+                      <div class="color-wh bgcolor-disable button full flex wrap">
+                        <small v-if="user.id == issue.account.id">...</small>
+                        <small v-else>Voted</small>
+                      </div>
+                    </div>
+                    <div v-else class="flex center">
+                      <div v-for="(option, index) in issue.poll.options" class="color-wh bgcolor button full flex wrap">
+                        <small>{{index+1}}</small>
+                      </div>
+                      <div class="color-wh bgcolor-pk button full flex wrap"><small>Vote</small></div>
+                    </div>
+                    <div>
+                      <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                      <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                    </div>
+                  </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                     <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1750,7 +2118,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <h4 v-else>Media contents</h4>
                     <small>Click to view</small>
                   </div>
-                  <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                  <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
@@ -1889,6 +2257,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <span v-html="formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
+                    <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                      <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                        <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                      </div>
+                    </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                       <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -1904,7 +2299,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -1981,8 +2376,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <a v-else class="color-pk">{{issue.reblog.account.username}}</a>
                         <small>‭@{{issue.reblog.account.acct}}</small>
                       </div>
-                    <small v-if="'public' != issue.reblog.visibility">[{{issue.reblog.visibility}}]</small>
-                    <small v-if="!optSimple && issue.reblog.sensitive" class="status-info"><i class="fa fa-fw fa-exclamation-triangle"></i></small>
+                      <small v-if="'public' != issue.reblog.visibility">[{{issue.reblog.visibility}}]</small>
+                      <small v-if="!optSimple && issue.reblog.sensitive" class="status-info"><i class="fa fa-fw fa-exclamation-triangle"></i></small>
                     </div>
                     <div class="status-text">
                       <span v-html="formatSpoiler(issue.reblog.spoiler_text, issue.reblog.emojis)"></span>
@@ -1993,6 +2388,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </div>
                       <div v-else>
                         <span v-html="formatContent(issue.reblog.content, issue.reblog.emojis)"></span>
+                      </div>
+                    </div>
+                    <div v-if="null != issue.reblog.poll && 0 != issue.reblog.poll.options" class="card">
+                      <div v-for="(option, index) in issue.reblog.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
+                        <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.reblog.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.reblog.poll.options" v-if="!issue.reblog.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.reblog.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue.reblog, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.reblog.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.reblog.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue.reblog);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.reblog.poll.expired">最終結果 計{{issue.reblog.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.reblog.poll.votes_count}}票 ({{formatDate(issue.reblog.poll.expires_at)}}まで)</small>
                       </div>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
@@ -2010,7 +2432,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.reblog.card" class="flex center detail-card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.reblog.card" class="flex center card" :href="issue.reblog.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
@@ -2061,6 +2483,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <span v-html="formatContent(issue.content, issue.emojis)"></span>
                       </div>
                     </div>
+                    <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                      <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                        <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                        <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                      </div>
+                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                          <small v-if="issue.poll.expired">Finished</small>
+                          <small v-else>Voted</small>
+                        </div>
+                      </div>
+                      <div v-else class="flex center">
+                        <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                          <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                          <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        </div>
+                        <div class="full">
+                          <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                          <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                          <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                        </div>
+                      </div>
+                      <div>
+                        <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                        <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                      </div>
+                    </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                       <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                         <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -2076,7 +2525,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <h4 v-else>Media contents</h4>
                       <small>Click to view</small>
                     </div>
-                    <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                    <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
@@ -2269,7 +2718,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <span v-on:click="runNotif('all');" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-bell"></i>Notification</div>
                 <small v-if="!notif_unread_filter.complete">30+</small>
-                <small v-else-if="0 != notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow">{{notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow}}</small>
+                <small v-else-if="0 != notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow + notif_unread_filter.others">{{notif_unread_filter.mention + notif_unread_filter.fav + notif_unread_filter.reblog + notif_unread_filter.follow + notif_unread_filter.others}}</small>
               </span>
               <span v-on:click="runNotif('mention');showNotifOption = true;" class="list-link border-lite full bgcolor-wh flex end">
                 <div class="hidden full"><i class="fa fa-fw fa-at"></i>Mention</div>
@@ -2320,7 +2769,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="list-link color-wh bgcolor-disable">Edit</div>
                 <div v-else-if="!showStreamEdit" v-on:click="toggleStreamEdit();" class="list-link color-wh bgcolor">Edit</div>
 
-                <input v-focus v-show="showStreamEdit && !fetch_lock.multiws && !fetch_lock.multi && !fetch_lock.lists" type="text" v-restore-listprofile class="underline-dash" id="list_name" @keyup.enter="actListProfile" onKeyup="inputListProfile(this)">
+                <input v-focus v-show="showStreamEdit && !fetch_lock.multiws && !fetch_lock.multi && !fetch_lock.lists" type="text" v-restore-listprofile class="underline-dash" id="list_name" @keyup.enter="actListProfile();" onKeyup="inputListProfile(this)">
                 <span v-if="!fetch_lock.multiws && !fetch_lock.multi && !fetch_lock.lists && showStreamEdit" class="flex">
                   <dummy v-if="stream_list.req_profile"></dummy>
                   <span v-else v-on:click="listprofile.name=stream_list.title;checkListProfile();document.getElementById('list_name').value=stream_list.title;toggleStreamEdit();" class="button mini color-wh bgcolor">Cancel</span>
@@ -2344,7 +2793,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <label v-else for="checkfollowing" class="button color-wh bgcolor">OFF</label>
                 </div>
                 <div v-if="'search'==stream_list_type" class="search-container action-bar bgcolor-wh flex center">
-                  <input v-focus type="text" v-restore-search class="underline-dash" @keyup.enter="fetchListSearch" onKeyup="inputSearch(this)"><br>
+                  <input v-focus type="text" v-restore-search class="underline-dash" @keyup.enter="fetchListSearch();" onKeyup="inputSearch(this)"><br>
                   <span v-if="fetch_lock.lists" class="button color-wh bgcolor">Search</span>
                   <span v-else v-on:click="fetchListSearch();" class="button color-wh bgcolor-pk">Search</span>
                 </div>
@@ -2393,7 +2842,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div v-else v-on:click="showStreamEdit=false;stream_list=issue;listprofile.name=stream_list.title;checkListProfile();document.getElementById('list_name').value=stream_list.title;fetchListListedBackup();fetchListListed();" class="list-link color-wh bgcolor"><i class="fa fa-fw fa-user-o"></i></div>
               </div>
               <div v-show="showStreamEdit && !isListMax" class="select-container list bgcolor-wh flex center">
-                <input type="text" v-restore-list class="underline-dash" id="list_name_new" @keyup.enter="runAddList" onKeyup="inputList(this);"><br>
+                <input type="text" v-restore-list class="underline-dash" id="list_name_new" @keyup.enter="runAddList();" onKeyup="inputList(this);"><br>
                 <span v-if="fetch_lock.multiws || fetch_lock.multi || fetch_lock.lists" class="color-wh bgcolor-disable button"><i class="fa fa-fw fa-spinner fa-pulse color-wh"></i></span>
                 <span v-else-if="stream_list_text_check" v-on:click="runAddList();" class="color-wh bgcolor-pk button">Add</span>
                 <span v-else class="color-wh bgcolor-disable button">Add</span>
@@ -2444,7 +2893,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="status-list">
 
               <div class="search-container action-bar bgcolor-wh flex center">
-                <input v-focus type="text" v-restore-search class="underline-dash" @keyup.enter="searchAll" onKeyup="inputSearch(this)">
+                <input v-focus type="text" v-restore-search class="underline-dash" @keyup.enter="searchAll();" onKeyup="inputSearch(this)">
                 <span v-if="fetch_lock.search" class="button color-wh bgcolor-disable">Search</span>
                 <span v-else v-on:click="searchAll();" class="button color-wh bgcolor-pk">Search</span>
               </div>
@@ -2506,6 +2955,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <span v-html="formatContent(issue.content, issue.emojis)"></span>
                     </div>
                   </div>
+                  <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
+                    <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
+                      <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
+                      <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
+                    </div>
+                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                        <small v-if="issue.poll.expired">Finished</small>
+                        <small v-else>Voted</small>
+                      </div>
+                    </div>
+                    <div v-else class="flex center">
+                      <div v-for="(option, index) in issue.poll.options" v-if="!issue.poll.expired" class="full">
+                        <small v-if="isSetVote(issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                        <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(issue, index);">{{index+1}}</small>
+                      </div>
+                      <div class="full">
+                        <small v-if="issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                        <small v-else-if="!checkVote(issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                        <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(issue);">Vote</small>
+                      </div>
+                    </div>
+                    <div>
+                      <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
+                      <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
+                    </div>
+                  </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                     <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -2521,7 +2997,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <h4 v-else>Media contents</h4>
                     <small>Click to view</small>
                   </div>
-                  <a v-if="null != issue.card" class="flex center detail-card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
+                  <a v-if="null != issue.card" class="flex center card" :href="issue.card.url" target="_blank" rel="noopener noreferrer">
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
@@ -2559,6 +3035,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           <div class="column-header bgcolor-wh">
             <div class="flex end action-bar">
               <span v-on:click="toggleForm();" class="button mini fixed color-wh bgcolor-gr">Close</span>
+              <span v-if="checkKatsu() && 2 > katsu_drafts.length" v-on:click="katsuToDraft();" class="button mini color-wh bgcolor">Save the draft</span>
+              <span v-else class="button mini color-wh bgcolor-disable">Save the draft</span>
             </div>
           </div>
           <div class="status-list bgcolor-wh">
@@ -2577,11 +3055,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </div>
                     </div>
                   </div>
-                  <div class="flex draft">
+<!--                   <div class="flex draft">
                     <span>(下書き保存)</span>
                     <i v-if="checkKatsu() && 2 > katsu_drafts.length" v-on:click="katsuToDraft();" class="fa fa-fw fa-floppy-o"></i>
                     <i v-else class="fa fa-fw fa-floppy-o color-disable"></i>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div v-if="hasKatsuDraft" class="form-option bgcolor-gray">
@@ -2622,6 +3100,33 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                   <div v-else>
                     <span v-html="formatContent(katsu.reply.content, katsu.reply.emojis)"></span>
+                  </div>
+                </div>
+                <div v-if="null != katsu.reply.poll && 0 != katsu.reply.poll.options" class="card">
+                  <div v-for="(option, index) in katsu.reply.poll.options" class="option-name flex start">
+                    <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, katsu.reply.poll.emojis)"></span></div>
+                    <small v-if="katsu.reply.poll.voted || katsu.reply.poll.expired">{{option.votes_count}}票</small>
+                  </div>
+                  <div v-if="katsu.reply.poll.voted || katsu.reply.poll.expired" class="flex center">
+                    <div v-if="user.id != katsu.reply.account.id" class="color-wh bgcolor-disable button full flex wrap">
+                      <small v-if="katsu.reply.poll.expired">Finished</small>
+                      <small v-else>Voted</small>
+                    </div>
+                  </div>
+                  <div v-else class="flex center">
+                    <div v-for="(option, index) in katsu.reply.poll.options" v-if="!katsu.reply.poll.expired" class="full">
+                      <small v-if="isSetVote(katsu.reply.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(katsu.reply, index);">{{index+1}}</small>
+                      <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(katsu.reply, index);">{{index+1}}</small>
+                    </div>
+                    <div class="full">
+                      <small v-if="katsu.reply.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
+                      <small v-else-if="!checkVote(katsu.reply.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
+                      <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(katsu.reply);">Vote</small>
+                    </div>
+                  </div>
+                  <div>
+                    <small v-if="katsu.reply.poll.expired">最終結果 計{{katsu.reply.poll.votes_count}}票</small>
+                    <small v-else>投票中 現在{{katsu.reply.poll.votes_count}}票 ({{formatDate(katsu.reply.poll.expires_at)}}まで)</small>
                   </div>
                 </div>
                 <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
@@ -2712,9 +3217,14 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </a>
                 </div>
                 <div class="flex center">
+                  <small v-for="(media, index) in katsu['media_previews']" v-on:click="removeMedia(index)" class="color-wh bgcolor-pk button full" :class="{ 'bgcolor-disable': null == katsu['media_attachments'][index] }">
+                    <span>Remove</span>
+                  </small>
+                </div>
+                <div class="media-stats hidden flex">
                   <div v-for="(media, index) in katsu['media_previews']" class="full">
-                    <div v-if="null != katsu['media_attachments'][index]" v-on:click="katsu['media_previews'].splice(index,1);katsu['media_attachments'].splice(index,1);" class="color-wh bgcolor-pk button"><small>Remove</small></div>
-                    <div v-else class="color-wh bgcolor-disable button full"><small>{{media_uploaded}}%</small></div>
+                    <small v-if="null != katsu['media_attachments'][index]"><i class="fa fa-fw fa-check"></i><span v-if="katsu['media_previews'][index].converted">Convert</span><span v-else>Ok</span></small>
+                    <small v-else><i class="fa fa-fw fa-spinner fa-pulse"></i>{{media_uploaded}}%</small>
                   </div>
                 </div>
                 <div class="flex end action-bar">
@@ -2739,7 +3249,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
 
-              <input type="file" accept=".jpg,.jpeg,.png,.gif,.webm,.mp4,.m4v,image/jpeg,image/png,image/gif,video/webm,video/mp4" name="file" id="uploader" class="invisible" onchange="runInputFile(this.files)">
+              <input type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.dib,.webp,.webm,.mp4,.m4v,image/jpeg,image/png,image/gif,image/bmp,image/webp,video/webm,video/mp4" name="file" id="uploader" class="invisible" onchange="runInputFile(this.files)">
 
               <div class="action-bar flex wrap form-option underline-dash">
                 <div class="color bgcolor-in">
@@ -2762,6 +3272,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
 
               <div class="action-bar form-option">
+
+                <img id="img" src="" alt="">
                 <div class="flex end action-bar">
                   <span>🔥 お知らせ 🔥</span>
                   <small>20180126(v1.2.7)</small>
@@ -2855,11 +3367,20 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
               <h3><i class="fa fa-fw fa-file-text-o"></i> Form: カツ!データの入力について決めてね </h3>
               <div class="flex end action-bar">
-              <span>書きかけの保存</span>
+                <span>書きかけカツ!の保存</span>
                 <input type="checkbox" id="keepform" class="invisible" v-model="optKeepForm">
                 <label v-if="optKeepForm" for="keepform" class="button color-wh bgcolor-pk">ON</label>
                 <label v-else for="keepform" class="button color-wh bgcolor">OFF</label>
               </div>
+<!--               <div class="flex end action-bar"><span>アップロード前に画像縮小</span></div>
+              <div class="flex end action-bar">
+                <input type="radio" class="invisible" id="rone" value="off" v-model="optConvMedia">
+                <input type="radio" class="invisible" id="rtwo" value="" v-model="optConvMedia">
+                <input type="radio" class="invisible" id="rthree" value="hd" v-model="optConvMedia">
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' == optConvMedia }" for="rone">OFF</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optConvMedia }" for="rtwo">Normal</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'hd' == optConvMedia }" for="rthree">HD</label>
+              </div> -->
 
               <h3><i class="fa fa-fw fa-check-square-o"></i> Confirm: 確認が必要な動作を選択してね </h3>
               <div class="flex end">
@@ -2954,7 +3475,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'regex' == optKatsuFilter }" v-on:click="optKatsuFilter = 'regex';">Regex</label>
               </div>
               <div v-if="'' != optKatsuFilter" class="search-container action-bar bgcolor-wh flex center">
-                <input type="text" v-restore-kfr class="underline-dash" @keyup.enter="updateFilterAll" onKeyup="inputKatsuFilterRaw(this)"><br>
+                <input type="text" v-restore-kfr class="underline-dash" @keyup.enter="updateFilterAll();" onKeyup="inputKatsuFilterRaw(this)"><br>
                 <label v-on:click="updateFilterAll();" class="button color-wh bgcolor-gr">Apply</label>
               </div>
               <div v-if="'regex' == optKatsuFilter" class="flex end action-bar">
@@ -3198,12 +3719,12 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0327"></script>
+    <script src="js/main.js?v=0507"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=032701', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=00507', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();

@@ -94,7 +94,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   border:none;
   border-top: dashed 1px #e1c152;
 }
-.detail-card {
+.card {
   border-left-color:#ccc;
 }
 
@@ -133,7 +133,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diadark .border-dash{border: dashed 1px #9BAEC8;}
 .bm_diadark .underline-dash{border-bottom: dashed 1px #9BAEC8;}
 .bm_diadark .topline-dash{border-top: dashed 1px #9BAEC8;}
-.bm_diadark .detail-card {border-left-color:#7c8ca3;}
+.bm_diadark .card {border-left-color:#7c8ca3;}
 
 .bm_diadark .content{
   color: #FFFFFF;
@@ -179,6 +179,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diawhite .bgcolor-pk{background: #0E7AC4;}
 .bm_diawhite .bgcolor-gr{background: #E1C152;}
 .bm_diawhite .bgcolor-disable{background: #ccc;}
+.bm_diawhite .bgcolor-gray{background-color: rgba(0,0,0,.04);}
 .bm_diawhite .bgcolor-wh, .bm_diawhite .bgcolor-wh.column{background: rgba(255,255,255, .85);}
 .bm_diawhite .bgcolor-gray.column{background: rgba(170, 170, 166, .25);}
 
@@ -187,7 +188,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diawhite .border-dash{border: dashed 1px #363947;}
 .bm_diawhite .underline-dash{border-bottom: dashed 1px #363947;}
 .bm_diawhite .topline-dash{border-top: dashed 1px #363947;}
-.bm_diawhite .detail-card {border-left-color:#ccc;}
+.bm_diawhite .card {border-left-color:#ccc;}
 
 
 .bm_diawhite .content{
@@ -230,13 +231,11 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diaorange.color .column, .bm_diaorange.color .wrapper, .bm_diaorange.color .confirm-wrapper{color: #6a4643;}
 .bm_diaorange .color-pk, .bm_diaorange a{color: #ed649c;} /**/
 .bm_diaorange .color-gr{color: #7b5d4d;} /**/
-.bm_diaorange .color-disable{color: #ccc;}
 .bm_diaorange .status-name .color-pk{color: #ed649c;} /**/
 
 .bm_diaorange .bgcolor   {background: #7b5d4d;} /**/
 .bm_diaorange .bgcolor-pk{background: #3d7289;} /**/
 .bm_diaorange .bgcolor-gr{background: #D3665E;} /**/
-.bm_diaorange .bgcolor-disable{background: #ccc;}
 .bm_diaorange .bgcolor-wh, .bm_diaorange .bgcolor-wh.column{background: rgba(255,255,255, .85);} /**/
 .bm_diaorange .bgcolor-gray.column{background: rgba(220, 196, 171, .25);}
 
@@ -245,7 +244,7 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 .bm_diaorange .border-dash{border: dashed 1px #6a4643;}
 .bm_diaorange .underline-dash{border-bottom: dashed 1px #6a4643;}
 .bm_diaorange .topline-dash{border-top: dashed 1px #6a4643;}
-.bm_diaorange .detail-card {border-left-color:#ccc;}
+.bm_diaorange .card {border-left-color:#ccc;}
 
 
 .bm_diaorange .content{ /**/
@@ -468,6 +467,9 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   padding-top: 1px;
   border-radius: 6px;
   opacity:0.66;
+}
+.media-stats .fa-fw{
+  margin-right: -5px;
 }
 .status-header .fa-fw{
   font-size: 16px;
@@ -770,8 +772,9 @@ div.column-footer.inside{
 .button.micro {
   padding: 0px 16px;
 }
-small.button {
+small.button, .form-wrapper small.button {
   padding: 6px 4px;
+  margin: 1px 2px;
 }
 .button.tall {
   min-height:44px;
@@ -849,6 +852,11 @@ small.button {
   width: 28px;
   height: 28px;
 }
+.avatar.micro {
+  margin: 0 2px;
+  width: 23px;
+  height: 23px;
+}
 .content-before {
   position: relative;
 }
@@ -875,7 +883,7 @@ small.button {
   margin-left: auto;
 }
 
-.status-name{
+.status-name, .option-name{
   white-space: nowrap;
 }
 .status-info {
@@ -950,15 +958,6 @@ small.button {
   width: 100%;
   overflow: hidden;
 }
-.media-header {
-  padding: 1px;
-  object-fit: cover;
-  display: block;
-  height: 100%;
-  text-decoration: none;
-  border-radius: 8px;
-  width: inherit;
-}
 
 .tall .media {
   height: 264px;
@@ -1026,13 +1025,13 @@ small.button {
   text-align: right;
 }
 
-.detail-card{
+.card{
   padding: 6px 8px;
   margin: 0 1px;
   border-left-width: 2px;
   border-left-style: solid;
 }
-.detail-card > img{
+.card > img{
   object-fit: contain;
   width: 48px;
   height: 48px;
@@ -1048,6 +1047,15 @@ small.button {
   height: 155px;
   width: 100%;
   padding: 4px 16px;
+}
+.media-header {
+  padding: 1px 0.75px;
+  object-fit: cover;
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  border-radius: 8px;
+  width: inherit;
 }
 
 .content input {
