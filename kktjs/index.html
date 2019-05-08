@@ -85,7 +85,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       </transition>
     </script>
 
-    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optMediaFit, optKatsuTrim]" onDragover="importdragover(event)" onDrop="importdrop(event)" onDragenter="importdragenter(event)">
+    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optMediaFit, optKatsuTrim]" onDragover="importdragover(event)" onDrop="importdrop(event)" onPaste="importpaste(event)" onDragenter="importdragenter(event)">
 
       <svg width="0" height="0" class="invisible" xmlns="http://www.w3.org/2000/svg">
         <g id="cb" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optKatsuTrim]">
@@ -305,29 +305,20 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
               <div v-if="null != modal_issue.poll && 0 != modal_issue.poll.options" class="card">
                 <div v-for="(option, index) in modal_issue.poll.options" class="option-name flex start">
-                  <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, modal_issue.poll.emojis)"></span></div>
-                  <small v-if="modal_issue.poll.voted || modal_issue.poll.expired">{{option.votes_count}}票</small>
+                  <div class="hidden full"><span v-html="index+1+'. '+formatEmoji(option, modal_issue.emojis)"></span></div>
+                  <small v-if="modal_issue.poll.voted || modal_issue.poll.expired">0票</small>
                 </div>
-                <div v-if="modal_issue.poll.voted || modal_issue.poll.expired" class="flex center">
-                  <div v-if="user.id != modal_issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
-                    <small v-if="modal_issue.poll.expired">Finished</small>
-                    <small v-else>Voted</small>
-                  </div>
-                </div>
-                <div v-else class="flex center">
+                <div class="flex center">
                   <div v-for="(option, index) in modal_issue.poll.options" v-if="!modal_issue.poll.expired" class="full">
                     <small v-if="isSetVote(modal_issue.poll, index)" class="color-wh bgcolor-pk button flex wrap" v-on:click="setVote(modal_issue, index);">{{index+1}}</small>
                     <small v-else class="color-wh bgcolor button flex wrap" v-on:click="setVote(modal_issue, index);">{{index+1}}</small>
                   </div>
                   <div class="full">
-                    <small v-if="modal_issue.req_vote" class="color-wh bgcolor-disable button flex wrap"><i class="fa fa-fw fa-spinner fa-pulse"></i></small>
-                    <small v-else-if="!checkVote(modal_issue.poll)" class="color-wh bgcolor-disable button flex wrap">Vote</small>
-                    <small v-else class="color-wh bgcolor-pk button flex wrap" v-on:click="actVote(modal_issue);">Vote</small>
+                    <small class="color-wh bgcolor-disable button flex wrap">Vote</small>
                   </div>
                 </div>
                 <div>
-                  <small v-if="modal_issue.poll.expired">最終結果 計{{modal_issue.poll.votes_count}}票</small>
-                  <small v-else>投票中 現在{{modal_issue.poll.votes_count}}票 ({{formatDate(modal_issue.poll.expires_at)}}まで)</small>
+                  <small>投票中 現在0票 ({{formatDate(modal_issue.poll_work.expires_at)}}まで)</small>
                 </div>
               </div>
               <div v-if="0 != modal_issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
@@ -545,6 +536,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <!-- DEBUG -->
         <div v-if="showDebug" class="column debug bgcolor-gray">
           <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}-{{ua}}</div>
+          <!-- <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}</div> -->
           <div class="scrollable">
             <h3>Columns</h3>
             <div>
@@ -1783,7 +1775,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div class="hidden full">
                 <i class="fa fa-fw fa-comment"></i>Detail <small v-if="!optSimple">(id:{{detail_targetid}})</small>
               </div>
-              <span class="column-option"><i v-on:click="runDetail(detail_targetid);" class="fa fa-fw fa-refresh"></i></span>
+              <span class="column-option">
+                <i v-if="hasDetail && !fetch_watch.detail && !fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" v-on:click="runDetail(detail_targetid);" class="fa fa-fw fa-refresh"></i>
+                <i v-else class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+              </span>
             </div>
           </div>
           <div class="scrollable">
@@ -2081,28 +2076,6 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
                     </div>
                   </div>
-                  <div v-if="null != issue.poll && 0 != issue.poll.options" class="card">
-                    <div v-for="(option, index) in issue.poll.options" class="option-name flex start">
-                      <div class="hidden full">{{index+1}}. {{option.title}}</div>
-                      <small>{{option.votes_count}}票</small>
-                    </div>
-                    <div v-if="issue.poll.voted" class="flex center">
-                      <div class="color-wh bgcolor-disable button full flex wrap">
-                        <small v-if="user.id == issue.account.id">...</small>
-                        <small v-else>Voted</small>
-                      </div>
-                    </div>
-                    <div v-else class="flex center">
-                      <div v-for="(option, index) in issue.poll.options" class="color-wh bgcolor button full flex wrap">
-                        <small>{{index+1}}</small>
-                      </div>
-                      <div class="color-wh bgcolor-pk button full flex wrap"><small>Vote</small></div>
-                    </div>
-                    <div>
-                      <small v-if="issue.poll.expired">最終結果 計{{issue.poll.votes_count}}票</small>
-                      <small v-else>投票中 現在{{issue.poll.votes_count}}票 ({{formatDate(issue.poll.expires_at)}}まで)</small>
-                    </div>
-                  </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper bgcolor-gray hidden flex">
                     <a v-for="media in issue.media_attachments" @click="modal_media = media;showMedia = true;">
                       <video v-if="'gifv' == media.type && '2' == optAutoPlay" :src="media.url" class="media" playsinline muted autoplay loop></video>
@@ -2160,7 +2133,17 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
         <!-- Account -->
         <div v-if="showAcct" class="column bgcolor-gray" :class="{ full: optColumnWide && '1' == optColumns }">
-          <div class="column-header"><i class="fa fa-fw fa-user-circle-o"></i>Account <small v-if="!optSimple">(id:{{acct_targetid}})</small></div>
+          <div class="column-header">
+            <div class="flex">
+              <div class="hidden full">
+                <i class="fa fa-fw fa-user-circle-o"></i>Account <small v-if="!optSimple">(id:{{acct_targetid}})</small>
+              </div>
+              <span class="column-option">
+                <i v-if="hasAcctProfile && !fetch_watch.acct_profile && !fetch_watch.acct_profile_rel && !fetch_watch.acct_profile_pin && !fetch_watch.acct_profile_req" v-on:click="runAcct(acct_targetid);" class="fa fa-fw fa-refresh"></i>
+                <i v-else class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+              </span>
+            </div>
+          </div>
           <div class="scrollable" id="acct" v-on:scroll="handleScrollAcct">
             <div v-if="hasAcctProfile && !fetch_watch.acct_profile && !fetch_watch.acct_profile_rel && !fetch_watch.acct_profile_pin && !fetch_watch.acct_profile_req" class="account-info">
               <div v-if="isMyAcct && user_requesting_count > 0" v-on:click="resetAcctColumn();fetchAcctFollowRequest();" class="button mini color-wh bgcolor-pk"><i class="fa fa-fw fa-info-circle"></i>Follow Request: {{user_requesting_count}}</div>
@@ -3185,6 +3168,51 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
 
+              <div v-show="showFormVote" class="form-option">
+                <div class="select-container vote bgcolor-wh flex center">
+                  <div class="">
+                    <span>1.</span><input type="text" v-restore-vote0 class="underline-dash" id="vote_title_0" onKeyup="inputVote(this, 0);"><br>
+                    <span>2.</span><input type="text" v-restore-vote1 class="underline-dash" id="vote_title_1" onKeyup="inputVote(this, 1);"><br>
+                    <span>3.</span><input type="text" v-restore-vote2 class="underline-dash" id="vote_title_2" onKeyup="inputVote(this, 2);"><br>
+                    <span>4.</span><input type="text" v-restore-vote3 class="underline-dash" id="vote_title_3" onKeyup="inputVote(this, 3);"><br>
+                  </div>
+                  <small v-on:click="toggleFormVote();" class="color-wh bgcolor button">Remove</small>
+                </div>
+
+                <div class="flex end action-bar">
+                  <span>複数回答アンケートに設定</span>
+                  <div v-if="true === katsu['poll'].multiple" v-on:click="katsu['poll'].multiple = false;" class="button color-wh bgcolor-pk">ON</div>
+                  <div v-else v-on:click="katsu['poll'].multiple = true;" class="button color-wh bgcolor">OFF</div>
+                </div>
+                <div class="flex end action-bar">
+                  <span>投票期間</span>
+                  <div class="select-wrapper underline-dash">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[0]" v-on:change="inputExtime">
+                      <option v-for="index in 32" :value="index-1">
+                        {{ index-1 }}
+                      </option>
+                    </select>
+                  </div>
+                  日
+                  <div class="select-wrapper underline-dash">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[1]" v-on:change="inputExtime">
+                      <option v-for="index in 24" :value="index-1">
+                        {{ index-1 }}
+                      </option>
+                    </select>
+                  </div>
+                  時間
+                  <div class="select-wrapper underline-dash">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[2]" v-on:change="inputExtime">
+                      <option v-for="index in 60" :value="index-1">
+                        {{ index-1 }}
+                      </option>
+                    </select>
+                  </div>
+                  分
+                </div>
+              </div>
+
               <div v-if="showFormDraft" class="form-option bgcolor-gray">
                 <div v-if="5 > content_text_drafts.length" class="action-bar flex end draft">
                   <i v-if="0 == contentLength()" class="fa fa-fw fa-floppy-o color-disable"></i>
@@ -3253,8 +3281,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
               <div class="action-bar flex wrap form-option underline-dash">
                 <div class="color bgcolor-in">
-                  <label v-if="4 > katsu['media_previews'].length && katsu['media_previews'].length == katsu['media_attachments'].length" for="uploader"><i class="fa fa-fw fa-camera"></i></label>
+                  <label v-if="4 > katsu['media_previews'].length && katsu['media_previews'].length == katsu['media_attachments'].length && !showFormVote" for="uploader"><i class="fa fa-fw fa-camera"></i></label>
                   <i v-else class="fa fa-fw fa-camera color-disable"></i>
+                  <i v-if="0 == katsu['media_previews'].length && 0 == katsu['media_attachments'].length" v-on:click="toggleFormVote();" class="fa fa-fw fa-tasks"></i>
+                  <i v-else class="fa fa-fw fa-tasks color-disable"></i>
                   <i class="fa fa-fw fa-smile-o"  @click="showEmojiPicker = true; openEmoji();"></i>
                   <i v-on:click="toggleFormDraft();" class="fa fa-fw fa-th-list"></i>
                   <i v-if="'direct' == katsu['visibility']" v-on:click="toggleFormVisible();" class="fa fa-fw fa-envelope"></i>
@@ -3496,6 +3526,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <label v-on:click="saveConf();" class="button full double color-wh bgcolor-gr">Save</label>
               </div>
 
+              <div class="flex end action-bar">
+                <label v-on:click="saveConf();reloadForce();" class="button full color-wh bgcolor-pk">Save & Super Reload</label>
+              </div>
+
               <br>
 
               <!--<h3><i class="fa fa-fw fa-bell"></i> Manage: </h3>
@@ -3556,7 +3590,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <h3>アプリで使える機能(v1.4)</h3>
               <small>
                 ログイン/ログアウト/Webアプリ設定<br>
-                カツ!機能(メディア投稿,CW,NSFW,絵文字入力)<br>
+                カツ!機能(メディア投稿,CW,NSFW,絵文字入力,アンケート)<br>
                 ドラッグ＆ドロップでメディア投稿(PC)<br>
                 キーボードショートカット(カツ!/検索)<br>
                 Home/Local/通知/タグ TLのカツ!ストリーム取得/削除<br>
@@ -3588,6 +3622,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 ミュート/ブロック の登録/解除、確認ウィンドウ<br>
                 リストにアカウントを登録/解除、確認ウィンドウ<br>
                 ピン留め の登録/解除、確認ウィンドウ<br>
+                カツ!アンケートへの 投票<br>
                 カツ!の 削除<br>
                 カツ!の 通報<br>
                 プロファイル編集(名前のみ)<br>
@@ -3601,7 +3636,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 カラーテーマ機能<br>
                 ショートカットメニュー<br>
                 ハッシュタグ TLのショートカット登録機能<br>
-                1,2,3カラム表示+Home/Local TLdetailのワイドカラム化<br>
+                1,2,3カラム表示+Home/Local TLのワイドカラム化<br>
                 画面のリサイズ/回転時に最適なカラム数に切り替え<br>
                 Home/Local TLの画像や映像を全て隠すオプション<br>
                 Home/Local TLに 最新/上底/下底スクロールボタンを追加<br>
@@ -3619,6 +3654,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 カツ!の 本文と注意文の入れ替え機能<br>
                 カツ!の 入力ショートカット(タグや定型文を登録可能)<br>
                 アカウントにリプを送るとき、デフォルトをunlistに変更<br>
+                複数回答できるカツ!アンケートに対応<br>
                 検索機能とアカウント検索機能の統合<br>
                 EmojiOne v2.2.7 採用<br>
                 nametag の 📛 tofu on fire 📛 化 (EmojiOne加工)<br>
@@ -3630,6 +3666,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 通信エラーメッセージ<br>
                 Local/連合 TLの切り替え機能<br>
                 タグ/リスト TLの切り替え機能<br>
+                webpファイルのアップロード対応<br>
               </small><br>
               <h3>アプリにまだない機能(v1.4)</h3>
               <small>
@@ -3656,7 +3693,6 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 インスタンスの情報 取得<br>
                 連合インスタンス一覧 取得<br>
                 連合インスタンスの情報 取得<br>
-                投票と集計機能<br>
                 Push通知(Service Worker)<br>
                 カツ!を 翻訳<br>
                 通知 TLのインスタンスフィルター<br>
