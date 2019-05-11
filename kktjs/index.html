@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0508">
+    <link rel="stylesheet" href="css/style.css?v=0511">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -231,7 +231,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, modal_issue.poll.emojis)"></span></div>
                   <small v-if="modal_issue.poll.voted || modal_issue.poll.expired">{{option.votes_count}}票</small>
                 </div>
-                <div v-if="modal_issue.poll.voted || modal_issue.poll.expired" class="flex center">
+                <div v-if="modal_issue.poll.voted || modal_issue.poll.expired || user.id == modal_issue.account.id" class="flex center">
                   <div v-if="user.id != modal_issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                     <small v-if="modal_issue.poll.expired">Finished</small>
                     <small v-else>Voted</small>
@@ -816,7 +816,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
                           <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
                         </div>
-                        <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                        <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired || user.id == issue.reblog.account.id" class="flex center">
                           <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
                             <small v-if="issue.reblog.poll.expired">Finished</small>
                             <small v-else>Voted</small>
@@ -916,7 +916,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                           <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                         </div>
-                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                           <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                             <small v-if="issue.poll.expired">Finished</small>
                             <small v-else>Voted</small>
@@ -1065,7 +1065,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                           <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                         </div>
-                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                           <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                             <small v-if="issue.poll.expired">Finished</small>
                             <small v-else>Voted</small>
@@ -1232,7 +1232,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.status.poll.emojis)"></span></div>
                         <small v-if="issue.status.poll.voted || issue.status.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.status.poll.voted || issue.status.poll.expired" class="flex center">
+                      <div v-if="issue.status.poll.voted || issue.status.poll.expired || user.id == issue.status.account.id" class="flex center">
                         <div v-if="user.id != issue.status.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.status.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -1433,7 +1433,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                           <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                           <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                         </div>
-                        <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                        <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                           <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                             <small v-if="issue.poll.expired">Finished</small>
                             <small v-else>Voted</small>
@@ -1562,7 +1562,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
                         <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired || user.id == issue.reblog.account.id" class="flex center">
                         <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.reblog.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -1657,7 +1657,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                         <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                         <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -1813,7 +1813,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                       <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                     </div>
-                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                    <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                       <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                         <small v-if="issue.poll.expired">Finished</small>
                         <small v-else>Voted</small>
@@ -2054,7 +2054,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                       <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                     </div>
-                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                    <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                       <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                         <small v-if="issue.poll.expired">Finished</small>
                         <small v-else>Voted</small>
@@ -2245,7 +2245,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                         <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                         <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -2378,7 +2378,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.reblog.poll.emojis)"></span></div>
                         <small v-if="issue.reblog.poll.voted || issue.reblog.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired" class="flex center">
+                      <div v-if="issue.reblog.poll.voted || issue.reblog.poll.expired || user.id == issue.reblog.account.id" class="flex center">
                         <div v-if="user.id != issue.reblog.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.reblog.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -2471,7 +2471,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                         <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                       </div>
-                      <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                      <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                         <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                           <small v-if="issue.poll.expired">Finished</small>
                           <small v-else>Voted</small>
@@ -2943,7 +2943,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, issue.poll.emojis)"></span></div>
                       <small v-if="issue.poll.voted || issue.poll.expired">{{option.votes_count}}票</small>
                     </div>
-                    <div v-if="issue.poll.voted || issue.poll.expired" class="flex center">
+                    <div v-if="issue.poll.voted || issue.poll.expired || user.id == issue.account.id" class="flex center">
                       <div v-if="user.id != issue.account.id" class="color-wh bgcolor-disable button full flex wrap">
                         <small v-if="issue.poll.expired">Finished</small>
                         <small v-else>Voted</small>
@@ -3090,7 +3090,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <div class="hidden full"><span v-html="index+1+'. '+formatEmojiDraft(option.title, katsu.reply.poll.emojis)"></span></div>
                     <small v-if="katsu.reply.poll.voted || katsu.reply.poll.expired">{{option.votes_count}}票</small>
                   </div>
-                  <div v-if="katsu.reply.poll.voted || katsu.reply.poll.expired" class="flex center">
+                  <div v-if="katsu.reply.poll.voted || katsu.reply.poll.expired || user.id == katsu.reply.account.id" class="flex center">
                     <div v-if="user.id != katsu.reply.account.id" class="color-wh bgcolor-disable button full flex wrap">
                       <small v-if="katsu.reply.poll.expired">Finished</small>
                       <small v-else>Voted</small>
@@ -3188,25 +3188,19 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <span>投票期間</span>
                   <div class="select-wrapper underline-dash">
                     <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[0]" v-on:change="inputExtime">
-                      <option v-for="index in 32" :value="index-1">
-                        {{ index-1 }}
-                      </option>
+                      <option v-for="index in 29" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
                   日
                   <div class="select-wrapper underline-dash">
                     <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[1]" v-on:change="inputExtime">
-                      <option v-for="index in 24" :value="index-1">
-                        {{ index-1 }}
-                      </option>
+                      <option v-for="index in 24" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
                   時間
                   <div class="select-wrapper underline-dash">
                     <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[2]" v-on:change="inputExtime">
-                      <option v-for="index in 60" :value="index-1">
-                        {{ index-1 }}
-                      </option>
+                      <option v-for="index in 60" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
                   分
@@ -3755,12 +3749,12 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=050801"></script>
+    <script src="js/main.js?v=0511"></script>
     <script src="js/picker.js" async></script>
 
     <script>
       if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=00508', {scope: './'}).then(reg => {
+        navigator.serviceWorker.register('sw.js?v=00511', {scope: './'}).then(reg => {
 
           reg.addEventListener('updatefound', () => {
             reg.update();
