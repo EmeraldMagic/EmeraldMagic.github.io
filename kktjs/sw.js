@@ -2,7 +2,7 @@
 // const url = 'https://sumire.work';
 const url = location.origin;
 
-const key = "v1.4.7_413";
+const key = "v1.4.7_414";
 const subkey = "?v=0512";
 console.log("sw: set cache "+key);
 
