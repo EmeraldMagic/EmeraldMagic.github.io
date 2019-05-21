@@ -403,6 +403,9 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
   font-size: 15px;
 }
 
+.info-wrapper .fa-fw.fa-spinner.fa-pulse{
+  width: 20px;
+}
 .column-option .fa-fw.fa-refresh{
   width: 16px;
 }
@@ -471,11 +474,10 @@ a:link, a:visited, a:active, a:hover{text-decoration:none;}
 }
 
 .media-wrapper.control .fa-fw{
-  font-size: 20px;
-  height: 23px;
-  padding-top: 1px;
+  font-size: 18px;
+  padding: 4px 1px 4px 3px;
   border-radius: 6px;
-  opacity:0.66;
+  opacity: 0.66;
 }
 .media-stats .fa-fw{
   margin-right: -5px;
@@ -940,7 +942,7 @@ small.button, .form-wrapper small.button {
 .media-wrapper.control{
   position: relative;
   margin: -132px 0 100px 0px;
-  padding: 8px;
+  padding: 6px;
   height: 32px;
   width: 34px;
 }

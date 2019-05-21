@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0511">
+    <link rel="stylesheet" href="css/style.css?v=0512">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -85,7 +85,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       </transition>
     </script>
 
-    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optMediaFit, optKatsuTrim]" onDragover="importdragover(event)" onDrop="importdrop(event)" onPaste="importpaste(event)" onDragenter="importdragenter(event)">
+    <div id="app" class="color" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optMediaFit, optKatsuTrim]" onDragover="importdragover(event)" onDrop="importdrop(event)" onPaste="importpaste(event)" onDragenter="importdragenter(event)" onFocus="changeAppActive(true);" onBlur="changeAppActive(false);">
 
       <svg width="0" height="0" class="invisible" xmlns="http://www.w3.org/2000/svg">
         <g id="cb" :class="[optThemeTops, optThemeBottoms, optMediaHeight, optKatsuTrim]">
@@ -256,7 +256,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </a>
               </div>
               <div v-if="0 != modal_issue.media_attachments" class="media-wrapper control">
-                <i v-on:click="updateMediaWrapper(modal_issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                <i v-on:click="updateMediaWrapper(modal_issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
               </div>
               <div v-if="((( optAllNsfw || modal_issue.sensitive ) && !modal_issue.media_opened ) || false === modal_issue.media_opened ) && 0 != modal_issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(modal_issue, true);">
                 <h4 v-if="modal_issue.sensitive">Sensitive contents</h4>
@@ -267,7 +267,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <img v-if="null != modal_issue.card.image" :src="modal_issue.card.image" onerror="this.src=IMG_DUMMY">
                 <div class="detail-content hidden">
                   <span>{{modal_issue.card.title}}</span><br>
-                  <small>{{formatDomain(modal_issue.card.url)}}</small>
+                  <small>{{formatDomain(modal_issue.card)}}</small>
                 </div>
               </a>
               <div class="action-bar flex end wrap">
@@ -329,7 +329,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </a>
               </div>
               <div v-if="0 != modal_issue.media_attachments" class="media-wrapper control">
-                <i v-on:click="updateMediaWrapper(modal_issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                <i v-on:click="updateMediaWrapper(modal_issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
               </div>
               <div v-if="(( modal_issue.sensitive && !modal_issue.media_opened ) || false === modal_issue.media_opened ) && 0 != modal_issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(modal_issue, true);">
                 <h4 v-if="modal_issue.sensitive">Sensitive contents</h4>
@@ -340,7 +340,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <img v-if="null != modal_issue.card.image" :src="modal_issue.card.image" onerror="this.src=IMG_DUMMY">
                 <div class="detail-content hidden">
                   <span>{{modal_issue.card.title}}</span><br>
-                  <small>{{formatDomain(modal_issue.card.url)}}</small>
+                  <small>{{formatDomain(modal_issue.card)}}</small>
                 </div>
               </a>
               <div class="action-bar flex end">
@@ -521,7 +521,15 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
 
       <info v-if="hasInfo">
         <span slot="header">
-          <div class="flex info-wrapper color-wh bgcolor">
+          <div v-if="app_wait_update" class="flex info-wrapper color-wh bgcolor">
+            <div v-on:click="location.reload();" class="flex full">
+              <span class="hidden full"><i class="fa fa-fw fa-refresh"></i> {{result_text}}</span>
+            </div>
+            <div v-on:click="runToast(false);playSound('sound'+optThemeSound);" class="flex color-wh bgcolor">
+              <i class="fa fa-fw fa-times"></i>
+            </div>
+          </div>
+          <div v-else class="flex info-wrapper color-wh bgcolor">
             <div v-on:click="runToast(true);playSound('sound'+optThemeSound);" class="flex full">
               <span class="hidden full" v-html="formatEmoji(result_text)"></span>
             </div>
@@ -532,13 +540,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </span>
       </info>
 
-      <div :class="{ 'extra': 'native' == app_mode }" class="flex column-list">
+      <div id="base" :class="{ 'extra': 'native' == app_mode }" class="flex column-list">
         <!-- DEBUG -->
         <div v-if="showDebug" class="column debug bgcolor-gray">
           <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}-{{ua}}</div>
-          <!-- <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}</div> -->
           <div class="scrollable">
             <h3>Columns</h3>
+            <!-- {{app_wait_update}}<br> -->
             <div>
               Home({{home_type}})<input type="checkbox" id="showHome" v-model="showHome">
               Local({{local_type}})<input type="checkbox" id="showLocal" v-model="showLocal">
@@ -599,13 +607,14 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             katsu_id(bookmark)<br>
             <input type="text" v-model="notif_id_bookmark">
             katsu_id(bm_Notif)<br>
+            <!-- Focus: {{app_active}}<br> -->
             home_unread: {{home_unread}}/ {{homes.length}},
-            <!-- home_posy: {{home_posy}}/{{home_posy_b}}<br> -->
-            local_unread: {{local_unread}}/ {{locals.length}},<br>
+            local_unread: {{local_unread}}/ {{locals.length}}<br>
+            <!-- home_posy: {{home_posy}}/{{home_posy_b}}, -->
             <!-- local_posy: {{local_posy}}/{{local_posy_b}}<br> -->
             notif_unread: {{notif_unread}}/ {{notifs_filter.length}}({{notifs.length}}),
-            <!-- notif_posy: {{notif_posy}}/{{notif_posy_b}}<br> -->
-            multi_unread: {{multi_unread}}/ {{multis.length}},<br>
+            multi_unread: {{multi_unread}}/ {{multis.length}}<br>
+            <!-- notif_posy: {{notif_posy}}/{{notif_posy_b}}, -->
             <!-- multi_posy: {{multi_posy}}/{{multi_posy_b}}<br> -->
             notif_unread_filter: {{notif_unread_filter.complete}} {{notif_unread_filter.mention+notif_unread_filter.fav+notif_unread_filter.reblog+notif_unread_filter.follow+notif_unread_filter.others}}({{notif_unread_filter.mention}}+{{notif_unread_filter.fav}}+{{notif_unread_filter.reblog}}+{{notif_unread_filter.follow}}+{{notif_unread_filter.others}}),
           </div>
@@ -742,13 +751,16 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           </div>
         </div>
         <!-- HOME -->
-        <div v-if="showHome" :class="[{ primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column bgcolor-gray">
+        <div v-show="showHome" :class="[{ primary: optColumnWide }, { full: optColumnWide && '1' == optColumns }]" class="column bgcolor-gray">
           <div class="column-header">
             <div class="flex">
               <div class="hidden full">
                 <i class="fa fa-fw fa-home"></i>Home <small v-if="!optSimple">(Stream: {{connHome}})</small>
               </div>
-              <span class="column-option"><i v-on:click="toggleHomeOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
+              <span class="column-option">
+                <i v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+                <i v-else v-on:click="toggleHomeOption();" class="fa fa-fw fa-ellipsis-h"></i>
+              </span>
             </div>
             <div v-if="showHomeOption" class="flex">
               <div v-if="fetch_lock.homews || fetch_lock.home" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Home</div>
@@ -757,13 +769,14 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-else-if="1 == optColumns" v-on:click="runLocal('Local');reopenWsLocal('Local');showHomeOption = false;" class="tl-link full color-wh" :class="[showLocal && 'Local' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-users"></i>Local</div>
               <div v-if="1 == optColumns && (fetch_lock.homews || fetch_lock.home)" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-globe"></i>Global</div>
               <div v-else-if="1 == optColumns" v-on:click="runLocal('Global');reopenWsLocal('Global');showHomeOption = false;" class="tl-link full color-wh" :class="[showLocal && 'Global' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-globe"></i>Global</div>
-              <div v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local" class="tl-link color-wh bgcolor-disable"><i class="fa fa-fw fa-spin fa-refresh"></i></div>
-              <div v-else v-on:click="reopenWsHome('Force');reopenWsLocal('Force');reopenWsMulti('Force');showHomeOption = false;showLocalOption = false;" class="tl-link color-wh bgcolor"><i class="fa fa-fw fa-refresh"></i></div>
+              <div v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="tl-link color-wh bgcolor-disable"><i class="fa fa-fw fa-spin fa-refresh"></i></div>
+              <div v-else v-on:click="reopenForce();" class="tl-link color-wh bgcolor"><i class="fa fa-fw fa-refresh"></i></div>
             </div>
           </div>
-          <div class="scrollable" id="home" v-on:scroll="handleScrollHome">
+          <div class="scrollable" id="home" v-if="showHome" v-on:scroll="handleScrollHome">
             <div v-if="hasHome" class="status-list">
               <div v-for="(issue, index) in homes" v-if="home_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <a :id="'home'+issue.id"></a>
                 <div v-if="null != issue.reblog" class="status-header flex start">
                   <i class="fa fa-fw fa-retweet color-on"></i>
                   <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border notif" v-on:click="runAcct(issue.account.id);" onerror="this.src=IMG_DUMMY">
@@ -847,7 +860,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         </a>
                       </div>
                       <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
-                        <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                        <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                       </div>
                       <div v-if="((( optAllNsfw || issue.reblog.sensitive ) && !issue.reblog.media_opened ) || false === issue.reblog.media_opened ) && 0 != issue.reblog.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue.reblog, true);">
                         <h4 v-if="issue.reblog.sensitive">Sensitive contents</h4>
@@ -859,7 +872,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
-                        <small>{{formatDomain(issue.reblog.card.url)}}</small>
+                        <small>{{formatDomain(issue.reblog.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -947,7 +960,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         </a>
                       </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                       </div>
                       <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                         <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -959,7 +972,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -987,14 +1000,15 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </small>
                 </div>
               </div>
+              <div class="flex info-wrapper">
+                <span v-if="fetch_lock.home"><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span>
+                <span v-else-if="fetch_comp.home">All Loaded</span>
+                <span v-else>TouchEnd to Load Next</span>
+              </div>
             </div>
             <div v-else>
               <div v-if="fetch_lock.home" class="flex info-wrapper">Initializing...</div>
-            </div>
-            <div class="flex info-wrapper">
-              <span v-if="fetch_lock.home"><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span>
-              <span v-else-if="fetch_comp.home">All Loaded</span>
-              <span v-else>TouchEnd to Load Next</span>
+              <div v-if="fetch_lock.home" class="flex info-wrapper"><span><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span></div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -1012,7 +1026,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <i v-if="'Global' == local_type" class="fa fa-fw fa-globe"></i>
                 <i v-else class="fa fa-fw fa-users"></i>{{local_type}} <small v-if="!optSimple">(Stream: {{connLocal}})</small>
               </div>
-              <span class="column-option"><i v-on:click="toggleLocalOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
+              <span class="column-option">
+                <i v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+                <i v-else v-on:click="toggleLocalOption();" class="fa fa-fw fa-ellipsis-h"></i>
+              </span>
             </div>
             <div v-if="showLocalOption" class="flex">
               <div v-if="1 == optColumns && (fetch_lock.localws || fetch_lock.local)" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-users"></i>Home</div>
@@ -1021,13 +1038,14 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-else v-on:click="reopenWsLocal('Local');showLocalOption = false;" class="tl-link full color-wh" :class="['Local' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-users"></i>Local</div>
               <div v-if="fetch_lock.localws || fetch_lock.local" class="tl-link full color-wh bgcolor-disable"><i class="fa fa-fw fa-globe"></i>Global</div>
               <div v-else v-on:click="reopenWsLocal('Global');showLocalOption = false;" class="tl-link full color-wh" :class="['Global' == local_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-globe"></i>Global</div>
-              <div v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local" class="tl-link color-wh bgcolor-disable"><i class="fa fa-fw fa-spin fa-refresh"></i></div>
-              <div v-else v-on:click="reopenWsHome('Force');reopenWsLocal('Force');reopenWsMulti('Force');showHomeOption = false;showLocalOption = false;" class="tl-link color-wh bgcolor"><i class="fa fa-fw fa-refresh"></i></div>
+              <div v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="tl-link color-wh bgcolor-disable"><i class="fa fa-fw fa-spin fa-refresh"></i></div>
+              <div v-else v-on:click="reopenForce();" class="tl-link color-wh bgcolor"><i class="fa fa-fw fa-refresh"></i></div>
             </div>
           </div>
           <div class="scrollable" id="local" v-on:scroll="handleScrollLocal">
             <div v-if="hasLocal" class="status-list">
               <div v-for="(issue, index) in locals" v-if="local_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <a :id="'local'+issue.id"></a>
                 <div v-if="local_id_bookmark == issue.id" class="status-header flex start bgcolor-bookmark bookmark">
                   <i v-on:click="local_id_bookmark = '';" class="fa fa-fw fa-paperclip big"></i>
                 </div>
@@ -1096,7 +1114,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         </a>
                       </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                       </div>
                       <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                         <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -1108,7 +1126,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -1136,19 +1154,20 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </small>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.account.acct_from">
-                    from <a :href="'//'+issue.account.acct_from" target="_blank" rel="noopener noreferrer">{{issue.account.acct_from}}</a>
+                  <small v-if="formatDomain(issue.account) != repository">
+                    from <a :href="'//'+issue.account.domain" target="_blank" rel="noopener noreferrer">{{formatDomain(issue.account)}}</a>
                   </small>
                 </div>
+              </div>
+              <div class="flex info-wrapper">
+                <span v-if="fetch_lock.local"><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span>
+                <span v-else-if="fetch_comp.local">All Loaded</span>
+                <span v-else>TouchEnd to Load Next</span>
               </div>
             </div>
             <div v-else>
               <div v-if="fetch_lock.local" class="flex info-wrapper">Initializing...</div>
-            </div>
-            <div class="flex info-wrapper">
-              <span v-if="fetch_lock.local"><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span>
-              <span v-else-if="fetch_comp.local">All Loaded</span>
-              <span v-else>TouchEnd to Load Next</span>
+              <div v-if="fetch_lock.local" class="flex info-wrapper"><span><i class="fa fa-fw fa-spinner fa-pulse"></i>Katsu Loading...</span></div>
             </div>
           </div>
           <div class="flex column-footer">
@@ -1159,13 +1178,16 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
 
         <!-- NOTIFICATION -->
-        <div v-if="showNotif" class="column bgcolor-gray" :class="{ full: optColumnWide && '1' == optColumns }">
+        <div v-show="showNotif" class="column bgcolor-gray" :class="{ full: optColumnWide && '1' == optColumns }">
           <div class="column-header">
             <div class="flex">
               <div class="hidden full">
                 <i class="fa fa-fw fa-bell"></i>Notification <small v-if="!optSimple">(Stream: {{connHome}})</small>
               </div>
-              <span v-if="!showNotifOption" class="column-option"><i v-on:click="notif_type = '';toggleNotifOption();" class="fa fa-fw fa-ellipsis-h"></i></span>
+              <span v-if="!showNotifOption" class="column-option">
+                <i v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+                <i v-else v-on:click="notif_type = '';toggleNotifOption();" class="fa fa-fw fa-ellipsis-h"></i>
+              </span>
             </div>
             <div v-if="showNotifOption" class="action-bar flex end">
               <div class="hidden">
@@ -1180,9 +1202,10 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               <div v-on:click="resetNotifColumn();notif_unread_filter.follow = 0;fetchNotifFollow();" class="select-link color-wh bgcolor" :class="['follow' == notif_type || '' == notif_type ? 'bgcolor-pk' : 'bgcolor']"><i class="fa fa-fw fa-user-plus"></i>Follow</div>
             </div>
           </div>
-          <div class="scrollable" id="notif" v-on:scroll="handleScrollNotif">
+          <div class="scrollable" id="notif" v-if="showNotif" v-on:scroll="handleScrollNotif">
             <div v-if="hasNotifFilter" class="status-list">
               <div v-for="(issue, index) in notifs_filter"  v-if="notif_unread <= index && !(('favourite' == issue.type || 'reblog' == issue.type) && null == issue.status) && notifJudge(issue)" class="status-wrapper" :class="issue.visibility">
+                <a :id="'notif'+issue.id"></a>
                 <div class="status-header flex start">
                   <i v-if="'mention' == issue.type" class="fa fa-fw fa-reply"></i>
                   <i v-else-if="'reblog' == issue.type" class="fa fa-fw fa-retweet color-on"></i>
@@ -1263,7 +1286,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.status.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue.status, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue.status, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="(( issue.status.sensitive && !issue.status.media_opened ) || false === issue.status.media_opened ) && 0 != issue.status.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue.status, true);">
                       <h4 v-if="issue.status.sensitive">Sensitive contents</h4>
@@ -1274,7 +1297,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.status.card.image" :src="issue.status.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.status.card.title}}</span><br>
-                        <small>{{formatDomain(issue.status.card.url)}}</small>
+                        <small>{{formatDomain(issue.status.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -1389,13 +1412,17 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <i v-else class="fa fa-fw fa-comment"></i>
                 {{multi_type}}: {{multi_name}} <small v-if="!optSimple && multi_name != multi_target">(id: {{multi_target}})</small> <small v-if="!optSimple">(Stream: {{connMulti}})</small>
               </div>
-              <span class="column-option"><i v-on:click="toggleStream();" class="fa fa-fw fa-exchange"></i></span>
+              <span class="column-option">
+                <i v-if="fetch_lock.homews || fetch_lock.home || fetch_lock.localws || fetch_lock.local || fetch_lock.multiws || fetch_lock.multi" class="fa fa-fw fa-spin fa-refresh color-disable"></i>
+                <i v-else v-on:click="toggleStream();" class="fa fa-fw fa-exchange"></i>
+              </span>
             </div>
           </div>
           <div class="scrollable" id="multi" v-on:scroll="handleScrollMulti">
             <!-- Hashtag -->
             <div v-if="'Hashtag' == multi_type && hasMulti" class="status-list">
               <div v-for="(issue, index) in multis" v-if="multi_unread <= index" class="status-wrapper" :class="issue.visibility">
+                <a :id="'multi'+issue.id"></a>
                 <div v-if="local_id_bookmark == issue.id" class="status-header flex start bgcolor-bookmark bookmark">
                   <i v-on:click="local_id_bookmark = '';" class="fa fa-fw fa-paperclip big"></i>
                 </div>
@@ -1464,7 +1491,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                         </a>
                       </div>
                       <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                        <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                       </div>
                       <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                         <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -1476,7 +1503,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -1504,8 +1531,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </small>
                 </div>
                 <div class="status-header flex end">
-                  <small v-if="issue.account.acct_from">
-                    from <a :href="'//'+issue.account.acct_from" target="_blank" rel="noopener noreferrer">{{issue.account.acct_from}}</a>
+                  <small v-if="formatDomain(issue.account) != repository">
+                    from <a :href="'//'+issue.account.domain" target="_blank" rel="noopener noreferrer">{{formatDomain(issue.account)}}</a>
                   </small>
                 </div>
               </div>
@@ -1593,7 +1620,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="((( optAllNsfw || issue.reblog.sensitive ) && !issue.reblog.media_opened ) || false === issue.reblog.media_opened ) && 0 != issue.reblog.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue.reblog, true);">
                       <h4 v-if="issue.reblog.sensitive">Sensitive contents</h4>
@@ -1604,7 +1631,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
-                        <small>{{formatDomain(issue.reblog.card.url)}}</small>
+                        <small>{{formatDomain(issue.reblog.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -1688,7 +1715,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                       <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -1699,7 +1726,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -1776,7 +1803,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <i class="fa fa-fw fa-comment"></i>Detail <small v-if="!optSimple">(id:{{detail_targetid}})</small>
               </div>
               <span class="column-option">
-                <i v-if="hasDetail && !fetch_watch.detail && !fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" v-on:click="runDetail(detail_targetid);" class="fa fa-fw fa-refresh"></i>
+                <i v-if="!fetch_watch.detail && !fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" v-on:click="runDetail(detail_targetid);" class="fa fa-fw fa-refresh"></i>
                 <i v-else class="fa fa-fw fa-spin fa-refresh color-disable"></i>
               </span>
             </div>
@@ -1843,7 +1870,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                   </div>
                   <div v-if="(( issue.sensitive && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                     <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -1854,7 +1881,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
-                      <small>{{formatDomain(issue.card.url)}}</small>
+                      <small>{{formatDomain(issue.card)}}</small>
                     </div>
                   </a>
                   <div class="action-bar flex end">
@@ -1945,7 +1972,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </a>
                   </div>
                   <div v-if="0 != detail.media_attachments" class="media-wrapper control">
-                    <i v-on:click="updateMediaWrapper(detail, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                    <i v-on:click="updateMediaWrapper(detail, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                   </div>
                   <div v-if="(( detail.sensitive && !detail.media_opened ) || false === detail.media_opened ) && 0 != detail.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(detail, true);">
                     <h4 v-if="detail.sensitive">Sensitive contents</h4>
@@ -1971,7 +1998,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <img v-if="null != detail.card.image" :src="detail.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{detail.card.title}}</span><br>
-                      <small>{{formatDomain(detail.card.url)}}</small>
+                      <small>{{formatDomain(detail.card)}}</small>
                     </div>
                   </a>
                   <div v-if="!fetch_watch.detail_chain && !fetch_watch.detail_fav && !fetch_watch.detail_reblog" class="detail-bar flex end">
@@ -2018,8 +2045,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </small>
               </div>
               <div class="status-header flex end">
-                <small v-if="null != detail.account.acct_from">
-                  from <a :href="'//'+detail.account.acct_from" target="_blank" rel="noopener noreferrer">{{detail.account.acct_from}}</a>
+                <small v-if="formatDomain(detail.account) != repository">
+                  from <a :href="'//'+detail.account.domain" target="_blank" rel="noopener noreferrer">{{formatDomain(detail.account)}}</a>
                 </small>
               </div>
             </div>
@@ -2084,7 +2111,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                   </div>
                   <div v-if="(( issue.sensitive && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                     <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -2095,7 +2122,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
-                      <small>{{formatDomain(issue.card.url)}}</small>
+                      <small>{{formatDomain(issue.card)}}</small>
                     </div>
                   </a>
                   <div class="action-bar flex end">
@@ -2139,7 +2166,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <i class="fa fa-fw fa-user-circle-o"></i>Account <small v-if="!optSimple">(id:{{acct_targetid}})</small>
               </div>
               <span class="column-option">
-                <i v-if="hasAcctProfile && !fetch_watch.acct_profile && !fetch_watch.acct_profile_rel && !fetch_watch.acct_profile_pin && !fetch_watch.acct_profile_req" v-on:click="runAcct(acct_targetid);" class="fa fa-fw fa-refresh"></i>
+                <i v-if="!fetch_watch.acct_profile && !fetch_watch.acct_profile_rel && !fetch_watch.acct_profile_pin && !fetch_watch.acct_profile_req" v-on:click="runAcct(acct_targetid);" class="fa fa-fw fa-refresh"></i>
                 <i v-else class="fa fa-fw fa-spin fa-refresh color-disable"></i>
               </span>
             </div>
@@ -2205,7 +2232,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
               </div>
-              <div v-if="7 < acct.note.length" class="flex">
+              <div v-if="hasAcctNote" class="flex">
                 <img :src="checkAvatar(acct.avatar)" class="avatar border" onerror="this.src=IMG_DUMMY">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
@@ -2275,7 +2302,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="(( issue.sensitive && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                       <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -2286,7 +2313,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -2408,7 +2435,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.reblog.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue.reblog, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="(( issue.reblog.sensitive && !issue.reblog.media_opened ) || false === issue.reblog.media_opened ) && 0 != issue.reblog.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue.reblog, true);">
                       <h4 v-if="issue.reblog.sensitive">Sensitive contents</h4>
@@ -2419,7 +2446,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.reblog.card.image" :src="issue.reblog.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.reblog.card.title}}</span><br>
-                        <small>{{formatDomain(issue.reblog.card.url)}}</small>
+                        <small>{{formatDomain(issue.reblog.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -2501,7 +2528,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       </a>
                     </div>
                     <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                      <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                     </div>
                     <div v-if="(( issue.sensitive && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                       <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -2512,7 +2539,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                       <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                       <div class="detail-content hidden">
                         <span>{{issue.card.title}}</span><br>
-                        <small>{{formatDomain(issue.card.url)}}</small>
+                        <small>{{formatDomain(issue.card)}}</small>
                       </div>
                     </a>
                     <div class="action-bar flex end">
@@ -2600,7 +2627,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         </div>
 
       </div>
-      <div :class="{ 'extra': 'native' == app_mode }" class="flex column-list-over">
+      <div id="over" :class="{ 'extra': 'native' == app_mode }" class="flex column-list-over">
         <!-- Links -->
         <div v-if="showLink" class="column mini leftswipe scrollable bgcolor-wh">
           <div class="link-header"><i class="fa fa-fw fa-comment"></i>Timeline</div>
@@ -2881,13 +2908,17 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <span v-else v-on:click="searchAll();" class="button color-wh bgcolor-pk">Search</span>
               </div>
 
-              <div v-if="searchs.hashtags && 0 != searchs.hashtags.length"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
-              <div class="flex wrap">
-                <span v-for="issue in searchs.hashtags" v-on:click="runMulti('Hashtag', issue);reopenWsMulti('Hashtag', issue);" class="list-link border-lite full color-pk bgcolor-wh">#{{issue}}</span>
+              <div class="flex account-bar">
+                <div v-on:click="search_type = 'hashtag'" class="select-link color-wh bgcolor" :class="{ 'bgcolor-pk': hasSearch && 0 != searchs.hashtags.length }"><i class="fa fa-fw fa-hashtag"></i>Hashtag</div>
+                <div v-on:click="search_type = 'acct'" class="select-link color-wh bgcolor" :class="{ 'bgcolor-pk': hasSearch && 0 != searchs.accounts.length }"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
+                <div v-on:click="search_type = 'katsu'" class="select-link color-wh bgcolor" :class="{ 'bgcolor-pk': hasSearch && 0 != searchs.statuses.length }"><i class="fa fa-fw fa-comments-o"></i>Katsu</div>
               </div>
 
-              <div v-if="searchs.accounts_ex && 0 != searchs.accounts_ex.length"><i class="fa fa-fw fa-user-circle-o"></i>Account</div>
-              <div v-for="issue in searchs.accounts_ex" class="status flex">
+              <div v-if="hasSearch && search_type == 'hashtag'" class="flex wrap">
+                <span v-for="issue in searchs.hashtags" v-on:click="runMulti('Hashtag', issue.name);reopenWsMulti('Hashtag', issue.name);" class="list-link border-lite full color-pk bgcolor-wh">#{{issue.name}}</span>
+              </div>
+
+              <div v-if="hasSearchAcctEx && search_type == 'acct'" v-for="issue in searchs.accounts_ex" class="status flex">
                 <img :src="checkAvatar(issue.avatar_static)" class="avatar border" v-on:click="showSearch = false; runAcct(issue.id);" onerror="this.src=IMG_DUMMY">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
                 <div class="content border">
@@ -2912,8 +2943,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 </div>
               </div>
 
-              <div v-if="searchs.statuses && 0 != searchs.statuses.length"><i class="fa fa-fw fa-comment-o"></i>KATSU!</div>
-              <div v-for="(issue, index) in searchs.statuses" class="status flex">
+              <div v-if="hasSearch && search_type == 'katsu'" v-for="(issue, index) in searchs.statuses" class="status flex">
 
                 <img :src="checkAvatar(issue.account.avatar_static)" class="avatar border" v-on:click="runAcct(issue.account.id);" onerror="this.src=IMG_DUMMY">
                 <div class="content-before"><svg width="12" height="14"><use xlink:href="#cb"></use></svg></div>
@@ -2973,7 +3003,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     </a>
                   </div>
                   <div v-if="0 != issue.media_attachments" class="media-wrapper control">
-                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                    <i v-on:click="updateMediaWrapper(issue, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                   </div>
                   <div v-if="((( optAllNsfw || issue.sensitive ) && !issue.media_opened ) || false === issue.media_opened ) && 0 != issue.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(issue, true);">
                     <h4 v-if="issue.sensitive">Sensitive contents</h4>
@@ -2984,7 +3014,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                     <img v-if="null != issue.card.image" :src="issue.card.image" onerror="this.src=IMG_DUMMY">
                     <div class="detail-content hidden">
                       <span>{{issue.card.title}}</span><br>
-                      <small>{{formatDomain(issue.card.url)}}</small>
+                      <small>{{formatDomain(issue.card)}}</small>
                     </div>
                   </a>
                   <div class="action-bar flex end">
@@ -3006,9 +3036,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </div>
                 </div>
               </div>
-            <div class="flex info-wrapper">
-              <span v-if="fetch_lock.search"><i class="fa fa-fw fa-spinner fa-pulse"></i>Searching...</span>
-            </div>
+
+              <div class="flex info-wrapper">
+                <span v-if="fetch_lock.search"><i class="fa fa-fw fa-spinner fa-pulse"></i>Searching...</span>
+                <span v-else-if="hasSearch">All Loaded</span>
+              </div>
 
             </div>
           </div>
@@ -3120,7 +3152,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   </a>
                 </div>
                 <div v-if="0 != katsu.reply.media_attachments" class="media-wrapper control">
-                  <i v-on:click="updateMediaWrapper(reply, false);" class="fa fa-fw fa-eye bgcolor-wh"></i>
+                  <i v-on:click="updateMediaWrapper(reply, false);" class="fa fa-fw fa-eye-slash bgcolor-wh"></i>
                 </div>
                 <div v-if="((( optAllNsfw || katsu.reply.sensitive ) && !katsu.reply.media_opened ) || false === katsu.reply.media_opened ) && 0 != katsu.reply.media_attachments" class="media-wrapper bluesheet" v-on:click="updateMediaWrapper(reply, true);">
                   <h4 v-if="katsu.reply.sensitive">Sensitive contents</h4>
@@ -3187,19 +3219,19 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="flex end action-bar">
                   <span>投票期間</span>
                   <div class="select-wrapper underline-dash">
-                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[0]" v-on:change="inputExtime">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[0]" v-on:change="runExtime">
                       <option v-for="index in 29" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
                   日
                   <div class="select-wrapper underline-dash">
-                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[1]" v-on:change="inputExtime">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[1]" v-on:change="runExtime">
                       <option v-for="index in 24" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
                   時間
                   <div class="select-wrapper underline-dash">
-                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[2]" v-on:change="inputExtime">
+                    <select class="button mini color bgcolor-wh" v-model="katsu.poll_work.extime[2]" v-on:change="runExtime">
                       <option v-for="index in 60" :value="index-1">{{ index-1 }}</option>
                     </select>
                   </div>
@@ -3246,7 +3278,8 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <div class="media-stats hidden flex">
                   <div v-for="(media, index) in katsu['media_previews']" class="full">
                     <small v-if="null != katsu['media_attachments'][index]"><i class="fa fa-fw fa-check"></i><span v-if="katsu['media_previews'][index].converted">Convert</span><span v-else>Ok</span></small>
-                    <small v-else><i class="fa fa-fw fa-spinner fa-pulse"></i>{{media_uploaded}}%</small>
+                    <!-- <small v-else><i class="fa fa-fw fa-spinner fa-pulse"></i>{{media_uploaded}}%</small> -->
+                    <small v-else><i class="fa fa-fw fa-spinner fa-pulse"></i>Upload</small>
                   </div>
                 </div>
                 <div class="flex end action-bar">
@@ -3270,8 +3303,6 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <small class="full text center">宛先の人<br>だけに公開</small>
                 </div>
               </div>
-
-              <input type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.dib,.webp,.webm,.mp4,.m4v,image/jpeg,image/png,image/gif,image/bmp,image/webp,video/webm,video/mp4" name="file" id="uploader" class="invisible" onchange="runInputFile(this.files)">
 
               <div class="action-bar flex wrap form-option underline-dash">
                 <div class="color bgcolor-in">
@@ -3324,6 +3355,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             </div>
             <div class="setting-wrapper">
 
+              <div v-if="showDebugVia" class="flex end action-bar">
+                <label v-on:click="saveConf();appUpdate();" class="button full color-wh bgcolor-pk">debug updater</label>
+              </div>
+              <div v-if="app_wait_update" class="flex end action-bar">
+                <label v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Update kktjs</label>
+              </div>
+
               <h3 class="setting-header">📛📛📛 WebApp Setting 📛📛📛</h3>
               <h3><i class="fa fa-fw fa-wrench"></i> Layout: 端末を選んでカラム数を決めてね</h3>
               <div class="flex end action-bar"><span>{{ optColumns }} Column(s) </span></div>
@@ -3333,7 +3371,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <label class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': 3 == optColumns }" for="cthree" v-on:click="optColumns = 3;runCustom();">PC</label>
               </div>
               <div class="flex end action-bar">
-                <span>優先設定</span>
+                <span>優先カラム</span>
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optPtl }" for="tone" v-on:click="optPtl = 1;runCustom();">Local</label>
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optPtl }" for="ttwo" v-on:click="optPtl = 2;runCustom();">Home</label>
               </div>
@@ -3365,7 +3403,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <!-- <input type="radio" class="invisible" id="vthree" value="3" v-model="optAutoPlay"> -->
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 1 == optAutoPlay }" for="vone">OFF</label>
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 2 == optAutoPlay }" for="vtwo">GIF</label>
-                <label class="button color-wh bgcolor-disable" for="">ALL</label>
+                <!-- <label class="button color-wh bgcolor-disable" for="">ALL</label> -->
               </div>
               <div class="flex end action-bar">
                 <span>サムネイルのリサイズ</span>
@@ -3461,8 +3499,13 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 <input type="radio" class="invisible" id="stwo" value="" v-model="optThemeSound">
                 <!-- <input type="radio" class="invisible" id="sthree" value="3" v-model="optThemeSound"> -->
                 <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' == optThemeSound }" for="sone">OFF</label>
-                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" for="stwo" v-on:click="playSound('sound');">Mastodon</label>
-                <label class="button color-wh bgcolor-disable" for="">Excellent</label>
+                <label class="button color-wh bgcolor" :class="{ 'bgcolor-pk': 'off' != optThemeSound }" for="stwo">ON</label>
+              </div>
+              <div class="flex end">
+                <label v-on:click="playSound('sound');" class="button full color-wh bgcolor" :class="{ 'bgcolor-pk': '' == optThemeSound }" for="stwo">Mastodon Boop</label>
+              </div>
+              <div class="flex end">
+                <label class="button full color-wh bgcolor-disable" for="">Excellent Ringtone</label>
               </div>
               <div class="flex end action-bar">
                 <div>トースト通知</div>
@@ -3521,7 +3564,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
 
               <div class="flex end action-bar">
-                <label v-on:click="saveConf();reloadForce();" class="button full color-wh bgcolor-pk">Save & Super Reload</label>
+                <label v-on:click="saveConf();appUpdate();" class="button full color-wh bgcolor-pk">Save & Update Check (or Super Reload)</label>
               </div>
 
               <br>
@@ -3675,7 +3718,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                 アカウントのブースト非表示<br>
                 ドメインのミュート機能<br>
                 キーボードショートカット(アプリ操作)<br>
-                インスタンスをミュートする<br>
+                インスタンスのミュート<br>
               </small><br>
               <h3>Mastodon/kktで対応待ちの機能(v1.4)</h3>
               <small>
@@ -3734,6 +3777,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
           </defs>
           <rect width="100%" height="100%" style="fill: url(#ptshoes)"/>
         </svg>
+        <input type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.dib,.webp,.webm,.mp4,.m4v,image/jpeg,image/png,image/gif,image/bmp,image/webp,video/webm,video/mp4" name="file" id="uploader" class="invisible" onChange="importclick(event)">
         <button id="soundoff" class="invisible"></button>
         <button id="sound" class="invisible"></button>
         <button id="soundex" class="invisible"></button>
@@ -3745,25 +3789,28 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/vue.min.js"></script>
 
     <script src="js/addtohomescreen.min.js"></script>
-    <script src="js/inobounce.min.js"></script>
+    <script src="js/inobounce.min.js"></script><!-- for iOS10 -->
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0511"></script>
+    <script src="js/main.js?v=0512"></script>
     <script src="js/picker.js" async></script>
 
     <script>
-      if('serviceWorker' in navigator && 'PushManager' in window){
-        navigator.serviceWorker.register('sw.js?v=00511', {scope: './'}).then(reg => {
-
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('sw.js', {scope: './'}).then(reg => {
           reg.addEventListener('updatefound', () => {
+            // console.log("sw reg: update found");
             reg.update();
           });
         });
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log("update ok");
+          console.log("sw reg: updated.");
+          app._data.result_text = "kktjs new version released.";
+          app._data.app_wait_update = true;
+          // location.reload();
         });
-      } else {
+      }else{
         console.warn('Service Worker is not supported');
       }
     </script>
