@@ -2,8 +2,8 @@
 // const url = 'https://sumire.work';
 const url = location.origin;
 
-const key = "v1.4.7_419";
-const subkey = "?v=0522";
+const key = "v1.4.7_452";
+const subkey = "?v=0528";
 console.log("sw: set cache "+key);
 
 const cache_keys = [
@@ -82,11 +82,11 @@ self.addEventListener('fetch', (event) => {
     caches.open(key).then((cache) => {
       return cache.match(event.request).then((response) => {
         // if(response && response.url.length != 0){
-        //   console.log("sw cache: "+response.url);
+        //   console.log("sw res: "+response.url);
         // }
         return response || fetch(event.request).then((response) => {
           if(/^https:\/\/cdn.jsdelivr.net\/|https:\/\/files.kirakiratter.com\/accounts\/avatars\//.test(event.request.url)){
-            // console.log("sw cache add: "+event.request.url);
+            console.log("sw cache add: "+event.request.url);
             cache.put(event.request, response.clone());
           // }else{
           //   console.log("sw fetch: "+event.request.url);
@@ -105,5 +105,7 @@ self.addEventListener('message', (event) => {
   // }else if(event.data == "force"){
   //   console.log("sw: kktjs update now");
   //   self.skipWaiting();
+  }else{
+    console.log("sw msg_test: "+event.data);
   }
 });

@@ -5,10 +5,11 @@
     <meta charset="utf-8">
     <title>kktjs</title>
     <link rel="stylesheet" href="css/emojipicker.css">
-    <link rel="stylesheet" href="css/style.css?v=0522">
+    <link rel="stylesheet" href="css/style.css?v=0528">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/addtohomescreen.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="Description" content="キラキラッターをもっと素敵にするWebクライアント">
     <meta content="#000" name="theme-color">
     <!-- OGP -->
     <meta property="og:title" content="kktjs" />
@@ -156,11 +157,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
                   <button v-on:click="openAuth();" class="color-wh bgcolor-gr">App Authorize</button><br>
                   コードを張り付けてボタンを押してね。<br>　
                   <span class="flex">
-                    <input type="text" v-model="code" class="border-lite"><br>
+                    <input type="text" v-model="code" class="border-lite" @keyup.enter="fetchToken();"><br>
                     <span v-on:click="fetchToken();" class="button bgcolor-gr color-wh border-lite">Start</span>
                   </span>
                 </div>
-                <small>{{result_text}}</small>
+                <small>{{result_text_tmp}}</small>
               </div>
 
             </div>
@@ -543,7 +544,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
       <div id="base" :class="{ 'extra': 'native' == app_mode }" class="flex column-list">
         <!-- DEBUG -->
         <div v-if="showDebug" class="column debug bgcolor-gray">
-          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}-{{ua}}</div>
+          <div class="column-header"><i class="fa fa-fw fa-cog"></i>App Status/{{app_mode}}-{{ua}} (sw: {{this.sw_stat.enabled}}, {{this.sw_stat.controller}})?</div>
           <div class="scrollable">
             <h3>Columns</h3>
             <!-- {{app_wait_update}}<br> -->
@@ -3356,10 +3357,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
             <div class="setting-wrapper">
 
               <div v-if="showDebugVia" class="flex end action-bar">
-                <label v-on:click="saveConf();appUpdate();" class="button full color-wh bgcolor-pk">debug updater</label>
-              </div>
-              <div v-if="app_wait_update" class="flex end action-bar">
-                <label v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Update kktjs</label>
+                <label v-if="app_wait_update" v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Update kktjs</label>
+                <label v-else-if="fetch_lock.update" class="button full color-wh bgcolor-disable">Update Check</label>
+                <label v-else-if="sw_stat.enabled && sw_stat.controller" v-on:click="serviceWorkerUpdateCheck();" class="button full color-wh bgcolor-pk">Update Check</label>
+                <label v-else-if="sw_stat.enabled && false === sw_stat.controller" v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Reload</label>
+                <label v-else v-on:click="saveConf();reloadForce();" class="button full color-wh bgcolor-pk">Save & Super Reload</label>
               </div>
 
               <h3 class="setting-header">📛📛📛 WebApp Setting 📛📛📛</h3>
@@ -3564,7 +3566,11 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
               </div>
 
               <div class="flex end action-bar">
-                <label v-on:click="saveConf();appUpdate();" class="button full color-wh bgcolor-pk">Save & Update Check (or Super Reload)</label>
+                <label v-if="app_wait_update" v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Update kktjs</label>
+                <label v-else-if="fetch_lock.update" class="button full color-wh bgcolor-disable">Update Check</label>
+                <label v-else-if="sw_stat.enabled && sw_stat.controller" v-on:click="serviceWorkerUpdateCheck();" class="button full color-wh bgcolor-pk">Update Check</label>
+                <label v-else-if="sw_stat.enabled && false === sw_stat.controller" v-on:click="saveConf();location.reload();" class="button full color-wh bgcolor-pk">Save & Reload</label>
+                <label v-else v-on:click="saveConf();reloadForce();" class="button full color-wh bgcolor-pk">Save & Super Reload</label>
               </div>
 
               <br>
@@ -3781,7 +3787,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         <button id="soundoff" class="invisible"></button>
         <button id="sound" class="invisible"></button>
         <button id="soundex" class="invisible"></button>
-        <img src="img/missing_header.png">
+        <img src="img/missing_header.png" alt="">
       </div>
 
     </div><!-- Vue Root -->
@@ -3793,7 +3799,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
     <script src="js/emojione.js"></script>
     <script src="js/lodash.min.js"></script>
 
-    <script src="js/main.js?v=0522"></script>
+    <script src="js/main.js?v=0528"></script>
     <script src="js/picker.js" async></script>
 
     <script>
@@ -3806,6 +3812,7 @@ kktjs v1.x Copyright (c) 2017 Sumire (Not yet been Permissive License.)
         });
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           console.log("sw reg: updated.");
+          app._data.fetch_lock.update = false;
           app._data.result_text = "kktjs new version released.";
           app._data.app_wait_update = true;
           // location.reload();
