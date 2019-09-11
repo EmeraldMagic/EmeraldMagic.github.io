@@ -1,16 +1,19 @@
+
+
 // const url = 'http://localhost:8080';
 // const url = 'https://sumire.work';
 const url = location.origin;
 
-const key = "v1.4.7_455";
-const subkey = "?v=0909";
-console.log("sw: set cache "+key);
+const key = "v1.4.8_23";
+const subkey = "?v=0911";
+console.log("sw: new cache! "+key);
 
 const cache_keys = [
   key
 ];
 const file = [
   url + '/kktjs/',
+  // url + '/kktjs/index.html',
   url + '/kktjs/sw.js',
   url + '/kktjs/css/style.css'+subkey,
   url + '/kktjs/js/main.js'+subkey,
@@ -34,7 +37,7 @@ const file = [
   url + '/kktjs/css/font-awesome.min.css',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/emojione.js',
-  url + '/kktjs/js/inobounce.min.js',
+  url + '/kktjs/js/inobounce.min.js'+subkey,
   url + '/kktjs/js/lodash.min.js',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/vue.min.js',
@@ -100,7 +103,7 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener('message', (event) => {
   if(event.data == "check"){
-    console.log("sw: update check.");
+    console.log("sw: update check (now "+key+")");
     self.registration.update();
   // }else if(event.data == "force"){
   //   console.log("sw: kktjs update now");
