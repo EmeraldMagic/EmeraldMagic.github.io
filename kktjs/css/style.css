@@ -1124,6 +1124,7 @@ small.button, .form-wrapper small.button {
   border-radius: 6px;
   resize: none;
   outline: none;
+  font-family: inherit;
   margin: 8px 0 4px 0;
   padding: 6px 10px;
 }
@@ -1133,6 +1134,7 @@ small.button, .form-wrapper small.button {
   border-radius: 6px;
   resize: none;
   outline: none;
+  font-family: inherit;
   padding: 6px 10px;
 }
 .media.gray{
