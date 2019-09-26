@@ -4,7 +4,7 @@
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 400;
-  src: local('Roboto'),local('Roboto-Regular'),
+  src: local('Roboto'),
        url(../fonts/roboto.ttf) format('truetype');
 }
 @font-face{
@@ -13,10 +13,6 @@
   font-weight: normal;
   src: url('../fonts/fontawesome-webfont.woff2') format('woff2'),
        url('../fonts/fontawesome-webfont.woff') format('woff');
-}
-@font-face {
-  font-family: "YuGothic M";
-  src: local("Yu Gothic Medium");
 }
 /* ===========================
     Reset CSS
@@ -550,7 +546,7 @@ body{
   -webkit-overflow-scrolling: touch;
   font-size: 90%;
   line-height: 1.2;
-  font-family: "Roboto", "游ゴシック体", YuGothic, "YuGothic M", sans-serif;
+  font-family: 'Roboto', YuGothic, Meiryo, sans-serif;
   font-style: normal;
   font-weight: normal;
   letter-spacing: 0.1px;
@@ -1128,7 +1124,6 @@ small.button, .form-wrapper small.button {
   border-radius: 6px;
   resize: none;
   outline: none;
-  font-family: inherit;
   margin: 8px 0 4px 0;
   padding: 6px 10px;
 }
@@ -1138,7 +1133,6 @@ small.button, .form-wrapper small.button {
   border-radius: 6px;
   resize: none;
   outline: none;
-  font-family: inherit;
   padding: 6px 10px;
 }
 .media.gray{

@@ -4,8 +4,8 @@
 // const url = 'https://sumire.work';
 const url = location.origin;
 
-const key = "v1.4.8_23";
-const subkey = "?v=0911";
+const key = "v1.4.8_24";
+const subkey = "?v=0926";
 console.log("sw: new cache! "+key);
 
 const cache_keys = [
@@ -37,7 +37,7 @@ const file = [
   url + '/kktjs/css/font-awesome.min.css',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/emojione.js',
-  url + '/kktjs/js/inobounce.min.js'+subkey,
+  url + '/kktjs/js/inobounce.min.js',
   url + '/kktjs/js/lodash.min.js',
   url + '/kktjs/js/addtohomescreen.min.js',
   url + '/kktjs/js/vue.min.js',
